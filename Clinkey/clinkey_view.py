@@ -35,7 +35,7 @@ class ClinkeyView:
         print("\n" * 20)
         print(f"{'Welcome to Clinkey':^90}")
         print("\n" * 5)
-        input("Press Enter to continue...")
+        input(f"{'Press Enter to continue...':^90}\n{f'':<45}")
 
     def header(self) -> None:
         """
@@ -63,7 +63,7 @@ class ClinkeyView:
         """
         self.header()
         print(f"{message:^90}")
-        return input(f"{'Yes/No ? (y/n) : ':^90}")
+        return input(f"{'Yes/No ? (y/n) : ':^90}\n{f'':<45}")
 
     def _get_user_123_choice(self, message: str, choice: list[str]) -> str:
         """
@@ -74,7 +74,7 @@ class ClinkeyView:
         print(f"{f'1 - {choice[0]}':^90}")
         print(f"{f'2 - {choice[1]}':^90}")
         print(f"{f'3 - {choice[2]}':^90}")
-        return input(f"{'1/2/3 ? : ':^90}")
+        return input(f"{'1/2/3 ? : ':^90}\n{f'':<45}")
 
     def _get_user_input(self, message: str) -> str:
         """
@@ -82,7 +82,7 @@ class ClinkeyView:
         """
         self.header()
         print(f"{message:^90}")
-        return input(f"{'Your choice : ':^90}")
+        return input(f"{'Your choice : ':^90}\n{f'':<45}")
 
     def get_user_password_type(self) -> str:
         """

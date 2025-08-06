@@ -1,5 +1,6 @@
 import random
 import string
+import argparse
 
 from clinkey_view import ClinkeyView
 
@@ -87,7 +88,7 @@ class Clinkey(ClinkeyView):
         """
         Generate a separator between blocks.
         """
-        return random.choice(['-', '——', '——', ' • '])
+        return random.choice(['-', '——', '——', '•'])
     
     def super_strong(self) -> str:
         """
@@ -119,7 +120,7 @@ class Clinkey(ClinkeyView):
         # Troisième itération : MOT (le dernier mot)
         result += words.pop()
         
-        return result
+        return result.strip()
     
     def strong(self) -> str:
         """
@@ -143,7 +144,7 @@ class Clinkey(ClinkeyView):
         for _ in range(3):
             result += words.pop(0) + seps.pop(0) + figures.pop(0) + seps.pop(0)
         
-        return result
+        return result.strip()
     
     def normal(self) -> str:
         """
@@ -163,28 +164,48 @@ class Clinkey(ClinkeyView):
         for _ in range(3):
             result += words.pop(0) + seps.pop(0)
         
+        return result.strip()
+    
+    def generate_password(self, method):
+        result = ""
+        while len(result) < 128:
+            result += method()
         return result
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Generate pronounceable passwords based on French syllables.")
+    parser.add_argument("-n", "--number", type=int, default=1, help="Number of passwords to generate")
+    parser.add_argument("-l", "--length", type=int, default=32, help="Length of the passwords")
+    parser.add_argument("-t", "--type", type=str, default="strong", help="Type of the passwords")
+    parser.add_argument("-o", "--output", type=str, default="", help="Output file")
+    args = parser.parse_args()
+    return args
 
-# Example of usage
-if __name__ == "__main__":
+def main():
+    args = parse_args()
     clinkey = Clinkey()
-    clinkey.display_greeting()
-    nombre = clinkey._get_user_input(
-        "How many passwords do you want to generate ?"
-    ).strip()
-    nombre = int(nombre) if nombre.isdigit() else 3
-    clinkey.header()
+    number = int(args.number)
+    length = int(args.length)
+    type = args.type
+    output = args.output
+    action = {
+        "super_strong": clinkey.super_strong,
+        "strong": clinkey.strong,
+        "normal": clinkey.normal
+    }
+    passwords = []
+    for _ in range(number):
+        passwords.append(clinkey.generate_password(action[type])[0:length])
     
-    print("=== Examples of generated passwords ===")
-    print("\nSuper Strong:")
-    for i in range(nombre):
-        print(f"  {clinkey.super_strong()}")
-    
-    print("\nStrong:")
-    for i in range(nombre):
-        print(f"  {clinkey.strong()}")
-    
-    print("\nNormal:")
-    for i in range(nombre):
-        print(f"  {clinkey.normal()}") 
+    if output:
+        with open(output, "w") as file:
+            for password in passwords:
+                file.write(password + "\n")
+        print(f"Passwords saved to {output}")
+    else:
+        for password in passwords:
+            print(password)
+
+
+if __name__ == "__main__":
+    main()

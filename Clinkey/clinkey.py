@@ -5,6 +5,25 @@ import argparse
 from clinkey_view import ClinkeyView
 
 
+ALPHABET = [char for char in string.ascii_letters.upper()]
+VOWELS = ['A', 'E', 'I', 'O', 'U', 'Y']
+CONSONANTS = [char for char in ALPHABET if char not in VOWELS]
+FIGURES = [char for char in string.digits]
+SPECIALS = [char for char in string.punctuation if char not in ['-', '_']]
+
+SYLLABES = []
+for c in CONSONANTS:
+    for v in VOWELS:
+        SYLLABES.append(c + v)
+        
+SYLLABES_COMPLEXES = ['TRE', 'TRI', 'TRO', 'TRA', 'TRE', 'TRI', 'TRO', 'TRA', 'DRE', 'DRI', 'DRO', 'DRA',
+                    'BRE', 'BRI', 'BRO', 'BRA', 'CRE', 'CRI', 'CRO', 'CRA', 'FRE', 'FRI', 'FRO', 'FRA',
+                    'GRE', 'GRI', 'GRO', 'GRA', 'PRE', 'PRI', 'PRO', 'PRA', 'SRE', 'SRI', 'SRO', 'SRA',
+                    'VRE', 'VRI', 'VRO', 'VRA', 'ZRE', 'ZRI', 'ZRO', 'ZRA', 'LON', 'LEN', 'LIN', 'LAN',
+                    'MON', 'MEN', 'MIN', 'MAN', 'NON', 'NEN', 'NIN', 'NAN', 'PON', 'PEN', 'PIN', 'PAN',
+                    'RON', 'REN', 'RIN', 'RAN', 'SON', 'SEN', 'SIN', 'SAN', 'TON', 'TEN', 'TIN', 'TAN',
+                    'VON', 'VEN', 'VIN', 'VAN', 'ZON', 'ZEN', 'ZIN', 'ZAN']
+
 class Clinkey(ClinkeyView):
     """
     Generate pronounceable passwords based on French syllables.
@@ -15,30 +34,18 @@ class Clinkey(ClinkeyView):
         Initialize the generator with the French syllables.
         """
         # Common French syllables
-        self._consonnes = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Z']
-        self._voyelles = ['A', 'E', 'I', 'O', 'U', 'Y']
-        self._syllabes_simples = ['BA', 'BE', 'BI', 'BO', 'BU', 'CA', 'CE', 'CI', 'CO', 'CU', 'DA', 'DE', 'DI', 'DO', 'DU',
-                                 'FA', 'FE', 'FI', 'FO', 'FU', 'GA', 'GE', 'GI', 'GO', 'GU', 'HA', 'HE', 'HI', 'HO', 'HU',
-                                 'JA', 'JE', 'JI', 'JO', 'JU', 'KA', 'KE', 'KI', 'KO', 'KU', 'LA', 'LE', 'LI', 'LO', 'LU',
-                                 'MA', 'ME', 'MI', 'MO', 'MU', 'NA', 'NE', 'NI', 'NO', 'NU', 'PA', 'PE', 'PI', 'PO', 'PU',
-                                 'RA', 'RE', 'RI', 'RO', 'RU', 'SA', 'SE', 'SI', 'SO', 'SU', 'TA', 'TE', 'TI', 'TO', 'TU',
-                                 'VA', 'VE', 'VI', 'VO', 'VU', 'WA', 'WE', 'WI', 'WO', 'WU', 'XA', 'XE', 'XI', 'XO', 'XU',
-                                 'ZA', 'ZE', 'ZI', 'ZO', 'ZU']
+        self._consonnes = CONSONANTS
+        self._voyelles = VOWELS
+        self._syllabes_simples = SYLLABES
         
         # More complex syllables
-        self._syllabes_complexes = ['TRE', 'TRI', 'TRO', 'TRA', 'TRE', 'TRI', 'TRO', 'TRA', 'DRE', 'DRI', 'DRO', 'DRA',
-                                   'BRE', 'BRI', 'BRO', 'BRA', 'CRE', 'CRI', 'CRO', 'CRA', 'FRE', 'FRI', 'FRO', 'FRA',
-                                   'GRE', 'GRI', 'GRO', 'GRA', 'PRE', 'PRI', 'PRO', 'PRA', 'SRE', 'SRI', 'SRO', 'SRA',
-                                   'VRE', 'VRI', 'VRO', 'VRA', 'ZRE', 'ZRI', 'ZRO', 'ZRA', 'LON', 'LEN', 'LIN', 'LAN',
-                                   'MON', 'MEN', 'MIN', 'MAN', 'NON', 'NEN', 'NIN', 'NAN', 'PON', 'PEN', 'PIN', 'PAN',
-                                   'RON', 'REN', 'RIN', 'RAN', 'SON', 'SEN', 'SIN', 'SAN', 'TON', 'TEN', 'TIN', 'TAN',
-                                   'VON', 'VEN', 'VIN', 'VAN', 'ZON', 'ZEN', 'ZIN', 'ZAN']
+        self._syllabes_complexes = SYLLABES_COMPLEXES
         
         # Special characters for super_strong
-        self._caracteres_speciaux = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', "'", '<', '>', ',', '.', '?', '/', '~', '`', 'ù', 'à', 'é', 'è', 'ç']
+        self._caracteres_speciaux = SPECIALS
         
         # Numbers
-        self._chiffres = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        self._chiffres = FIGURES
     
     def _generate_simple_syllable(self) -> str:
         """
@@ -88,7 +95,7 @@ class Clinkey(ClinkeyView):
         """
         Generate a separator between blocks.
         """
-        return random.choice(['-', '——', '——', '•'])
+        return random.choice(['-', '_'])
     
     def super_strong(self) -> str:
         """

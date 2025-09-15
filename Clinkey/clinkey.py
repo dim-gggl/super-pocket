@@ -9,7 +9,7 @@ ALPHABET = [char for char in string.ascii_letters.upper()]
 VOWELS = ['A', 'E', 'I', 'O', 'U', 'Y']
 CONSONANTS = [char for char in ALPHABET if char not in VOWELS]
 FIGURES = [char for char in string.digits]
-SPECIALS = [char for char in string.punctuation if char not in ['-', '_']]
+SPECIALS = [char for char in string.punctuation if char not in ['-', '_', '$', '#', '|', '<', '>', '(', ')', '[', ']', '{', '}', '\'', '\"', '`', '@', ' ']]
 
 SYLLABES = []
 for c in CONSONANTS:
@@ -185,6 +185,8 @@ def parse_args():
     parser.add_argument("-l", "--length", type=int, default=32, help="Length of the passwords")
     parser.add_argument("-t", "--type", type=str, default="strong", help="Type of the passwords")
     parser.add_argument("-o", "--output", type=str, default="", help="Output file")
+    parser.add_argument("--lower", action="store_true", help="Define if the password should switch to lowercase")
+    parser.add_argument("--no-separator", "--no-sep", action="store_true", help="Define if the password should switch to capitalize")
     args = parser.parse_args()
     return args
 
@@ -195,6 +197,8 @@ def main():
     length = int(args.length)
     type = args.type
     output = args.output
+    lower = args.lower
+    no_separator = args.no_separator
     action = {
         "super_strong": clinkey.super_strong,
         "strong": clinkey.strong,
@@ -203,7 +207,10 @@ def main():
     passwords = []
     for _ in range(number):
         passwords.append(clinkey.generate_password(action[type])[0:length])
-    
+    if lower:
+        passwords = [password.lower() for password in passwords]
+    if no_separator:
+        passwords = [password.replace("-", "").replace("_", "") for password in passwords]
     if output:
         with open(output, "w") as file:
             for password in passwords:

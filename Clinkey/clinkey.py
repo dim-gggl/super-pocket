@@ -9,7 +9,7 @@ ALPHABET = [char for char in string.ascii_letters.upper()]
 VOWELS = ['A', 'E', 'I', 'O', 'U', 'Y']
 CONSONANTS = [char for char in ALPHABET if char not in VOWELS]
 FIGURES = [char for char in string.digits]
-SPECIALS = [char for char in string.punctuation if char not in ['-', '_']]
+SPECIALS = [char for char in string.punctuation if char not in ['-', '_', '$', '#', '|', '<', '>', '(', ')', '[', ']', '{', '}', '\'', '\"', '`', '@', ' ']]
 
 SYLLABES = []
 for c in CONSONANTS:

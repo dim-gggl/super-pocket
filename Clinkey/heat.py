@@ -1,9 +1,14 @@
 import random
 import string
 import argparse
+import click
+from rich.console import Console
 
 from clinkey_view import ClinkeyView
 
+
+console = Console()
+view = ClinkeyView()
 
 ALPHABET = [char for char in string.ascii_letters.upper()]
 VOWELS = ['A', 'E', 'I', 'O', 'U', 'Y']
@@ -173,32 +178,26 @@ class Clinkey(ClinkeyView):
         
         return result.strip()
     
-    def generate_password(self, method):
+    def generate_password(self, method, target_length: int = 16):
         result = ""
-        while len(result) < 128:
-            result += method()
+        while len(result) < target_length:
+            part = method()
+            if len(result + part) <= target_length:
+                result += part
+            else:
+                # Add partial word to reach exact length
+                remaining = target_length - len(result)
+                result += part[:remaining]
+                break
         return result
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Generate pronounceable passwords based on French syllables.")
-    parser.add_argument("-n", "--number", type=int, default=1, help="Number of passwords to generate")
-    parser.add_argument("-l", "--length", type=int, default=32, help="Length of the passwords")
-    parser.add_argument("-t", "--type", type=str, default="strong", help="Type of the passwords")
-    parser.add_argument("-o", "--output", type=str, default="", help="Output file")
-    parser.add_argument("--lower", action="store_true", help="Lowercase the passwords")
-    parser.add_argument("--no-separator", "--no-sep", action="store_true", help="No separator between blocks")
-    args = parser.parse_args()
-    return args
-
-def main():
-    args = parse_args()
+def generate(length: int = 16, 
+            type : str = "normal", 
+            number: int = 1, 
+            no_separator : bool = False, 
+            lower : bool = False, 
+            output: str = None):
     clinkey = Clinkey()
-    number = int(args.number)
-    length = int(args.length)
-    type = args.type
-    output = args.output
-    lower = args.lower
-    no_separator = args.no_separator
     action = {
         "super_strong": clinkey.super_strong,
         "strong": clinkey.strong,
@@ -206,21 +205,78 @@ def main():
     }
     passwords = []
     for _ in range(number):
-        passwords.append(clinkey.generate_password(action[type])[0:length])
+        passwords.append(clinkey.generate_password(action[type], length))
     if lower:
         passwords = [password.lower() for password in passwords]
     if no_separator:
         passwords = [password.replace("-", "").replace("_", "") for password in passwords]
-    
     if output:
         with open(output, "w") as file:
             for password in passwords:
                 file.write(password.rstrip("_").rstrip("-").lstrip("_").lstrip("-") + "\n")
-        print(f"Passwords saved to {output}")
-    else:
-        for password in passwords:
-            print(password)
+    return passwords
 
+@click.group()
+def heat():
+    """Heat - Collection d'outils de sécurité et génération"""
+    pass
+
+@heat.command()
+@click.option("-l", '--length', default=None, type=int, help='Longueur du mot de passe')
+@click.option("-t", '--type', default=None, help='Type: normal, strong, super_strong')
+@click.option("-n", '--number', default=None, type=int, help='Nombre de mots de passe à générer')
+@click.option("-ns", "--no-sep", is_flag=True, help="Supprimer les séparateurs")
+@click.option("-low", "--lower", is_flag=True, help="Convertir en minuscules")
+@click.option("-o", "--output", help="Fichier de sortie")
+def clinkey(length: int | None = None,
+          type: str | None = None,
+          number: int | None = None,
+          no_sep: bool = False,
+          lower: bool = False,
+          output: str = None) -> list[str]:
+    """Générateur de mots de passe prononçables basé sur les syllabes françaises"""
+
+    # Mode interactif si pas d'arguments
+    interactive_mode = length is None and type is None and number is None
+
+    if interactive_mode:
+        view.display_logo()
+
+    if length is None:
+        if interactive_mode:
+            length = view.ask_for("length")
+        if not length:
+            length = 16
+
+    if type is None:
+        if interactive_mode:
+            type = view.ask_for("type")
+        if not type:
+            type = "normal"
+
+    if number is None:
+        if interactive_mode:
+            number = view.ask_for("number")
+        if not number:
+            number = 1
+
+    passwords = generate(
+        length=length,
+        type=type,
+        number=number,
+        no_separator=no_sep,
+        lower=lower,
+        output=output
+    )
+
+    if interactive_mode:
+        view.display_passwords(passwords)
+    else:
+        # Mode ligne de commande - affichage simple
+        for password in passwords:
+            console.print(password, style="bright_green")
+
+    return passwords
 
 if __name__ == "__main__":
-    main()
+    heat()

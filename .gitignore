@@ -2,3 +2,13 @@
 __pycache__
 *.txt
 .python-version
+.venv/
+.env
+venv
+env
+.cursor/
+*.lock
+pyproject.*
+*.pyc
+__pycache__
+.DS_Store

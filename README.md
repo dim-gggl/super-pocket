@@ -1,6 +1,12 @@
-# Fancy Tools
+# Pocket
+
+[![Documentation Status](https://readthedocs.org/projects/pocket/badge/?version=latest)](https://pocket.readthedocs.io/en/latest/?badge=latest)
+[![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 A collection of developer productivity tools including markdown rendering, project exporters, agent templates, and cheatsheets management.
+
+**[📚 Read the Documentation](https://pocket.readthedocs.io/)** | [🚀 Quick Start](#quick-start) | [💡 Features](#features)
 
 ## Features
 

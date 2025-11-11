@@ -1,16 +1,16 @@
+# - Agent templates and cheat sheets management
 """
-Fancy Tools - A collection of developer productivity tools.
+Pocket - A collection of developer tools.
 
 This package provides various utilities for developers including:
 - Markdown rendering and conversion
 - Project-to-file exporters
 - PDF conversion tools
-- Web utilities (favicon generation, etc.)
-- Agent templates and cheat sheets management
+- Web utilities (favicon generation, job search, etc.)
 """
 
-__version__ = "0.1.0"
-__author__ = "dim-gggl"
+__version__ = "1.0.1"
+__author__ = "Dimitri Gaggioli"
 
 from pathlib import Path
 

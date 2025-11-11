@@ -40,6 +40,13 @@ dist/
 .env
 .env.local
 
+# Documentation
+docs/_build/
+docs/_autosummary/
+docs/.doctrees/
+.doctrees/
+*.doctree
+
 # Project specific
 *.log
 examples/agent_configs/*.md

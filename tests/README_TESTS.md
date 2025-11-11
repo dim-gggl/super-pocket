@@ -1,6 +1,6 @@
 # Tests Documentation
 
-This directory contains comprehensive unit tests for the Fancy Tools project.
+This directory contains comprehensive unit tests for the Pocket project.
 
 ## Test Structure
 

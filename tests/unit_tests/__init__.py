@@ -1,3 +1,3 @@
 """
-Unit tests for Fancy Tools modules.
+Unit tests for Pocket modules.
 """

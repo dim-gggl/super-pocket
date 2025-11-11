@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Fancy Tools - Unified CLI entry point.
+Pocket - Unified CLI entry point.
 
-This module provides a unified command-line interface for all Fancy Tools
-functionality, organized into logical subcommands.
+This module provides a unified command-line interface for all Pocket
+functionalities, organized into logical subcommands.
 """
 
 import click
 from rich.console import Console
 
 from pocket import __version__
+from pocket.web.job_search import main as job_search
+from pocket.markdown.renderer import markd
+from pathlib import Path
 
 console = Console()
 
@@ -60,8 +63,6 @@ def markdown_render(file: str, width: int):
         pocket markdown render README.md
         pocket markdown render docs/guide.md -w 100
     """
-    from pocket.markdown.renderer import markd
-    from pathlib import Path
 
     # Call the markd function with the file
     ctx = click.Context(markd)
@@ -88,7 +89,7 @@ def project_group():
 )
 @click.option(
     '-e', '--exclude',
-    default="env,.env,venv,.venv,.gitignore,.git,.vscode,.idea,.cursor,lib,bin,site-packages,node_modules,__pycache__,.DS_Store",
+    default=".AGENTS,Agents,AGENTS.md,.claude,.cursor,WORKFLOWS.md,RULES.md,env,.env,venv,.venv,.gitignore,.git,.vscode,.idea,lib,bin,site-packages,node_modules,__pycache__,.DS_Store",
     help='Comma-separated list of files/directories to exclude.'
 )
 def project_to_file(path: str, output: str, exclude: str):
@@ -292,6 +293,46 @@ def pdf_convert_cmd(input_file: str, output: str):
 def web_group():
     """Web utilities."""
     pass
+
+
+@web_group.command(name="job-search")
+@click.argument("query")
+@click.option("-p", "--page", type=int, default=1, help="Page number to start from")
+@click.option("-n", "--num_pages", type=int, default=10, help="Number of pages to scrape")
+@click.option("-c", "--country", type=str, default="fr", help="Country to search in")
+@click.option("-l", "--language", type=str, default="fr", help="Language to search in")
+@click.option("-d", "--date_posted", type=str, default="month", help="Date posted to search for. Possible values: all, today, 3days, week, month")
+@click.option("-t", "--employment_types", type=str, default="FULLTIME", help="Employment types to search for. Possible values: FULLTIME, CONTRACTOR, PARTTIME, INTERN")
+@click.option("-r", "--job_requirements", type=str, default="no_experience", help="Job requirements to search for")
+@click.option("--work-from-home", is_flag=True, default=False, help="Search for jobs that allow working from home")
+@click.option("-o", "--output", type=str, default="jobs.json", help="Output file name")
+def web_job_search_cmd(query: str, page: int, num_pages: int, country: str, language: str, date_posted: str, employment_types: str, job_requirements: str, output: str):
+    """
+    Search for jobs using the JSearch API.
+
+    Searches for jobs based on query and saves results to a JSON file.
+    Requires RAPIDAPI_API_KEY environment variable to be set.
+
+    Args:
+        query: Search query for jobs (e.g., "Python developer").
+        page: Page number to start from (default: 1).
+        num_pages: Number of pages to scrape (default: 10).
+        country: Country to search in (default: fr).
+        language: Language to search in (default: fr).
+        date_posted: Date posted filter (default: month).
+        employment_types: Employment types (default: FULLTIME).
+        job_requirements: Job requirements (default: no_experience).
+        output: Output JSON file name (default: jobs.json).
+
+    Examples:
+        pocket web job-search "Python developer"
+        pocket web job-search "Data scientist" -c us -l en -o data_jobs.json
+    """
+    ctx = click.Context(job_search)
+    ctx.invoke(job_search, query=query, page=page, num_pages=num_pages,
+               country=country, language=language, date_posted=date_posted,
+               employment_types=employment_types, job_requirements=job_requirements,
+               work_from_home=work_from_home, output=output)
 
 
 @web_group.command(name="favicon")

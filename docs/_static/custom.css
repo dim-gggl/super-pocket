@@ -1,0 +1,292 @@
+/* Custom CSS for Pocket Documentation */
+
+/* Brand colors */
+:root {
+    --pocket-primary: #2980B9;
+    --pocket-secondary: #3498DB;
+    --pocket-accent: #E74C3C;
+    --pocket-dark: #2C3E50;
+    --pocket-light: #ECF0F1;
+}
+
+/* Improve code block appearance */
+.highlight {
+    background: #f8f9fa !important;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin: 1em 0;
+}
+
+.highlight pre {
+    padding: 12px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+/* Style inline code */
+code.literal {
+    background-color: #f8f9fa;
+    color: #E74C3C;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 90%;
+    border: 1px solid #e9ecef;
+}
+
+.toctree-l2 > a.reference.internal, .toctree-expand {
+    color: var(--pocket-light) !important;
+}
+
+/* Improve admonition styling */
+.admonition {
+    margin: 1.5em 0;
+    padding: 12px;
+    border-left: 4px solid var(--pocket-primary);
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.admonition-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--pocket-dark);
+}
+
+.admonition.note {
+    border-left-color: #3498DB;
+}
+
+.admonition.warning {
+    border-left-color: #F39C12;
+    background-color: #FFF8E1;
+}
+
+.admonition.tip {
+    border-left-color: #27AE60;
+    background-color: #E8F5E9;
+}
+
+.admonition.important {
+    border-left-color: #E74C3C;
+    background-color: #FFEBEE;
+}
+
+/* Style tables */
+.rst-content table.docutils {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.rst-content table.docutils thead {
+    background-color: var(--pocket-primary);
+    color: white;
+}
+
+.rst-content table.docutils th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.rst-content table.docutils td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.rst-content table.docutils tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.rst-content table.docutils tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Improve navigation */
+.wy-nav-side {
+    background: var(--pocket-dark);
+}
+
+.wy-side-nav-search {
+    background-color: var(--pocket-primary);
+}
+
+.wy-side-nav-search input[type=text] {
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Style links */
+a {
+    color: var(--pocket-secondary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--pocket-primary);
+    text-decoration: underline;
+}
+
+/* Improve heading styles */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--pocket-dark);
+    font-weight: 600;
+}
+
+h1 {
+    border-bottom: 3px solid var(--pocket-primary);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    border-bottom: 2px solid var(--pocket-light);
+    padding-bottom: 8px;
+    margin-top: 24px;
+}
+
+/* Style the version selector */
+.rst-versions {
+    border-top: 2px solid var(--pocket-primary);
+}
+
+/* Improve button styling */
+.btn {
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-neutral {
+    background-color: var(--pocket-primary) !important;
+    color: white !important;
+}
+
+.btn-neutral:hover {
+    background-color: var(--pocket-secondary) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Improve search results */
+.search li {
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.search li:hover {
+    background-color: #f8f9fa;
+}
+
+/* Style code blocks in lists */
+.rst-content ol li code,
+.rst-content ul li code {
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* Improve footer */
+.rst-footer-buttons {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--pocket-light);
+}
+
+/* Add some breathing room */
+.rst-content {
+    line-height: 1.7;
+}
+
+.rst-content p {
+    margin-bottom: 16px;
+}
+
+/* Style version badge */
+.version {
+    color: var(--pocket-secondary);
+    font-weight: 600;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 768px) {
+    .rst-content table.docutils {
+        font-size: 14px;
+    }
+
+    .rst-content table.docutils th,
+    .rst-content table.docutils td {
+        padding: 8px;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles if needed */
+}
+
+/* Custom badge styling */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-primary {
+    background-color: var(--pocket-primary);
+    color: white;
+}
+
+.badge-success {
+    background-color: #27AE60;
+    color: white;
+}
+
+/* Improve sidebar navigation */
+.wy-menu-vertical li.current {
+    background-color: var(--pocket-dark);
+}
+
+.wy-menu-vertical li.current a {
+    border-right: 3px solid var(--pocket-primary);
+}
+
+.wy-menu-vertical a:hover {
+    background-color: rgba(255,255,255,0.05);
+}
+
+/* Style document metadata */
+.document-meta {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+/* Improve list styling */
+.rst-content ul li,
+.rst-content ol li {
+    margin-bottom: 8px;
+}
+
+/* Add visual interest to checkmarks */
+.rst-content ul li::before {
+    content: none;
+}
+
+/* Style parameter lists */
+.rst-content dl dt {
+    font-weight: 600;
+    color: var(--pocket-dark);
+    margin-top: 12px;
+}
+
+.rst-content dl dd {
+    margin-left: 24px;
+    margin-bottom: 12px;
+}

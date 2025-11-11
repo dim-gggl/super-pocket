@@ -12,10 +12,10 @@ build:
   jobs:
     post_checkout:
       # Install uv for faster dependency resolution (optional)
-      - pip install uv
+      - python -m pip install --upgrade pip
     post_install:
       # Install the package with all dependencies
-      - pip install -e .[all]
+      - python -m pip install -e .[all]
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:

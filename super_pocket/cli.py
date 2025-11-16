@@ -5,6 +5,8 @@ Pocket - Unified CLI entry point.
 This module provides a unified command-line interface for all Pocket
 functionalities, organized into logical subcommands.
 """
+import asyncio
+
 import click
 from rich.console import Console
 from pathlib import Path
@@ -19,6 +21,7 @@ from super_pocket.templates_and_cheatsheets.cli import copy_item
 from super_pocket.templates_and_cheatsheets.cli import init_agents
 from super_pocket.pdf.converter import pdf_convert
 from super_pocket.web.favicon import favicon_convert
+from super_pocket.project.req_to_date import run_req_to_date
 
 
 console = Console()
@@ -120,6 +123,28 @@ def project_to_file(path: str, output: str, exclude: str):
 
     create_codebase_markdown(path, output, exclude)
 
+@project_group.command(name="req-to-date")
+@click.argument("packages", nargs=-1)
+def req_to_date(packages: tuple[str, ...]):
+    """Accepte `nom==version`, une liste séparée par des virgules ou un fichier requirements."""
+
+    if not packages:
+        raise click.BadParameter(
+            "Fournissez au moins un package, une liste séparée par des virgules ou un fichier requirements.txt.",
+            ctx=click.get_current_context(),
+            param_hint="packages"
+        )
+
+    try:
+        results = run_req_to_date(packages)
+    except ValueError as exc:
+        raise click.BadParameter(str(exc))
+
+    for result in results:
+        console.print(
+            f"{result.package} (installée: {result.currentVersion}) -> ",
+            f"patch: {result.latestPatch or '-'} | dernière: {result.latestOverall} | statut: {result.status}"
+        )
 
 # ==================== Templates Commands ====================
 @cli.group(name="templates")

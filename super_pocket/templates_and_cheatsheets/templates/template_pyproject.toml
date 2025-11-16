@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "your_package_name"
+version = "0.1.0"
+description = "Short description of your library."
+authors = [
+  { name="Dimitri Gaggioli", email="your_email@example.com" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"  # Choose your actual lower bound
+
+keywords = ["python", "library", "utilities"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+# Clean, no upper bounds.
+dependencies = [
+  "numpy>=1.20",
+  "requests>=2.30",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+  "tox>=4.0",
+  "ruff>=0.4",
+  "mypy>=1.8",
+]
+
+docs = [
+  "mkdocs>=1.5",
+  "mkdocs-material>=9.2",
+]
+
+[tool.hatch.version]
+path = "your_package_name/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/**", "pyproject.toml", "README.md"]
+
+[tool.hatch.build.targets.wheel]
+include = ["src/**"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "--cov=your_package_name --cov-report=xml"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.9"
+ignore_missing_imports = true
+strict = true

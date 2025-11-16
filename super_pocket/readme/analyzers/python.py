@@ -27,7 +27,7 @@ class PythonAnalyzer:
         try:
             with open(pyproject_path, "rb") as f:
                 data = tomllib.load(f)
-        except Exception:
+        except (OSError, tomllib.TOMLDecodeError):
             return None
 
         project_data = data.get("project", {})

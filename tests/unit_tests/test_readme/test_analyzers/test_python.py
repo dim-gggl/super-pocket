@@ -52,3 +52,63 @@ def test_python_analyzer_no_pyproject(tmp_path):
     context = analyzer.analyze(tmp_path)
 
     assert context is None
+
+
+def test_python_analyzer_detects_web_app(tmp_path):
+    """Test that Python analyzer detects web apps (FastAPI/Flask/Django)."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("""[project]
+name = "test-web-app"
+version = "1.0.0"
+description = "A test web application"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+]
+""")
+
+    analyzer = PythonAnalyzer()
+    context = analyzer.analyze(tmp_path)
+
+    assert context.language == "python"
+    assert context.project_type == ProjectType.WEB_APP
+    assert context.project_name == "test-web-app"
+    assert context.description == "A test web application"
+
+
+def test_python_analyzer_detects_library(tmp_path):
+    """Test that Python analyzer detects library (default fallback)."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("""[project]
+name = "test-library"
+version = "2.0.0"
+description = "A test library"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24.0",
+    "pandas>=2.0.0",
+]
+""")
+
+    analyzer = PythonAnalyzer()
+    context = analyzer.analyze(tmp_path)
+
+    assert context.language == "python"
+    assert context.project_type == ProjectType.LIBRARY
+    assert context.project_name == "test-library"
+    assert context.description == "A test library"
+
+
+def test_python_analyzer_handles_invalid_toml(tmp_path):
+    """Test that analyzer gracefully handles malformed TOML files."""
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text("""[project
+name = "invalid"
+this is not valid TOML syntax
+""")
+
+    analyzer = PythonAnalyzer()
+    context = analyzer.analyze(tmp_path)
+
+    assert context is None

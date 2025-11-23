@@ -9,7 +9,7 @@ in Super Pocket. Use this as a reference when using Super Pocket programmaticall
 Core Module
 -----------
 
-.. automodule:: pocket
+.. automodule:: super_pocket
    :members:
    :undoc-members:
    :show-inheritance:
@@ -19,7 +19,7 @@ CLI Module
 
 Command-line interface implementation.
 
-.. automodule:: pocket.cli
+.. automodule:: super_pocket.cli
    :members:
    :undoc-members:
    :show-inheritance:
@@ -29,7 +29,7 @@ Markdown Module
 
 Markdown rendering and processing tools.
 
-.. automodule:: pocket.markdown
+.. automodule:: super_pocket.markdown
    :members:
    :undoc-members:
    :show-inheritance:
@@ -37,7 +37,7 @@ Markdown rendering and processing tools.
 markdown.renderer
 ~~~~~~~~~~~~~~~~~
 
-.. automodule:: pocket.markdown.renderer
+.. automodule:: super_pocket.markdown.renderer
    :members:
    :undoc-members:
    :show-inheritance:
@@ -47,7 +47,7 @@ Project Module
 
 Project export and management tools.
 
-.. automodule:: pocket.project
+.. automodule:: super_pocket.project
    :members:
    :undoc-members:
    :show-inheritance:
@@ -55,7 +55,7 @@ Project export and management tools.
 project.to_file
 ~~~~~~~~~~~~~~~
 
-.. automodule:: pocket.project.to_file
+.. automodule:: super_pocket.project.to_file
    :members:
    :undoc-members:
    :show-inheritance:
@@ -66,9 +66,9 @@ PDF Module
 PDF conversion tools.
 
 .. note::
-   Requires ``pocket[pdf]`` optional dependencies.
+   Requires ``super-pocket[pdf]`` optional dependencies.
 
-.. automodule:: pocket.pdf
+.. automodule:: super_pocket.pdf
    :members:
    :undoc-members:
    :show-inheritance:
@@ -76,7 +76,7 @@ PDF conversion tools.
 pdf.converter
 ~~~~~~~~~~~~~
 
-.. automodule:: pocket.pdf.converter
+.. automodule:: super_pocket.pdf.converter
    :members:
    :undoc-members:
    :show-inheritance:
@@ -87,9 +87,9 @@ Web Module
 Web utilities including favicon generation.
 
 .. note::
-   Requires ``pocket[web]`` optional dependencies.
+   Requires ``super-pocket[web]`` optional dependencies.
 
-.. automodule:: pocket.web
+.. automodule:: super_pocket.web
    :members:
    :undoc-members:
    :show-inheritance:
@@ -97,7 +97,7 @@ Web utilities including favicon generation.
 web.favicon
 ~~~~~~~~~~~
 
-.. automodule:: pocket.web.favicon
+.. automodule:: super_pocket.web.favicon
    :members:
    :undoc-members:
    :show-inheritance:
@@ -105,7 +105,7 @@ web.favicon
 web.job_search
 ~~~~~~~~~~~~~~
 
-.. automodule:: pocket.web.job_search
+.. automodule:: super_pocket.web.job_search
    :members:
    :undoc-members:
    :show-inheritance:
@@ -115,7 +115,7 @@ Templates Module
 
 Agent templates and cheatsheets management.
 
-.. automodule:: pocket.templates_and_cheatsheets
+.. automodule:: super_pocket.templates_and_cheatsheets
    :members:
    :undoc-members:
    :show-inheritance:
@@ -123,7 +123,7 @@ Agent templates and cheatsheets management.
 templates_and_cheatsheets.cli
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: pocket.templates_and_cheatsheets.cli
+.. automodule:: super_pocket.templates_and_cheatsheets.cli
    :members:
    :undoc-members:
    :show-inheritance:
@@ -131,7 +131,7 @@ templates_and_cheatsheets.cli
 templates_and_cheatsheets.validator
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: pocket.templates_and_cheatsheets.validator
+.. automodule:: super_pocket.templates_and_cheatsheets.validator
    :members:
    :undoc-members:
    :show-inheritance:
@@ -142,7 +142,7 @@ Using the API
 Programmatic Usage
 ~~~~~~~~~~~~~~~~~~
 
-You can use Super Pocket's modules (imported via the ``pocket`` package) programmatically in your Python code:
+You can use Super Pocket's modules (imported via the ``super_pocket`` package) programmatically in your Python code:
 
 Markdown Rendering Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

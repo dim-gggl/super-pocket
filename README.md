@@ -1,6 +1,6 @@
 # Super Pocket
 
-[![Documentation Status](https://readthedocs.org/projects/pocket/badge/?version=latest)](https://pocket.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pocketdocs/badge/?version=latest)](https://pocketdocs.readthedocs.io/en/latest/?badge=latest)
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 

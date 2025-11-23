@@ -11,7 +11,7 @@ Package Structure
 
 .. code-block:: text
 
-   pocket/
+   super_pocket/
    ├── __init__.py
    ├── cli.py                          # Main CLI interface
    ├── markdown/                       # Markdown tools
@@ -42,18 +42,18 @@ Module Descriptions
 Core Modules
 ~~~~~~~~~~~~
 
-pocket
-^^^^^^
+super_pocket
+^^^^^^^^^^^^
 
 Main package initialization and public API.
 
 .. autosummary::
    :toctree: _autosummary
 
-   pocket
+   super_pocket
 
-pocket.cli
-^^^^^^^^^^
+super_pocket.cli
+^^^^^^^^^^^^^^^^
 
 Command-line interface implementation using Click framework.
 
@@ -67,21 +67,21 @@ Command-line interface implementation using Click framework.
 .. autosummary::
    :toctree: _autosummary
 
-   pocket.cli
+   super_pocket.cli
 
 Markdown Modules
 ~~~~~~~~~~~~~~~~
 
-pocket.markdown
-^^^^^^^^^^^^^^^
+super_pocket.markdown
+^^^^^^^^^^^^^^^^^^^^^
 
 Markdown rendering and processing functionality.
 
 .. autosummary::
    :toctree: _autosummary
 
-   pocket.markdown
-   pocket.markdown.renderer
+   super_pocket.markdown
+   super_pocket.markdown.renderer
 
 **Features:**
 
@@ -93,16 +93,16 @@ Markdown rendering and processing functionality.
 Project Modules
 ~~~~~~~~~~~~~~~
 
-pocket.project
-^^^^^^^^^^^^^^
+super_pocket.project
+^^^^^^^^^^^^^^^^^^^^
 
 Project export and analysis tools.
 
 .. autosummary::
    :toctree: _autosummary
 
-   pocket.project
-   pocket.project.to_file
+   super_pocket.project
+   super_pocket.project.to_file
 
 **Features:**
 
@@ -114,19 +114,19 @@ Project export and analysis tools.
 PDF Modules
 ~~~~~~~~~~~
 
-pocket.pdf
-^^^^^^^^^^
+super_pocket.pdf
+^^^^^^^^^^^^^^^^
 
 PDF conversion utilities.
 
 .. note::
-   Requires ``pocket[pdf]`` optional dependencies.
+   Requires ``super-pocket[pdf]`` optional dependencies.
 
 .. autosummary::
    :toctree: _autosummary
 
-   pocket.pdf
-   pocket.pdf.converter
+   super_pocket.pdf
+   super_pocket.pdf.converter
 
 **Features:**
 
@@ -138,20 +138,20 @@ PDF conversion utilities.
 Web Modules
 ~~~~~~~~~~~
 
-pocket.web
-^^^^^^^^^^
+super_pocket.web
+^^^^^^^^^^^^^^^^
 
 Web utilities and asset generation.
 
 .. note::
-   Requires ``pocket[web]`` optional dependencies.
+   Requires ``super-pocket[web]`` optional dependencies.
 
 .. autosummary::
    :toctree: _autosummary
 
-   pocket.web
-   pocket.web.favicon
-   pocket.web.job_search
+   super_pocket.web
+   super_pocket.web.favicon
+   super_pocket.web.job_search
 
 **Features:**
 
@@ -163,19 +163,19 @@ Web utilities and asset generation.
 Templates Modules
 ~~~~~~~~~~~~~~~~~
 
-pocket.templates_and_cheatsheets
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+super_pocket.templates_and_cheatsheets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Agent templates and cheatsheets management.
 
 .. autosummary::
    :toctree: _autosummary
 
-   pocket.templates_and_cheatsheets
-   pocket.templates_and_cheatsheets.cli
-   pocket.templates_and_cheatsheets.validator
-   pocket.templates_and_cheatsheets.templates
-   pocket.templates_and_cheatsheets.cheatsheets
+   super_pocket.templates_and_cheatsheets
+   super_pocket.templates_and_cheatsheets.cli
+   super_pocket.templates_and_cheatsheets.validator
+   super_pocket.templates_and_cheatsheets.templates
+   super_pocket.templates_and_cheatsheets.cheatsheets
 
 **Features:**
 
@@ -225,7 +225,7 @@ Importing Modules
 .. code-block:: python
 
    # Import main package
-   import pocket
+   import super_pocket
 
    # Import specific modules
    from super_pocket.markdown import renderer
@@ -370,4 +370,4 @@ Full Module Index
    :toctree: _autosummary
    :recursive:
 
-   pocket
+   super_pocket

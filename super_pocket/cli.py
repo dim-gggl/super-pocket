@@ -15,6 +15,7 @@ from super_pocket import __version__
 from super_pocket.web.job_search import main as job_search
 from super_pocket.markdown.renderer import markd
 from super_pocket.project.to_file import create_codebase_markdown
+from super_pocket.project.readme import run_readme_wizard
 from super_pocket.templates_and_cheatsheets.cli import list_items
 from super_pocket.templates_and_cheatsheets.cli import view_item
 from super_pocket.templates_and_cheatsheets.cli import copy_item
@@ -123,6 +124,38 @@ def project_to_file(path: str, output: str, exclude: str):
 
     create_codebase_markdown(path, output, exclude)
 
+
+@project_group.command(name="readme")
+@click.option(
+    '-p', '--path',
+    default='.',
+    help='Root directory of the project to scan.'
+)
+@click.option(
+    '-o', '--output',
+    default=None,
+    help='Output README file path (defaults to <project_root>/README.md).'
+)
+def project_readme(path: str, output: str | None):
+    """Interactively generate a README.md for a project.
+
+    This command scans the target project to infer its languages, dependencies,
+    frameworks and a likely project type. It then runs an interactive wizard
+    to build a relevant README.md, asking the user a few questions to
+    customize the final content.
+
+    Args:
+        path: Root directory of the project to scan (default: current directory).
+        output: Optional explicit README path; default is README.md in project root.
+
+    Examples:
+        pocket project readme
+        pocket project readme -p ./my-project
+        pocket project readme -p ./my-project -o ./docs/README.md
+    """
+
+    run_readme_wizard(path, output)
+
 @project_group.command(name="req-to-date")
 @click.argument("packages", nargs=-1)
 def req_to_date(packages: tuple[str, ...]):
@@ -142,8 +175,8 @@ def req_to_date(packages: tuple[str, ...]):
 
     for result in results:
         console.print(
-            f"{result.package} (installée: {result.currentVersion}) -> ",
-            f"patch: {result.latestPatch or '-'} | dernière: {result.latestOverall} | statut: {result.status}"
+            f"[red]{result.package} {result.currentVersion})[/red] -> ",
+            f"[green]{result.latestOverall}[/green]"
         )
 
 # ==================== Templates Commands ====================

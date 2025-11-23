@@ -9,6 +9,7 @@ containing the entire codebase with syntax highlighting and file tree structure.
 import os
 import argparse
 import sys
+import click
 from collections.abc import Generator
 from pathlib import Path
 from typing import Set
@@ -37,6 +38,13 @@ LANG_MAP = {
     '.sql': 'sql',
     '.dockerfile': 'dockerfile',
     'Dockerfile': 'dockerfile',
+}
+
+DEFAULT_VALUES = {
+    "project": ".",
+    "output": None,
+    "exclude": "env,.env,venv,.venv,.gitignore,.git,.vscode,.idea,.cursor,lib,bin,site-packages,node_modules,__pycache__,.DS_Store",
+    "extend_exclude": ""
 }
 
 
@@ -147,9 +155,9 @@ def create_codebase_markdown(
         ...     output_file='my-app.md',
         ...     exclude_str='node_modules,.git,dist'
         ... )
-        🚀 Starting project scan: 'my-app'
+        || Starting project scan: 'my-app'
         ...
-        🎉 Success! Codebase compiled into 'my-app.md'
+        || Success! Codebase compiled into 'my-app.md'
     """
     # Clean up paths and exclusions
     project_path = os.path.abspath(project_path)
@@ -160,10 +168,10 @@ def create_codebase_markdown(
     if output_file is None:
         output_file = f"{project_name}-1-file.md"
 
-    print(f"🚀 Starting project scan: '{project_name}'")
-    print(f"📂 Source directory: {project_path}")
-    print(f"📋 Output file: {output_file}")
-    print(f"🙈 Excluded items: {exclude_set}")
+    print(f"|| Starting project scan: '{project_name}'")
+    print(f"|| Source directory: {project_path}")
+    print(f"|| Output file: {output_file}")
+    print(f"|| Excluded items: {exclude_set}")
 
     try:
         with open(output_file, 'w', encoding='utf-8') as md_file:
@@ -171,16 +179,16 @@ def create_codebase_markdown(
             md_file.write(f"# {project_name}\n\n")
 
             # 2. Generate and write project tree
-            print("🌳 Generating file tree...")
+            print("|| Generating file tree...")
             md_file.write("```bash\n")
             md_file.write(f"{project_name}/\n")
             for line in generate_tree(project_path, exclude_set):
                 md_file.write(f"{line}\n")
             md_file.write("```\n\n")
-            print("✅ File tree generated.")
+            print("|| File tree generated.")
 
             # 3. Walk through files and write their content
-            print("📝 Reading and writing file contents...")
+            print("|| Reading and writing file contents...")
             for root, dirs, files in os.walk(project_path, topdown=True):
                 # Ensure we don't descend into excluded directories
                 dirs[:] = [d for d in dirs if d not in exclude_set]
@@ -204,70 +212,49 @@ def create_codebase_markdown(
                             md_file.write("\n```\n\n")
 
                     except UnicodeDecodeError:
-                        print(f"⚠️  Warning: Cannot read file '{relative_path}' (probably binary). Skipping.")
+                        print(f"\033[31m|| Warning: Cannot read file \033[1m'{relative_path}'\033[0m\033[31m (probably binary). Skipping.\033[0m")
                     except Exception as e:
-                        print(f"❌ Error reading file '{relative_path}': {e}")
+                        print(f"\033[31m❌ Error reading file \033[1m'{relative_path}'\033[0m\033[31m: {e}\033[0m")
 
-            print("✅ File contents written.")
+            print("|| File contents written.")
 
     except IOError as e:
-        print(f"❌ Error writing to file '{output_file}': {e}", file=sys.stderr)
+        print(f"\033[31m❌ Error writing to file \033[1m'{output_file}'\033[0m\033[31m: {e}\033[0m", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"❌ An unexpected error occurred: {e}", file=sys.stderr)
+        print(f"\033[31m❌ An unexpected error occurred: {e}\033[0m", file=sys.stderr)
         sys.exit(1)
 
-    print(f"\n🎉 Success! Codebase compiled into '{output_file}'")
+    print(f"\n|| Success! Codebase compiled into '{output_file}'")
 
-
-def main():
+@click.command(name="proj-to-file")
+@click.option('-p', '--project', default='.', help='Root directory of the project to scan.')
+@click.option('-o', '--output', default=None, help='Output Markdown file name.')
+@click.option('-e', '--exclude', default=DEFAULT_VALUES["exclude"], help='Comma-separated list of files/directories to exclude.')
+@click.option('-ee', '--extend-exclude', default="", help='Comma-separated list of files/directories to extend the exclude list.')
+def proj_to_file(project: str, output: str, exclude: str, extend_exclude: str):
     """
-    Entry point for CLI argument handling.
+    Export an entire project directory to a single Markdown file.
 
-    Parses command-line arguments and initiates the project-to-file conversion
-    process. This function serves as the main entry point when the script is
-    run directly from the command line.
-
-    Command-line Arguments:
-        -p, --projet: Root directory of the project to scan (default: current directory).
-        -o, --output: Output Markdown file name (default: '<project_name>-1-file.md').
-        -e, --exclude: Comma-separated list of files/directories to exclude.
-
-    Raises:
-        SystemExit: If the specified project path doesn't exist or is not a directory.
+    This command scans a project directory and generates a single Markdown
+    file containing the file tree structure and all source code with syntax
+    highlighting. Useful for documentation, code reviews, or AI analysis.
     """
-    parser = argparse.ArgumentParser(
-        description="Scan a development project and generate a single Markdown file containing the entire codebase.",
-        formatter_class=argparse.RawTextHelpFormatter
-    )
+    exclude_pattern = DEFAULT_VALUES["exclude"]
+    project_dir = DEFAULT_VALUES["project"]
+    output_path = DEFAULT_VALUES["output"]
 
-    parser.add_argument(
-        '-p', '--projet',
-        default='.',
-        help="Root directory of the project to scan.\nDefault: current directory ('.')."
-    )
+    if project:
+        project_dir = project
+    
+    if output:
+        output_path = output
+    
+    if exclude:
+        exclude_pattern = exclude
+    
+    if extend_exclude:
+        exclude_pattern += f",{extend_exclude}"
 
-    parser.add_argument(
-        '-o', '--output',
-        default=None,
-        help="Name of the output Markdown file.\nDefault: '<project_name>-1-file.md'."
-    )
+    create_codebase_markdown(project_dir, output_path, exclude_pattern)
 
-    default_exclude = "env,.env,venv,.venv,.gitignore,.git,.vscode,.idea,.cursor,lib,bin,site-packages,node_modules,__pycache__,.DS_Store"
-    parser.add_argument(
-        '-e', '--exclude',
-        default=default_exclude,
-        help=f"Comma-separated list of files and directories to ignore.\nDefault: \"{default_exclude}\"."
-    )
-
-    args = parser.parse_args()
-
-    if not os.path.isdir(args.projet):
-        print(f"Error: Project path '{args.projet}' does not exist or is not a directory.", file=sys.stderr)
-        sys.exit(1)
-
-    create_codebase_markdown(args.projet, args.output, args.exclude)
-
-
-if __name__ == '__main__':
-    main()

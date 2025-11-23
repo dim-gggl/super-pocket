@@ -99,6 +99,38 @@ The exported file will contain:
 * File contents with syntax highlighting
 * Proper formatting for sharing
 
+Interactive README Generation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create a polished README directly from the CLI:
+
+.. code-block:: bash
+
+   # Inspect current project and write README.md
+   pocket project readme
+
+   # Target a different repository and custom path
+   pocket project readme -p ../demo -o docs/README.md
+
+The wizard inspects metadata (languages, dependencies, frameworks) and prompts for highlights,
+usage instructions, and roadmap sections before writing the file.
+
+Keeping Requirements Current
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Quickly identify outdated dependencies:
+
+.. code-block:: bash
+
+   # Check a requirements file
+   pocket project req-to-date requirements.txt
+
+   # Mix inline specs with file paths
+   pocket project req-to-date click==8.1.7,rich>=13 pyproject.toml
+
+Each result prints ``current -> latest`` so you can decide what to upgrade.
+Prefer the standalone shortcut ``req-update`` when you only need dependency audits.
+
 Agent Templates & Cheatsheets
 ------------------------------
 
@@ -171,11 +203,11 @@ PDF Conversion
 Convert text and Markdown files to PDF documents.
 
 .. note::
-   PDF features require the ``pdf`` optional dependencies:
+   PDF features require the ``super-pocket[pdf]`` optional dependencies:
 
    .. code-block:: bash
 
-      pip install pocket[pdf]
+      pip install "super-pocket[pdf]"
 
 Basic Conversion
 ~~~~~~~~~~~~~~~~
@@ -189,7 +221,7 @@ Basic Conversion
    pocket pdf convert notes.txt -o notes.pdf
 
    # Using standalone command
-   conv-to-pdf document.md output.pdf
+   conv2pdf document.md output.pdf
 
 The PDF will be generated with:
 
@@ -203,11 +235,11 @@ Web Utilities
 Generate favicons and other web assets.
 
 .. note::
-   Web features require the ``web`` optional dependencies:
+   Web features require the ``super-pocket[web]`` optional dependencies:
 
    .. code-block:: bash
 
-      pip install pocket[web]
+      pip install "super-pocket[web]"
 
 Favicon Generation
 ~~~~~~~~~~~~~~~~~~
@@ -218,10 +250,10 @@ Favicon Generation
    pocket web favicon logo.png -o favicon.ico
 
    # Specify custom size
-   pocket web favicon logo.png -o favicon.ico --size 32
+   pocket web favicon logo.png -o favicon.ico --sizes "64x64,32x32"
 
    # Using standalone command
-   flavicon logo.png -o favicon.ico
+   favicon logo.png -o favicon.ico
 
 Supported input formats:
 
@@ -229,6 +261,23 @@ Supported input formats:
 * JPG/JPEG
 * GIF
 * BMP
+
+Job Search Automation
+~~~~~~~~~~~~~~~~~~~~~
+
+Query the `JSearch API <https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch>`_ directly from the CLI:
+
+.. code-block:: bash
+
+   export RAPIDAPI_API_KEY="your-token"
+
+   # Fetch remote-friendly opportunities
+   pocket web job-search "Senior Python" --work_from_home -n 5 -o python_jobs.json
+
+   # Switch locales and filters
+   pocket web job-search "Data Engineer" -c us -l en -d week -t CONTRACTOR
+
+Results are saved as JSON, making it easy to feed them into custom dashboards or scripts.
 
 Common Workflows
 ----------------

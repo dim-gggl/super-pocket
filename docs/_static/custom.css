@@ -2,17 +2,21 @@
 
 /* Brand colors */
 :root {
-    --pocket-primary: #2980B9;
-    --pocket-secondary: #3498DB;
-    --pocket-accent: #E74C3C;
-    --pocket-dark: #2C3E50;
-    --pocket-light: #ECF0F1;
+    --pocket-primary: #01a66a;
+    --pocket-secondary: #028990;
+    --pocket-accent: #e73c6d;
+    --pocket-accent-secondary: #e7863c;
+    --pocket-dark: #00442b;
+    --pocket-light: #caf3e4;
+
+    --pocket-text-light: #dfdfdf;
+    --pocket-text-dark: #1e1e1e;
 }
 
 /* Improve code block appearance */
 .highlight {
     background: #f8f9fa !important;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--pocket-primary);
     border-radius: 4px;
     margin: 1em 0;
 }
@@ -25,12 +29,12 @@
 
 /* Style inline code */
 code.literal {
-    background-color: #f8f9fa;
-    color: #E74C3C;
+    background-color: #242424;
+    color: #d2d2d2;
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 90%;
-    border: 1px solid #e9ecef;
+    border: 1px solid var(--pocket-primary);
 }
 
 .toctree-l2 > a.reference.internal, .toctree-expand {
@@ -42,7 +46,7 @@ code.literal {
     margin: 1.5em 0;
     padding: 12px;
     border-left: 4px solid var(--pocket-primary);
-    background-color: #f8f9fa;
+    background-color: var(--pocket-text-light);
     border-radius: 4px;
 }
 
@@ -53,21 +57,21 @@ code.literal {
 }
 
 .admonition.note {
-    border-left-color: #3498DB;
+    border-left-color: var(--pocket-dark);
 }
 
 .admonition.warning {
-    border-left-color: #F39C12;
+    border-left-color: var(--pocket-accent-secondary);
     background-color: #FFF8E1;
 }
 
 .admonition.tip {
-    border-left-color: #27AE60;
+    border-left-color: var(--pocket-secondary);
     background-color: #E8F5E9;
 }
 
 .admonition.important {
-    border-left-color: #E74C3C;
+    border-left-color: var(--pocket-accent);
     background-color: #FFEBEE;
 }
 

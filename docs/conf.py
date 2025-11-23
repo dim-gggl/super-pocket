@@ -5,9 +5,10 @@
 
 import os
 import sys
+from pathlib import Path
 
 # Add the project root directory to the Python path
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, Path(__file__).parent.parent.absolute())
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -23,11 +24,9 @@ version = '1.0.1'
 
 extensions = [
     'sphinx.ext.autodoc',          # Auto-generate documentation from docstrings
-    'sphinx.ext.autosummary',      # Generate autodoc summaries
     'sphinx.ext.napoleon',         # Support for Google/NumPy style docstrings
     'sphinx.ext.viewcode',         # Add links to highlighted source code
     'sphinx.ext.intersphinx',      # Link to other projects' documentation
-    'sphinx.ext.todo',             # Support for TODO items
     'sphinx.ext.coverage',         # Check documentation coverage
     'sphinx.ext.githubpages',      # Create .nojekyll file for GitHub Pages
 ]
@@ -98,9 +97,6 @@ autodoc_default_options = {
 autodoc_typehints = 'description'
 autodoc_typehints_description_target = 'documented'
 
-# -- Options for autosummary extension ---------------------------------------
-autosummary_generate = True
-autosummary_imported_members = False
 
 # -- Options for intersphinx extension ---------------------------------------
 # Example configuration for intersphinx: refer to the Python standard library.
@@ -110,9 +106,6 @@ intersphinx_mapping = {
     'requests': ('https://requests.readthedocs.io/en/latest/', None),
 }
 
-# -- Options for todo extension ----------------------------------------------
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
 
 # -- Options for Napoleon extension ------------------------------------------
 napoleon_google_docstring = True

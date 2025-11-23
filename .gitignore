@@ -56,3 +56,4 @@ examples/project_exports/*.md
 .claude/
 MIGRATION.md
 MIGRATION_PDF_WEB.md
+.python-version

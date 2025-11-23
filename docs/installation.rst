@@ -62,7 +62,7 @@ To install Super Pocket from source for development:
 .. code-block:: bash
 
    # Clone the repository
-   git clone https://github.com/your-username/super-pocket.git
+   git clone https://github.com/dim-gggl/super-pocket.git
    cd super-pocket
 
    # Create and activate virtual environment
@@ -81,7 +81,7 @@ Using uv for Development
 .. code-block:: bash
 
    # Clone the repository
-   git clone https://github.com/your-username/super-pocket.git
+   git clone https://github.com/dim-gggl/super-pocket.git
    cd super-pocket
 
    # Install dependencies with uv

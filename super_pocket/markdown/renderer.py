@@ -43,7 +43,7 @@ def read_markdown_file(file_path: Path) -> str:
     try:
         return file_path.read_text(encoding='utf-8')
     except PermissionError:
-        raise PermissionError(f"Permission denied: Cannot read {file_path}")
+        raise
     except Exception as e:
         raise IOError(f"Error reading file {file_path}: {e}")
 
@@ -134,20 +134,19 @@ def markd(file_arg: Optional[Path], file: Optional[Path], output: Optional[Path]
         render_markdown(content, console)
 
     except FileNotFoundError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
+        raise e(f"[red]Error:[/red] {e}", style="bold")
+
     except ValueError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
+        raise e(f"[red]Error:[/red] {e}", style="bold")
+
     except PermissionError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
+        raise e(f"[red]Error:[/red] {e}", style="bold")
+
     except IOError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
+        raise e(f"[red]Error:[/red] {e}", style="bold")
+
     except Exception as e:
-        console.print(f"[red]Unexpected error:[/red] {e}", style="bold")
-        raise click.Abort()
+        raise e(f"[red]Unexpected error:[/red] {e}", style="bold")
 
 
 if __name__ == '__main__':

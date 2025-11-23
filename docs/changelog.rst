@@ -187,7 +187,7 @@ None - version 1.0.0 maintains backward compatibility with 0.x releases.
 
    .. code-block:: bash
 
-      pip install pocket[all]
+      pip install "super-pocket[all]"
 
 Deprecation Notices
 -------------------

@@ -18,59 +18,37 @@ classifiers = [
     "Programming Language :: Python :: 3.14"
 ]
 dependencies = [
-    "click>=8.3.0",
-    "coverage>=7.11.3",
-    "pytest>=9.0.0",
+    "click>=8.3.1",
+    "coverage>=7.12.0",
+    "pytest>=9.0.1",
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
-    "rich>=14.1.0",
+    "rich>=14.2.0",
     "sphinx>=8.2.3",
     "sphinx-rtd-theme>=3.0.2",
     # Sphinx extensions
-    "sphinx-autobuild>=2024.10.3",
-    "sphinx-copybutton>=0.5.2",
-    # Theme dependencies
-    "docutils>=0.21.2",
+    "sphinx-autobuild>=2025.8.25",
     # Markdown support (optional)
-    "myst-parser>=4.0.0",
+    "myst-parser>=4.0.1",
     # Additional utilities
     "sphinx-tabs>=3.4.7",
     "sphinxcontrib-httpdomain>=1.8.1",
     # Code documentation
-    "sphinx-autodoc-typehints>=2.5.0",
+    "sphinx-autodoc-typehints>=3.5.2",
     "httpx>=0.28.1",
     "uvicorn>=0.38.0",
     "asyncio>=4.0.0",
     "fastapi>=0.121.2",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=3.0.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
-]
-pdf = [
-    "fpdf2>=2.7.0",
-    "markdown-pdf>=1.0.0",
-]
-web = [
-    "Pillow>=10.0.0",
-]
-all = [
-    "fpdf2>=2.7.0",
-    "markdown-pdf>=1.0.0",
-    "Pillow>=10.0.0",
-]
 
 [project.scripts]
 pocket = "super_pocket.cli:cli"
 markd = "super_pocket.markdown.renderer:markd"
-proj-to-file = "super_pocket.project.to_file:main"
-req-to-date = "super_pocket.project.req_to_date:req_to_date_cli"
-conv-to-pdf = "super_pocket.pdf.converter:main"
-flavicon = "super_pocket.web.favicon:main"
+proj2md = "super_pocket.project.to_file:proj_to_file"
+req-update = "super_pocket.project.req_to_date:req_to_date_cli"
+conv2pdf = "super_pocket.pdf.converter:main"
+favicon = "super_pocket.web.favicon:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -101,7 +79,7 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-line-length = 79
+line-length = 88
 target-version = "py311"
 
 [tool.ruff.lint]
@@ -109,5 +87,5 @@ select = ["E", "F", "I", "N", "W"]
 ignore = ["E501"]
 
 [tool.black]
-line-length = 79
+line-length = 88
 target-version = ["py311"]

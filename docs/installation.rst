@@ -98,7 +98,7 @@ Optional Dependencies
 
 Super Pocket has several optional feature sets:
 
-PDF Features (``pocket[pdf]``)
+PDF Features (``super-pocket[pdf]``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Required for PDF conversion functionality:
@@ -108,9 +108,9 @@ Required for PDF conversion functionality:
 
 .. code-block:: bash
 
-   pip install pocket[pdf]
+   pip install "super-pocket[pdf]"
 
-Web Features (``pocket[web]``)
+Web Features (``super-pocket[web]``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Required for web utilities like favicon generation:
@@ -119,9 +119,9 @@ Required for web utilities like favicon generation:
 
 .. code-block:: bash
 
-   pip install pocket[web]
+   pip install "super-pocket[web]"
 
-Development Dependencies (``pocket[dev]``)
+Development Dependencies (``super-pocket[dev]``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Required for contributing to Super Pocket:
@@ -133,16 +133,16 @@ Required for contributing to Super Pocket:
 
 .. code-block:: bash
 
-   pip install pocket[dev]
+   pip install "super-pocket[dev]"
 
-All Features (``pocket[all]``)
+All Features (``super-pocket[all]``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Install everything except development dependencies:
 
 .. code-block:: bash
 
-   pip install pocket[all]
+   pip install "super-pocket[all]"
 
 Verifying Installation
 ----------------------

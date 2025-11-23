@@ -12,6 +12,16 @@ from typing import Optional, List, Tuple
 import click
 from rich.console import Console
 
+try:
+    from PIL import Image
+except ImportError:
+    console.print(
+        "[red]Error:[/red] Pillow is not installed. "
+        "Install it with: pip install Pillow",
+        style="bold"
+    )
+    raise
+
 
 console = Console()
 
@@ -27,9 +37,9 @@ DEFAULT_FAVICON_SIZES: List[Tuple[int, int]] = [
 
 
 def convert_to_favicon(
-    input_file: Path,
-    output_file: Path,
-    sizes: Optional[List[Tuple[int, int]]] = None
+    input_file: str,
+    output_file: str = 'favicon.ico',
+    sizes: Optional[List[Tuple[int, int]]] = DEFAULT_FAVICON_SIZES
 ) -> None:
     """
     Convert an image to a favicon (.ico) file with multiple sizes.
@@ -45,28 +55,19 @@ def convert_to_favicon(
         ImportError: If PIL/Pillow is not installed.
         ValueError: If output file doesn't have .ico extension.
     """
-    try:
-        from PIL import Image
-    except ImportError:
-        console.print(
-            "[red]Error:[/red] Pillow is not installed. "
-            "Install it with: pip install Pillow",
-            style="bold"
-        )
-        raise
+
+    input_file = Path(input_file)
 
     if not input_file.exists():
         raise FileNotFoundError(f"Input file not found: {input_file}")
 
-    if output_file.suffix.lower() != '.ico':
-        raise ValueError("Output file must have .ico extension")
-
-    if sizes is None:
-        sizes = DEFAULT_FAVICON_SIZES
+    if not output_file.endswith('.ico'):
+        output_file = output_file.split('.')[0] + '.ico'
 
     # Open and convert image
     img = Image.open(input_file)
-    img.save(str(output_file), format="ICO", sizes=sizes)
+    for i in range(len(sizes)-1):
+        img.save(f"{i}_{output_file}", format="ICO", sizes=sizes[i])
 
     console.print(
         f"[green]✓[/green] Favicon saved to '{output_file}' with {len(sizes)} sizes",
@@ -77,22 +78,24 @@ def convert_to_favicon(
 @click.command()
 @click.argument(
     'input_file',
-    type=click.Path(exists=True, path_type=Path)
+    type=str
 )
 @click.option(
     '-o', '--output',
-    type=click.Path(path_type=Path),
+    type=str,
+    default='favicon.ico',
     help='Output favicon file path. Default: favicon.ico'
 )
 @click.option(
-    '--sizes',
-    type=str,
-    help='Custom sizes as comma-separated WxH values (e.g., "64x64,32x32,16x16")'
+    '-s', '--sizes',
+    type=List[Tuple[int, int]],
+    default=DEFAULT_FAVICON_SIZES,
+    help='Custom sizes as comma-separated WxH values (e.g., "64x64,32x32,16x16"). '
 )
-def favicon_convert(
-    input_file: Path,
-    output: Optional[Path],
-    sizes: Optional[str]
+def favicon(
+    input_file: str,
+    output: str,
+    sizes: List[Tuple[int, int]]
 ) -> None:
     """
     Convert an image to a favicon (.ico) file.
@@ -114,49 +117,15 @@ def favicon_convert(
         pocket web favicon logo.png
         pocket web favicon logo.png -o custom-favicon.ico
         pocket web favicon logo.png --sizes "64x64,32x32,16x16"
-        flavicon logo.png -o favicon.ico
+        favicon logo.png -o favicon.ico
     """
-    # Determine output path
-    if output is None:
-        output = Path.cwd() / "favicon.ico"
-    elif not str(output).endswith('.ico'):
-        # Auto-add .ico extension if not present
-        output = output.with_suffix('.ico')
-
-    # Parse custom sizes if provided
-    size_list = None
-    if sizes:
-        try:
-            size_list = []
-            for size_str in sizes.split(','):
-                w, h = map(int, size_str.strip().split('x'))
-                size_list.append((w, h))
-        except (ValueError, AttributeError) as e:
-            console.print(
-                f"[red]Error:[/red] Invalid size format. Use 'WxH,WxH' (e.g., '64x64,32x32')",
-                style="bold"
-            )
-            raise click.Abort()
-
-    try:
-        convert_to_favicon(input_file, output, size_list)
-    except FileNotFoundError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
-    except ValueError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
-    except ImportError:
-        raise click.Abort()
-    except Exception as e:
-        console.print(f"[red]Unexpected error:[/red] {e}", style="bold")
-        raise click.Abort()
-
+    if isinstance(sizes, str):
+        sizes = [tuple(map(int, size.split('x'))) for size in sizes.split(',')]
+    convert_to_favicon(input_file, output, sizes)
 
 def main():
     """Main entry point for standalone script."""
-    favicon_convert()
+    favicon()
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

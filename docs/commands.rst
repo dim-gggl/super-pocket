@@ -112,7 +112,83 @@ The generated file includes:
 
 .. code-block:: bash
 
-   project to-file -p . -o output.md
+   proj2md -p . -o output.md
+
+pocket project readme
+~~~~~~~~~~~~~~~~~~~~~
+
+Generate a complete ``README.md`` interactively from the inspected project.
+
+**Usage:**
+
+.. code-block:: bash
+
+   pocket project readme [OPTIONS]
+
+**Options:**
+
+* ``-p, --path TEXT`` - Project directory to analyze (default: current directory)
+* ``-o, --output TEXT`` - Path to the README file to create (default: <path>/README.md)
+* ``--help`` - Show help message
+
+**Examples:**
+
+.. code-block:: bash
+
+   # Generate README in current project
+   pocket project readme
+
+   # Scan another repo and save in docs/README.md
+   pocket project readme -p ../demo -o docs/README.md
+
+**What it does:**
+
+* Detects project metadata (languages, frameworks, dependencies)
+* Prompts for highlights, roadmap, usage samples, etc.
+* Writes a ready-to-edit README with consistent sections
+
+pocket project req-to-date
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Audit dependencies and compare installed versions with the latest releases.
+
+**Usage:**
+
+.. code-block:: bash
+
+   pocket project req-to-date [PACKAGES...]
+
+**Arguments:**
+
+* ``PACKAGES`` - Accepts any mix of:
+
+  - Requirement strings (``package==version``)
+  - Comma-separated lists (``package_a,package_b>=2``)
+  - Paths to ``requirements.txt`` or ``pyproject.toml``
+
+**Examples:**
+
+.. code-block:: bash
+
+   # Check a single package
+   pocket project req-to-date click==8.1.7
+
+   # Provide a requirements file
+   pocket project req-to-date requirements.txt
+
+   # Mix multiple sources
+   pocket project req-to-date numpy==1.23,rich>=13 pyproject.toml
+
+**Output Format:**
+
+Each dependency is printed as ``current -> latest`` with color-coded hints.
+Errors on malformed inputs raise a descriptive ``BadParameter`` message.
+
+**Standalone Command:**
+
+.. code-block:: bash
+
+   req-update requirements.txt
 
 Templates Commands
 ------------------
@@ -250,7 +326,7 @@ PDF Commands
 Convert text and Markdown files to PDF format.
 
 .. note::
-   Requires ``pocket[pdf]`` optional dependencies.
+   Requires ``super-pocket[pdf]`` optional dependencies.
 
 pocket pdf convert
 ~~~~~~~~~~~~~~~~~~
@@ -269,7 +345,7 @@ Convert a text or Markdown file to PDF.
 
 **Options:**
 
-* ``-o, --output TEXT`` - Output PDF file path (required)
+* ``-o, --output TEXT`` - Optional output PDF path (default: <input>.pdf)
 * ``--help`` - Show help message
 
 **Examples:**
@@ -294,15 +370,57 @@ Convert a text or Markdown file to PDF.
 
 .. code-block:: bash
 
-   conv-to-pdf document.md output.pdf
+   conv2pdf document.md output.pdf
 
 Web Commands
 ------------
 
-Web utilities for generating favicons and other web assets.
+Web utilities for generating favicons, querying jobs, and other assets.
 
 .. note::
-   Requires ``pocket[web]`` optional dependencies.
+   Requires ``super-pocket[web]`` optional dependencies.
+
+pocket web job-search
+~~~~~~~~~~~~~~~~~~~~~
+
+Scrape job listings via the `JSearch API <https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch>`_ and store them locally.
+
+**Usage:**
+
+.. code-block:: bash
+
+   pocket web job-search [OPTIONS] QUERY
+
+**Options:**
+
+* ``-p, --page INTEGER`` - First results page (default: 1)
+* ``-n, --num_pages INTEGER`` - Number of pages to traverse (default: 10)
+* ``-c, --country TEXT`` - Country code (default: fr)
+* ``-l, --language TEXT`` - Language code (default: fr)
+* ``-d, --date_posted TEXT`` - Filter window (``today``, ``3days``, ``week``, ``month``)
+* ``-t, --employment_types TEXT`` - Employment filter (e.g., ``FULLTIME``)
+* ``-r, --job_requirements TEXT`` - Requirement filter (e.g., ``no_experience``)
+* ``--work_from_home`` - Limit to remote-friendly positions
+* ``-o, --output TEXT`` - Output JSON file (default: ``jobs.json``)
+* ``--help`` - Show help message
+
+**Environment Variables:**
+
+* ``RAPIDAPI_API_KEY`` - Required API key for authenticated requests
+
+**Examples:**
+
+.. code-block:: bash
+
+   # Fetch 5 pages of remote-friendly Python jobs in Canada
+   pocket web job-search "Python developer" -c ca -l en -n 5 --work_from_home
+
+   # Store results for later processing
+   pocket web job-search "Data engineer" -o data_jobs.json
+
+**Output Format:**
+
+Results are saved as JSON with job metadata, company names, and job URLs.
 
 pocket web favicon
 ~~~~~~~~~~~~~~~~~~
@@ -322,7 +440,7 @@ Generate a favicon from an image file.
 **Options:**
 
 * ``-o, --output TEXT`` - Output .ico file path (default: favicon.ico)
-* ``--size INTEGER`` - Favicon size in pixels (default: 16)
+* ``--sizes TEXT`` - Comma-separated list of ``WIDTHxHEIGHT`` pairs (defaults to 256x256,128x128,64x64,32x32,16x16)
 * ``--help`` - Show help message
 
 **Examples:**
@@ -335,8 +453,8 @@ Generate a favicon from an image file.
    # Specify output path
    pocket web favicon logo.png -o static/favicon.ico
 
-   # Custom size
-   pocket web favicon logo.png -o favicon.ico --size 32
+   # Custom sizes
+   pocket web favicon logo.png --sizes "48x48,32x32,16x16"
 
 **Supported Input Formats:**
 
@@ -349,7 +467,7 @@ Generate a favicon from an image file.
 
 .. code-block:: bash
 
-   flavicon logo.png -o favicon.ico
+   favicon logo.png -o favicon.ico
 
 Command Cheat Sheet
 -------------------
@@ -368,7 +486,13 @@ Quick reference table:
      - ``markd``
    * - ``pocket project to-file``
      - Export project to file
-     - ``project to-file``
+     - ``proj2md``
+   * - ``pocket project readme``
+     - Generate README from project metadata
+     - N/A
+   * - ``pocket project req-to-date``
+     - Audit dependencies and suggest upgrades
+     - ``req-update``
    * - ``pocket templates list``
      - List templates/cheatsheets
      - N/A
@@ -383,10 +507,13 @@ Quick reference table:
      - N/A
    * - ``pocket pdf convert``
      - Convert to PDF
-     - ``conv-to-pdf``
+     - ``conv2pdf``
    * - ``pocket web favicon``
      - Generate favicon
-     - ``flavicon``
+     - ``favicon``
+   * - ``pocket web job-search``
+     - Fetch job listings from JSearch API
+     - N/A
 
 Common Patterns
 ---------------
@@ -444,7 +571,13 @@ Super Pocket commands use standard Unix exit codes:
 Environment Variables
 ---------------------
 
-Currently, Super Pocket does not use environment variables for configuration. This may be added in future versions.
+The web job search command requires ``RAPIDAPI_API_KEY`` to be exported in your shell:
+
+.. code-block:: bash
+
+   export RAPIDAPI_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+Additional feature-specific variables may be introduced in future releases.
 
 See Also
 --------

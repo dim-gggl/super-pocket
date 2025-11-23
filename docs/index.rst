@@ -17,25 +17,25 @@ essential developer utilities into a single, unified CLI interface.
 Features
 --------
 
-📝 **Markdown Rendering**
+**Markdown Rendering**
    Beautiful terminal rendering of Markdown files with syntax highlighting and rich formatting
 
-📦 **Project Export**
+**Project Export**
    Convert entire projects to single Markdown files for easy sharing and documentation
 
-🤖 **Agent Templates**
+**Agent Templates**
    Manage and distribute AI agent configuration templates for consistent AI-assisted development
 
-📚 **Cheatsheets**
+**Cheatsheets**
    Quick access to development cheatsheets and reference materials
 
-📄 **PDF Tools**
+**PDF Tools**
    Convert markdown and text files to professional PDF documents
 
-🌐 **Web Utilities**
+**Web Utilities**
    Generate favicons and other web assets from images
 
-⚡ **Unified CLI**
+**Unified CLI**
    Single, intuitive command-line interface for all tools with consistent UX
 
 Quick Start
@@ -99,6 +99,7 @@ Table of Contents
 
    contributing
    testing
+   documentation
 
 .. toctree::
    :maxdepth: 1

@@ -1,4 +1,5 @@
 import httpx, re, asyncio, uvicorn, click
+import tomllib
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +13,7 @@ app = FastAPI(title="Requirements Checker API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # En production, spécifie les origines autorisées
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -38,7 +39,9 @@ class CheckRequest(BaseModel):
 def _read_requirements_file(path: Path) -> List[str]:
     """Retourne les dépendances extraites d'un fichier requirements."""
     try:
-        lines = path.read_text(encoding="utf-8").splitlines()
+        with open(path, "r") as f:
+            lines = [l.strip() for l in f.readlines()[2:]]
+
     except FileNotFoundError:
         raise ValueError(f"Fichier requirements introuvable: {path}") from None
     except OSError as exc:
@@ -61,8 +64,73 @@ def _read_requirements_file(path: Path) -> List[str]:
     return specs
 
 
+def _read_pyproject_file(path: Path) -> List[str]:
+    """Retourne les dépendances extraites d'un fichier pyproject.toml."""
+    try:
+        content = path.read_bytes()
+    except FileNotFoundError:
+        raise ValueError(f"Fichier pyproject.toml introuvable: {path}") from None
+    except OSError as exc:
+        raise ValueError(f"Impossible de lire {path}: {exc}") from None
+
+    try:
+        data = tomllib.loads(content.decode("utf-8"))
+    except tomllib.TOMLDecodeError as exc:
+        raise ValueError(f"Erreur de parsing TOML dans {path}: {exc}") from None
+
+    specs: List[str] = []
+    
+    # Extraire les dépendances principales
+    dependencies = data.get("project", {}).get("dependencies", [])
+    for dep in dependencies:
+        # Convertir les spécificateurs de version en format ==version
+        # Supporte: package>=1.0.0, package~=1.0, package==1.0.0, etc.
+        spec = _normalize_dependency_spec(dep)
+        if spec:
+            specs.append(spec)
+    
+    # Optionnel: extraire aussi les dépendances optionnelles
+    optional_deps = data.get("project", {}).get("optional-dependencies", {})
+    for group_name, group_deps in optional_deps.items():
+        for dep in group_deps:
+            spec = _normalize_dependency_spec(dep)
+            if spec:
+                specs.append(spec)
+
+    if not specs:
+        raise ValueError(f"Aucune dépendance trouvée dans {path}")
+
+    return specs
+
+
+def _normalize_dependency_spec(dep: str) -> Optional[str]:
+    """Normalise une spécification de dépendance en format package==version."""
+    # Si déjà au format package==version, retourner tel quel
+    if "==" in dep:
+        return dep
+    
+    # Extraire le nom du package et la version pour les autres formats
+    # Supporte: >=, ~=, >, <, <=, !=
+    match = re.match(r'^([a-zA-Z0-9_-]+)\s*([><=!~]+)\s*(.+)$', dep)
+    if match:
+        package = match.group(1)
+        operator = match.group(2)
+        version = match.group(3)
+        
+        # Pour >=, ~=, utiliser la version minimale spécifiée
+        if operator in (">=", "~=", ">"):
+            return f"{package}=={version}"
+
+        # Pour ==, retourner tel quel
+        elif operator == "==":
+            return dep
+    
+    # Si pas de version spécifiée, ignorer
+    return None
+
+
 def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
-    """Décompose les arguments CLI: virgules, fichiers requirements, etc."""
+    """Décompose les arguments CLI: virgules, fichiers requirements, pyproject.toml, etc."""
     expanded: List[str] = []
     for entry in inputs:
         if entry is None:
@@ -79,7 +147,12 @@ def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
 
         potential_path = Path(entry).expanduser()
         if potential_path.is_file():
-            expanded.extend(_read_requirements_file(potential_path))
+            # Détecter le type de fichier et utiliser le parser approprié
+            if potential_path.name == "pyproject.toml":
+                expanded.extend(_read_pyproject_file(potential_path))
+            else:
+                # Par défaut, traiter comme un fichier requirements.txt
+                expanded.extend(_read_requirements_file(potential_path))
             continue
 
         expanded.append(entry)
@@ -228,9 +301,19 @@ def run_req_to_date(packages: Sequence[str]) -> List[PackageResult]:
 
 
 @click.command(name="req-to-date")
-@click.argument("packages", nargs=-1)
+@click.argument("packages")
 def req_to_date_cli(packages: tuple[str, ...]):
     """Commande standalone: accepte nom==version, liste avec virgules ou requirements.txt."""
+    if not "," in packages:
+        if packages.endswith(".txt"):
+            packages = _read_requirements_file(packages)
+        elif packages.endswith(".toml"):
+            packages = _read_pyproject_file(packages)
+        else:
+            packages = [packages]
+    else:
+        packages = packages.split(",")
+    if packages[0].endswith(".txt"):
     if not packages:
         raise click.BadParameter(
             "Fournissez au moins un package, une liste séparée par des virgules ou un fichier requirements.txt.",
@@ -246,6 +329,6 @@ def req_to_date_cli(packages: tuple[str, ...]):
     for result in results:
         if not result.currentVersion == result.latestOverall:
             click.echo(
-                f"{result.package} (installée: {result.currentVersion}) -> "
-                f"patch: {result.latestPatch or '-'} | dernière: {result.latestOverall} | statut: {result.status}"
+                f"\033[31m{result.package} {result.currentVersion})\033[0m ---> "
+                f"\033[32m {result.latestOverall}\033[0m"
             )

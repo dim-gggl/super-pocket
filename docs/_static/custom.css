@@ -3,22 +3,21 @@
 /* Brand colors */
 :root {
     --pocket-primary: #01a66a;
-    --pocket-secondary: #028990;
+    --pocket-secondary: #01603e;
     --pocket-accent: #e73c6d;
-    --pocket-accent-secondary: #e7863c;
+    --pocket-accent-secondary: #690924;
     --pocket-dark: #00442b;
     --pocket-light: #caf3e4;
-
     --pocket-text-light: #dfdfdf;
     --pocket-text-dark: #1e1e1e;
 }
 
 /* Improve code block appearance */
 .highlight {
-    background: #f8f9fa !important;
+    background: #242424 !important;
     border: 1px solid var(--pocket-primary);
-    border-radius: 4px;
-    margin: 1em 0;
+    border-radius: 6px;
+    margin: 1rem 0;
 }
 
 .highlight pre {
@@ -132,25 +131,23 @@ a:hover {
 
 /* Improve heading styles */
 h1, h2, h3, h4, h5, h6 {
-    color: var(--pocket-dark);
-    font-weight: 600;
+    color: var(--pocket-accent);
+    font-weight: 700;
 }
 
 h1 {
-    border-bottom: 3px solid var(--pocket-primary);
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
 h2 {
-    border-bottom: 2px solid var(--pocket-light);
     padding-bottom: 8px;
     margin-top: 24px;
 }
 
 /* Style the version selector */
 .rst-versions {
-    border-top: 2px solid var(--pocket-primary);
+    border-top: 2px solid var(--pocket-accent);
 }
 
 /* Improve button styling */
@@ -227,70 +224,4 @@ h2 {
 /* Dark mode support (optional) */
 @media (prefers-color-scheme: dark) {
     /* Add dark mode styles if needed */
-}
-
-/* Custom badge styling */
-.badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 3px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.badge-primary {
-    background-color: var(--pocket-primary);
-    color: white;
-}
-
-.badge-success {
-    background-color: #27AE60;
-    color: white;
-}
-
-/* Improve sidebar navigation */
-.wy-menu-vertical li.current {
-    background-color: var(--pocket-dark);
-}
-
-.wy-menu-vertical li.current a {
-    border-right: 3px solid var(--pocket-primary);
-}
-
-.wy-menu-vertical a:hover {
-    background-color: rgba(255,255,255,0.05);
-}
-
-/* Style document metadata */
-.document-meta {
-    font-size: 14px;
-    color: #6c757d;
-    margin-bottom: 20px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-}
-
-/* Improve list styling */
-.rst-content ul li,
-.rst-content ol li {
-    margin-bottom: 8px;
-}
-
-/* Add visual interest to checkmarks */
-.rst-content ul li::before {
-    content: none;
-}
-
-/* Style parameter lists */
-.rst-content dl dt {
-    font-weight: 600;
-    color: var(--pocket-dark);
-    margin-top: 12px;
-}
-
-.rst-content dl dd {
-    margin-left: 24px;
-    margin-bottom: 12px;
 }

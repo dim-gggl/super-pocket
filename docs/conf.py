@@ -13,7 +13,7 @@ sys.path.insert(0, Path(__file__).parent.parent.absolute())
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Super Pocket'
+project = 'super-pocket'
 copyright = '2025, Dimitri Gaggioli'
 author = 'Dimitri Gaggioli'
 release = '1.0.1'
@@ -56,15 +56,15 @@ html_static_path = ['_static']
 # Theme options are theme-specific and customize the look and feel of a theme
 html_theme_options = {
     'logo_only': False,
-    'display_version': True,
+    'display_version': False,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'style_nav_header_background': '#2980B9',
     # Toc options
-    'collapse_navigation': False,
+    'collapse_navigation': True,
     'sticky_navigation': True,
     'navigation_depth': 4,
-    'includehidden': True,
+    'includehidden': False,
     'titles_only': False
 }
 

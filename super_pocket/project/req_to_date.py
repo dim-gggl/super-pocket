@@ -4,15 +4,18 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Callable
+from rich.console import Console
+
+console = Console()
 
 
 app = FastAPI(title="Requirements Checker API")
 
-# Configuration CORS pour permettre les requêtes du frontend
+# CORS settings to allow requests from all origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En production, spécifie les origines autorisées
+    allow_origins=["*"],  # In production, specify allowed origins
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,7 +40,7 @@ class CheckRequest(BaseModel):
 
 
 def _read_requirements_file(path: Path) -> List[str]:
-    """Retourne les dépendances extraites d'un fichier requirements."""
+    """Returns the dependencies extracted from a requirements file."""
     try:
         with open(path, "r") as f:
             lines = [l.strip() for l in f.readlines()[2:]]
@@ -55,37 +58,37 @@ def _read_requirements_file(path: Path) -> List[str]:
             specs.append(line)
 
     if not specs:
-        raise ValueError(f"Aucun package valide trouvé dans {path}")
+        raise ValueError(f"No valid package found in {path}")
 
     return specs
 
 
 def _read_pyproject_file(path: Path) -> List[str]:
-    """Retourne les dépendances extraites d'un fichier pyproject.toml."""
+    """Returns the dependencies extracted from a pyproject.toml file."""
     try:
         content = path.read_bytes()
     except FileNotFoundError:
-        raise ValueError(f"Fichier pyproject.toml introuvable: {path}") from None
+        raise ValueError(f"pyproject.toml file not found: {path}") from None
     except OSError as exc:
-        raise ValueError(f"Impossible de lire {path}: {exc}") from None
+        raise ValueError(f"Unable to read {path}: {exc}") from None
 
     try:
         data = tomllib.loads(content.decode("utf-8"))
     except tomllib.TOMLDecodeError as exc:
-        raise ValueError(f"Erreur de parsing TOML dans {path}: {exc}") from None
+        raise ValueError(f"TOML parsing error in {path}: {exc}") from None
 
     specs: List[str] = []
     
-    # Extraire les dépendances principales
+    # Extract the main dependencies
     dependencies = data.get("project", {}).get("dependencies", [])
     for dep in dependencies:
-        # Convertir les spécificateurs de version en format ==version
-        # Supporte: package>=1.0.0, package~=1.0, package==1.0.0, etc.
+        # Convert the version specifications to ==version format
+        # Supported: package>=1.0.0, package~=1.0, package==1.0.0, etc.
         spec = _normalize_dependency_spec(dep)
         if spec:
             specs.append(spec)
     
-    # Optionnel: extraire aussi les dépendances optionnelles
+    # Optional: extract also the optional dependencies
     optional_deps = data.get("project", {}).get("optional-dependencies", {})
     for group_name, group_deps in optional_deps.items():
         for dep in group_deps:
@@ -94,39 +97,39 @@ def _read_pyproject_file(path: Path) -> List[str]:
                 specs.append(spec)
 
     if not specs:
-        raise ValueError(f"Aucune dépendance trouvée dans {path}")
+        raise ValueError(f"No dependencies found in {path}")
 
     return specs
 
 
 def _normalize_dependency_spec(dep: str) -> Optional[str]:
-    """Normalise une spécification de dépendance en format package==version."""
-    # Si déjà au format package==version, retourner tel quel
+    """Normalize a dependency specification to package==version format."""
+    # If already in package==version format, return it as is
     if "==" in dep:
         return dep
     
-    # Extraire le nom du package et la version pour les autres formats
-    # Supporte: >=, ~=, >, <, <=, !=
+    # Extract the package name and version for the other formats
+    # Supported: >=, ~=, >, <, <=, !=
     match = re.match(r'^([a-zA-Z0-9_-]+)\s*([><=!~]+)\s*(.+)$', dep)
     if match:
         package = match.group(1)
         operator = match.group(2)
         version = match.group(3)
         
-        # Pour >=, ~=, utiliser la version minimale spécifiée
+        # For >=, ~=, use the minimum version specified
         if operator in (">=", "~=", ">"):
             return f"{package}=={version}"
 
-        # Pour ==, retourner tel quel
+        # For ==, return it as is
         elif operator == "==":
             return dep
     
-    # Si pas de version spécifiée, ignorer
+    # If no version specified, ignore
     return None
 
 
 def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
-    """Décompose les arguments CLI: virgules, fichiers requirements, pyproject.toml, etc."""
+    """Decompose CLI arguments: commas, requirements files, pyproject.toml, etc."""
     expanded: List[str] = []
     for entry in inputs:
         if not entry:
@@ -141,41 +144,41 @@ def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
 
         potential_path = Path(entry).expanduser()
         if potential_path.is_file():
-            # Détecter le type de fichier et utiliser le parser approprié
+            # Detect the file type and use the appropriate parser
             if potential_path.name == "pyproject.toml":
                 expanded.extend(_read_pyproject_file(potential_path))
             else:
-                # Par défaut, traiter comme un fichier requirements.txt
+                # By default, treat as a requirements.txt file
                 expanded.extend(_read_requirements_file(potential_path))
             continue
 
         expanded.append(entry)
 
     if not expanded:
-        raise ValueError("La liste de packages ne peut pas être vide")
+        raise ValueError("The list of packages cannot be empty")
 
     return expanded
 
 
 def parse_package_specs(specs: Sequence[str]) -> List[PackageInput]:
-    """Convertit la liste d'arguments CLI en objets PackageInput."""
+    """Convert the CLI arguments list to PackageInput objects."""
     expanded_specs = _expand_spec_inputs(specs)
     parsed: List[PackageInput] = []
     for spec in expanded_specs:
         if "==" not in spec:
-            raise ValueError("Chaque package doit être fourni sous la forme nom==version")
+            raise ValueError("Each package must be provided in the form name==version")
         package, version = spec.split("==", 1)
         package = package.strip()
         version = version.strip()
         if not package or not version:
-            raise ValueError(f"Format invalide pour '{spec}': nom ou version manquant")
+            raise ValueError(f"Invalid format for '{spec}': name or version missing")
         parsed.append(PackageInput(package=package, version=version))
 
     return parsed
 
 
 def parse_version(version_str: str) -> Optional[dict]:
-    """Parse une version en format semver"""
+    """Parse a version in semver format"""
     match = re.match(r'^(\d+)\.(\d+)\.(\d+)', version_str)
     if not match:
         return None
@@ -188,7 +191,7 @@ def parse_version(version_str: str) -> Optional[dict]:
 
 
 def find_latest_patch(current_version: str, all_versions: List[str]) -> Optional[str]:
-    """Trouve la dernière version patch compatible"""
+    """Find the latest patch compatible version"""
     current = parse_version(current_version)
     if not current:
         return None
@@ -205,13 +208,13 @@ def find_latest_patch(current_version: str, all_versions: List[str]) -> Optional
     if not compatible_versions:
         return None
     
-    # Trier par patch décroissant et retourner le premier
+    # Sort by patch descending and return the first one
     compatible_versions.sort(key=lambda x: x['patch'], reverse=True)
     return compatible_versions[0]['full']
 
 
 async def check_package(pkg: str, version: str) -> PackageResult:
-    """Vérifie un package sur PyPI"""
+    """Check a package on PyPI"""
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(
@@ -224,7 +227,7 @@ async def check_package(pkg: str, version: str) -> PackageResult:
                     package=pkg,
                     current_version=version,
                     status="error",
-                    message=f"Paquet introuvable (code {response.status_code})"
+                    message=f"Package not found (code {response.status_code})"
                 )
             
             data = response.json()
@@ -244,7 +247,7 @@ async def check_package(pkg: str, version: str) -> PackageResult:
                 package=pkg,
                 current_version=version,
                 status="error",
-                message="Timeout lors de la requête à PyPI"
+                message="Timeout when querying PyPI"
             )
         except Exception as e:
             return PackageResult(
@@ -260,14 +263,14 @@ async def root():
     return {
         "message": "Requirements Checker API",
         "endpoints": {
-            "/check": "POST - Vérifie les dépendances",
+            "/check": "POST - Check dependencies",
             "/docs": "Documentation interactive"
         }
     }
 
 
 async def _check_packages(request_packages: List[PackageInput]) -> List[PackageResult]:
-    """Lance les vérifications sur PyPI pour la liste fournie."""
+    """Launch the checks on PyPI for the provided list."""
     tasks = [check_package(pkg.package.lower(), pkg.version) for pkg in request_packages]
     return await asyncio.gather(*tasks)
 
@@ -275,26 +278,46 @@ async def _check_packages(request_packages: List[PackageInput]) -> List[PackageR
 @app.post("/check", response_model=List[PackageResult])
 async def check_packages(request: CheckRequest):
     """
-    Vérifie une liste de packages et retourne les mises à jour disponibles
+    Check a list of packages and return the available updates
     """
     if not request.packages:
-        raise HTTPException(status_code=400, detail="Liste de packages vide")
+        raise HTTPException(status_code=400, detail="Empty package list")
 
     return await _check_packages(request.packages)
 
 
 async def check_packages_from_specs(specs: Sequence[str]) -> List[PackageResult]:
-    """Interface utilitaire pour la ligne de commande."""
+    """Utility interface for the command line."""
     packages = parse_package_specs(specs)
     return await _check_packages(packages)
 
 
 def run_req_to_date(packages: Sequence[str]) -> List[PackageResult]:
-    """Point d'entrée synchrone pour les CLI (standalone ou via pocket)."""
+    """Synchronous entry point for CLI (standalone or via pocket)."""
     return asyncio.run(check_packages_from_specs(packages))
 
 
+def print_req_to_date_results(
+    results: Sequence[PackageResult],
+    printer: Callable[[PackageResult], None],
+) -> None:
+    """Shared helper to render results for both CLIs.
+
+    The caller provides a small printer callback so that each CLI
+    can control its own styling/output mechanism.
+    """
+    for result in results:
+        if result.currentVersion != result.latestOverall:
+            console.print(
+                f"{result.package} [red]{result.currentVersion}[/red] ---> "
+                f"[green]{result.latestOverall}[/green]",
+                style="bold",
+                justify="center",
+            )
+
+
 @click.command(name="req-to-date")
+@click.argument("packages", nargs=-1)
 @click.argument("packages", nargs=-1)
 def req_to_date_cli(packages: tuple[str, ...]):
     """Commande standalone: accepte nom==version, liste avec virgules ou requirements.txt."""

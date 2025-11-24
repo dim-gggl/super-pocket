@@ -24,6 +24,9 @@ from super_pocket.pdf.converter import pdf_convert
 from super_pocket.web.favicon import favicon_convert
 from super_pocket.project.req_to_date import run_req_to_date
 from super_pocket.readme.cli import readme_cli
+from super_pocket.web.favicon import favicon
+from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_results
+
 
 
 console = Console()
@@ -185,6 +188,15 @@ def req_to_date(packages: tuple[str, ...]):
 
     if outdated_count == 0:
         console.print("[green]All packages are up to date[/green]")
+    print_req_to_date_results(
+        results,
+        lambda result: console.print(
+            f"{result.package} [red]{result.currentVersion}[/red] -> "
+            f"[green]{result.latestOverall}[/green]",
+            style="bold",
+            justify="center",
+        ),
+    )
 
 # ==================== Templates Commands ====================
 @cli.group(name="templates")

@@ -59,3 +59,4 @@ MIGRATION_PDF_WEB.md
 
 # Git worktrees
 .worktrees/
+.python-version

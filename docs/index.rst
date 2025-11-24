@@ -1,5 +1,5 @@
-Super Pocket Documentation
-==========================
+super-pocket
+============
 
 .. image:: https://img.shields.io/badge/version-1.0.1-blue.svg
    :alt: Version 1.0.1
@@ -10,7 +10,7 @@ Super Pocket Documentation
 .. image:: https://img.shields.io/badge/license-MIT-green.svg
    :alt: MIT License
 
-**Super Pocket** is a comprehensive collection of developer productivity tools that streamline your development workflow.
+**super-pocket** is a comprehensive collection of developer productivity tools that streamline your development workflow.
 From beautiful markdown rendering to project exporters, agent templates, and cheatsheets management - Super Pocket brings
 essential developer utilities into a single, unified CLI interface.
 
@@ -35,13 +35,10 @@ Features
 **Web Utilities**
    Generate favicons and other web assets from images
 
-**Unified CLI**
-   Single, intuitive command-line interface for all tools with consistent UX
-
 Quick Start
 -----------
 
-Install Super Pocket:
+Install super-pocket:
 
 .. code-block:: bash
 
@@ -59,10 +56,10 @@ Export your project:
 
    pocket project to-file -p . -o project.md
 
-Why Super Pocket?
+Why super-pocket?
 -----------------
 
-Super Pocket consolidates common developer tools into a single package, providing:
+super-pocket consolidates common developer tools into a single package, providing:
 
 - **Consistency**: Unified CLI interface across all tools
 - **Productivity**: Quick access to frequently-used utilities
@@ -114,4 +111,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

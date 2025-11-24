@@ -15,7 +15,7 @@ from rich.console import Console
 try:
     from PIL import Image
 except ImportError:
-    console.print(
+    Console().print(
         "[red]Error:[/red] Pillow is not installed. "
         "Install it with: pip install Pillow",
         style="bold"

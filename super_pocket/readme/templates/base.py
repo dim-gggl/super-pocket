@@ -1,7 +1,6 @@
 """Base README sections that are included in all READMEs."""
 
 from abc import ABC, abstractmethod
-from typing import List
 from ..models import ProjectContext
 
 

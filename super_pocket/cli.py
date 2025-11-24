@@ -23,6 +23,7 @@ from super_pocket.templates_and_cheatsheets.cli import init_agents
 from super_pocket.pdf.converter import pdf_convert
 from super_pocket.web.favicon import favicon_convert
 from super_pocket.project.req_to_date import run_req_to_date
+from super_pocket.readme.cli import readme_cli
 
 
 console = Console()
@@ -421,6 +422,10 @@ def web_favicon_cmd(input_file: str, output: str, sizes: str):
 
     ctx = click.Context(favicon_convert)
     ctx.invoke(favicon_convert, input_file=Path(input_file), output=output_path, sizes=sizes)
+
+
+# ==================== README Commands ====================
+cli.add_command(readme_cli, name="readme")
 
 
 def main():

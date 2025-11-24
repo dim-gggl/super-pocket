@@ -14,6 +14,7 @@ A collection of developer productivity tools including markdown rendering, proje
 - **Project Export**: Convert entire projects to single Markdown files for easy sharing
 - **Agent Templates**: Manage and distribute AI agent configuration templates
 - **Cheatsheets**: Quick access to development cheatsheets
+- **README Generator**: Smart README generation with project detection and templates
 - **Unified CLI**: Single command-line interface for all tools
 
 ## Installation
@@ -150,6 +151,19 @@ pocket templates copy unit_tests_agent -o .agents/
 # Initialize agent templates directory
 pocket templates init
 pocket templates init -o ./my-agents/
+```
+
+### README Generator
+
+```bash
+# Analyze project to see what would be detected
+pocket readme analyze
+
+# Generate a README for current project
+pocket readme generate
+
+# Generate with custom output path
+pocket readme generate -o docs/README.md
 ```
 
 ## Project Structure

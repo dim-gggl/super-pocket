@@ -46,7 +46,7 @@ dependencies = [
 pocket = "super_pocket.cli:cli"
 markd = "super_pocket.markdown.renderer:markd"
 proj2md = "super_pocket.project.to_file:proj_to_file"
-req-update = "super_pocket.project.req_to_date:req_to_date_cli"
+req-to-date = "super_pocket.project.req_to_date:req_to_date_cli"
 conv2pdf = "super_pocket.pdf.converter:main"
 favicon = "super_pocket.web.favicon:main"
 

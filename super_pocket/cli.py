@@ -174,11 +174,17 @@ def req_to_date(packages: tuple[str, ...]):
     except ValueError as exc:
         raise click.BadParameter(str(exc))
 
+    outdated_count = 0
     for result in results:
-        console.print(
-            f"[red]{result.package} {result.currentVersion})[/red] -> ",
-            f"[green]{result.latestOverall}[/green]"
-        )
+        if result.latest_overall and result.current_version != result.latest_overall:
+            console.print(
+                f"[red]{result.package} ({result.current_version})[/red] -> "
+                f"[green]{result.latest_overall}[/green]"
+            )
+            outdated_count += 1
+
+    if outdated_count == 0:
+        console.print("[green]All packages are up to date[/green]")
 
 # ==================== Templates Commands ====================
 @cli.group(name="templates")

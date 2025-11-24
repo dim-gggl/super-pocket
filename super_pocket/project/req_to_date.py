@@ -25,9 +25,9 @@ class PackageInput(BaseModel):
 
 class PackageResult(BaseModel):
     package: str
-    currentVersion: str
-    latestPatch: Optional[str] = None
-    latestOverall: Optional[str] = None
+    current_version: str
+    latest_patch: Optional[str] = None
+    latest_overall: Optional[str] = None
     status: str
     message: Optional[str] = None
 
@@ -42,21 +42,17 @@ def _read_requirements_file(path: Path) -> List[str]:
         with open(path, "r") as f:
             lines = [l.strip() for l in f.readlines()[2:]]
 
-    except FileNotFoundError:
-        raise ValueError(f"Fichier requirements introuvable: {path}") from None
+    except FileNotFoundError as exc:
+        raise exc(f"Fichier requirements introuvable: {path}: {exc}")
     except OSError as exc:
-        raise ValueError(f"Impossible de lire {path}: {exc}") from None
+        raise exc(f"Impossible de lire {path}: {exc}")
 
     specs: List[str] = []
-    for raw_line in lines:
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
+    for line in lines:
+        if not line or line.startswith("#") or line.startswith("--"):
             continue
-        if line.startswith("-r") or line.startswith("--"):
-            raise ValueError(
-                f"Les références imbriquées ou options pip ne sont pas supportées: '{line}'"
-            )
-        specs.append(line)
+        else:
+            specs.append(line)
 
     if not specs:
         raise ValueError(f"Aucun package valide trouvé dans {path}")
@@ -133,15 +129,13 @@ def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
     """Décompose les arguments CLI: virgules, fichiers requirements, pyproject.toml, etc."""
     expanded: List[str] = []
     for entry in inputs:
-        if entry is None:
-            continue
-        entry = entry.strip()
         if not entry:
             continue
+        entry = entry.strip()
 
         # Gestion des listes séparées par des virgules dans un seul argument
-        if ',' in entry and not Path(entry).exists():
-            parts = [part.strip() for part in entry.split(',') if part.strip()]
+        if ',' in entry:
+            parts = [part.strip() for part in entry.split(',')]
             expanded.extend(parts)
             continue
 
@@ -228,7 +222,7 @@ async def check_package(pkg: str, version: str) -> PackageResult:
             if response.status_code != 200:
                 return PackageResult(
                     package=pkg,
-                    currentVersion=version,
+                    current_version=version,
                     status="error",
                     message=f"Paquet introuvable (code {response.status_code})"
                 )
@@ -239,23 +233,23 @@ async def check_package(pkg: str, version: str) -> PackageResult:
             
             return PackageResult(
                 package=pkg,
-                currentVersion=version,
-                latestPatch=latest_patch,
-                latestOverall=data['info']['version'],
+                current_version=version,
+                latest_patch=latest_patch,
+                latest_overall=data['info']['version'],
                 status='outdated' if latest_patch else 'up-to-date'
             )
             
         except httpx.TimeoutException:
             return PackageResult(
                 package=pkg,
-                currentVersion=version,
+                current_version=version,
                 status="error",
                 message="Timeout lors de la requête à PyPI"
             )
         except Exception as e:
             return PackageResult(
                 package=pkg,
-                currentVersion=version,
+                current_version=version,
                 status="error",
                 message=str(e)
             )
@@ -301,34 +295,22 @@ def run_req_to_date(packages: Sequence[str]) -> List[PackageResult]:
 
 
 @click.command(name="req-to-date")
-@click.argument("packages")
+@click.argument("packages", nargs=-1)
 def req_to_date_cli(packages: tuple[str, ...]):
     """Commande standalone: accepte nom==version, liste avec virgules ou requirements.txt."""
-    if not "," in packages:
-        if packages.endswith(".txt"):
-            packages = _read_requirements_file(packages)
-        elif packages.endswith(".toml"):
-            packages = _read_pyproject_file(packages)
-        else:
-            packages = [packages]
-    else:
-        packages = packages.split(",")
-    if packages[0].endswith(".txt"):
-    if not packages:
-        raise click.BadParameter(
-            "Fournissez au moins un package, une liste séparée par des virgules ou un fichier requirements.txt.",
-            ctx=click.get_current_context(),
-            param_hint="packages"
-        )
-
+    packages = _expand_spec_inputs(packages)
+    count = 0
     try:
         results = run_req_to_date(packages)
     except ValueError as exc:
         raise click.BadParameter(str(exc))
 
     for result in results:
-        if not result.currentVersion == result.latestOverall:
+        if result.current_version != result.latest_overall:
             click.echo(
-                f"\033[31m{result.package} {result.currentVersion})\033[0m ---> "
-                f"\033[32m {result.latestOverall}\033[0m"
+                f"\033[31m{result.package} {result.current_version})\033[0m ---> "
+                f"\033[32m {result.latest_overall}\033[0m"
             )
+            count += 1
+    if count == 0:
+        click.echo("Aucune mise à jour disponible")

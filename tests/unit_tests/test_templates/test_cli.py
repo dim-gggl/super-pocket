@@ -1,4 +1,4 @@
-/"""
+"""
 Tests for templates and cheatsheets CLI module.
 """
 

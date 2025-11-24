@@ -4,7 +4,10 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Callable
+from rich.console import Console
+
+console = Console()
 
 
 app = FastAPI(title="Requirements Checker API")
@@ -306,6 +309,25 @@ def run_req_to_date(packages: Sequence[str]) -> List[PackageResult]:
     return asyncio.run(check_packages_from_specs(packages))
 
 
+def print_req_to_date_results(
+    results: Sequence[PackageResult],
+    printer: Callable[[PackageResult], None],
+) -> None:
+    """Shared helper to render results for both CLIs.
+
+    The caller provides a small printer callback so that each CLI
+    can control its own styling/output mechanism.
+    """
+    for result in results:
+        if result.currentVersion != result.latestOverall:
+            console.print(
+                f"{result.package} [red]{result.currentVersion}[/red] ---> "
+                f"[green]{result.latestOverall}[/green]",
+                style="bold",
+                justify="center",
+            )
+
+
 @click.command(name="req-to-date")
 @click.argument("packages", nargs=-1)
 def req_to_date_cli(packages: tuple[str, ...]):
@@ -316,12 +338,15 @@ def req_to_date_cli(packages: tuple[str, ...]):
     except ValueError as exc:
         raise click.BadParameter(str(exc))
 
-    for result in results:
-        if not result.currentVersion == result.latestOverall:
-            click.echo(
-                f"\033[31m{result.package} {result.currentVersion})\033[0m ---> "
-                f"\033[32m {result.latestOverall}\033[0m"
-            )
+    print_req_to_date_results(
+        results,
+        lambda result: console.print(
+            f"{result.package} [red]{result.currentVersion}[/red] ---> "
+            f"[green]{result.latestOverall}[/green]",
+            style="bold",
+            justify="center",
+        ),
+    )
 
 
 def main():

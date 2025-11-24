@@ -21,8 +21,8 @@ from super_pocket.templates_and_cheatsheets.cli import view_item
 from super_pocket.templates_and_cheatsheets.cli import copy_item
 from super_pocket.templates_and_cheatsheets.cli import init_agents
 from super_pocket.pdf.converter import pdf_convert
-from super_pocket.web.favicon import favicon_convert
-from super_pocket.project.req_to_date import run_req_to_date
+from super_pocket.web.favicon import favicon
+from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_results
 
 
 console = Console()
@@ -173,11 +173,15 @@ def req_to_date(packages: tuple[str, ...]):
     except ValueError as exc:
         raise click.BadParameter(str(exc))
 
-    for result in results:
-        console.print(
-            f"[red]{result.package} {result.currentVersion})[/red] -> ",
-            f"[green]{result.latestOverall}[/green]"
-        )
+    print_req_to_date_results(
+        results,
+        lambda result: console.print(
+            f"{result.package} [red]{result.currentVersion}[/red] -> "
+            f"[green]{result.latestOverall}[/green]",
+            style="bold",
+            justify="center",
+        ),
+    )
 
 # ==================== Templates Commands ====================
 @cli.group(name="templates")

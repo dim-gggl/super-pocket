@@ -39,6 +39,8 @@ dependencies = [
     "uvicorn>=0.38.0",
     "asyncio>=4.0.0",
     "fastapi>=0.121.2",
+    "jinja2>=3.1.0",
+    "pyyaml>=6.0.0",
 ]
 
 
@@ -61,11 +63,10 @@ python_functions = "test_*"
 addopts = "-v --cov=pocket --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
-source = ["pocket"]
+source = ["super_pocket/"]
 omit = [
     "*/tests/*",
-    "*/__init__.py",
-    "*/cli.py",
+    "*/__init__.py"
 ]
 
 [tool.coverage.report]

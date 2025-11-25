@@ -1,0 +1,27 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Initial release of {{ project_display_name }}
+- Core functionality with `greet()` and `add_numbers()` functions
+{% if features.testing %}
+- Comprehensive test suite with pytest
+{% endif %}
+{% if features.type_stubs %}
+- Type stub support with py.typed marker
+{% endif %}
+{% if features.github_actions %}
+- GitHub Actions CI/CD with PyPI publishing
+{% endif %}
+
+## [0.1.0] - YYYY-MM-DD
+
+### Added
+- Initial project structure
+- Basic package setup

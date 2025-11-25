@@ -1,0 +1,74 @@
+[tool.poetry]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ description }}"
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/yourusername/{{ project_name }}"
+repository = "https://github.com/yourusername/{{ project_name }}"
+documentation = "https://github.com/yourusername/{{ project_name }}#readme"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+packages = [
+    { include = "{{ project_name }}", from = "src" }
+]
+{% if features.type_stubs %}
+include = ["src/{{ project_name }}/py.typed"]
+{% endif %}
+
+[tool.poetry.dependencies]
+python = "{{ python_version }}"
+
+[tool.poetry.group.dev.dependencies]
+{% if features.testing %}
+pytest = "^7.0.0"
+pytest-cov = "^4.0.0"
+{% endif %}
+{% if tool_choices.docs_tool == "sphinx" %}
+sphinx = "^7.0.0"
+sphinx-rtd-theme = "^2.0.0"
+{% elif tool_choices.docs_tool == "mkdocs" %}
+mkdocs = "^1.5.0"
+mkdocs-material = "^9.0.0"
+{% endif %}
+{% if features.precommit %}
+pre-commit = "^3.0.0"
+{% endif %}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+{% if features.testing %}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov={{ project_name }}",
+    "--cov-report=term-missing",
+]
+{% endif %}
+
+[tool.coverage.run]
+source = ["src/{{ project_name }}"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

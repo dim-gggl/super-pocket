@@ -1,0 +1,146 @@
+# {{ project_display_name }}
+
+{{ description }}
+
+## Installation
+
+```bash
+pip install {{ project_name }}
+```
+
+## Usage
+
+```python
+from {{ project_name }}.core import greet, add_numbers
+
+# Use the greet function
+print(greet("Alice"))  # Output: Hello, Alice!
+
+# Add numbers
+result = add_numbers(2, 3)
+print(result)  # Output: 5
+```
+
+## Development
+
+### Setup
+
+```bash
+{% if tool_choices.package_manager == "uv" %}
+# Create virtual environment
+uv venv
+
+# Install dependencies
+uv sync
+{% elif tool_choices.package_manager == "poetry" %}
+# Install dependencies
+poetry install
+{% else %}
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install in editable mode with dev dependencies
+pip install -e ".[dev]"
+{% endif %}
+```
+{% if features.testing %}
+
+### Testing
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest
+{% else %}
+pytest
+{% endif %}
+```
+
+Run tests with coverage:
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest --cov={{ project_name }} --cov-report=html
+{% else %}
+pytest --cov={{ project_name }} --cov-report=html
+{% endif %}
+```
+{% endif %}
+{% if tool_choices.docs_tool == "sphinx" %}
+
+### Documentation
+
+Build documentation:
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run sphinx-build -b html docs/ docs/_build/html
+{% else %}
+cd docs
+make html
+{% endif %}
+```
+{% elif tool_choices.docs_tool == "mkdocs" %}
+
+### Documentation
+
+Serve documentation locally:
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run mkdocs serve
+{% else %}
+mkdocs serve
+{% endif %}
+```
+
+Build documentation:
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run mkdocs build
+{% else %}
+mkdocs build
+{% endif %}
+```
+{% endif %}
+
+### Building
+
+Build the package:
+
+```bash
+{% if tool_choices.package_manager == "uv" %}
+uv build
+{% elif tool_choices.package_manager == "poetry" %}
+poetry build
+{% else %}
+python -m build
+{% endif %}
+```
+
+## Publishing
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry publish
+{% else %}
+# Install twine if not already installed
+pip install twine
+
+# Upload to PyPI
+twine upload dist/*
+{% endif %}
+```
+
+## License
+
+MIT
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+This project was generated with [super-pocket](https://github.com/yourusername/super-pocket).

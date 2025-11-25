@@ -1,0 +1,27 @@
+"""Tests for {{ project_name }} core functionality."""
+import pytest
+from {{ project_name }}.core import greet, add_numbers
+
+
+def test_greet_default():
+    """Test greet function with default name."""
+    result = greet()
+    assert result == "Hello, World!"
+
+
+def test_greet_custom_name():
+    """Test greet function with custom name."""
+    result = greet("Alice")
+    assert result == "Hello, Alice!"
+
+
+def test_add_numbers():
+    """Test adding two numbers."""
+    assert add_numbers(2, 3) == 5
+    assert add_numbers(-1, 1) == 0
+    assert add_numbers(0, 0) == 0
+
+
+def test_add_numbers_negative():
+    """Test adding negative numbers."""
+    assert add_numbers(-5, -3) == -8

@@ -1,0 +1,82 @@
+[project]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ description }}"
+readme = "README.md"
+requires-python = "{{ python_version }}"
+license = { text = "MIT" }
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+{% if features.testing %}
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+{% endif %}
+{% if tool_choices.docs_tool == "sphinx" %}
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=2.0.0",
+{% elif tool_choices.docs_tool == "mkdocs" %}
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+{% endif %}
+{% if features.precommit %}
+    "pre-commit>=3.0.0",
+{% endif %}
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/{{ project_name }}"
+Documentation = "https://github.com/yourusername/{{ project_name }}#readme"
+Repository = "https://github.com/yourusername/{{ project_name }}"
+"Bug Tracker" = "https://github.com/yourusername/{{ project_name }}/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ project_name }}"]
+{% if features.type_stubs %}
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/{{ project_name }}/py.typed" = "{{ project_name }}/py.typed"
+{% endif %}
+{% if features.testing %}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov={{ project_name }}",
+    "--cov-report=term-missing",
+]
+{% endif %}
+
+[tool.coverage.run]
+source = ["src/{{ project_name }}"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

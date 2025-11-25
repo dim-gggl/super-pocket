@@ -1,5 +1,7 @@
 """Tests for manifest parsing and validation."""
 import pytest
+import tempfile
+from pathlib import Path
 from super_pocket.project.init.manifest import (
     ToolChoice,
     ToolOption,
@@ -99,3 +101,60 @@ def test_template_manifest_creation():
     assert len(manifest.features) == 1
     assert len(manifest.structure) == 1
     assert len(manifest.post_generation) == 1
+
+
+def test_parse_manifest_from_yaml():
+    """Test parsing a complete manifest from YAML."""
+    yaml_content = """
+name: python-cli
+display_name: "Python CLI Tool"
+description: "Command-line tool with Click"
+python_version: ">=3.11"
+
+tool_choices:
+  cli_framework:
+    prompt: "Which CLI framework?"
+    default: click
+    options:
+      - name: click
+        description: "Click - composable CLI"
+      - name: typer
+        description: "Typer - type hints"
+
+features:
+  - name: testing
+    description: "Testing with pytest"
+    default: true
+  - name: docker
+    description: "Docker support"
+    default: false
+
+structure:
+  - path: "src/{{ project_name }}"
+    type: directory
+  - path: "src/{{ project_name }}/__init__.py"
+    template: "python-cli/init.py.j2"
+
+post_generation:
+  - action: git_init
+  - action: create_venv
+    params:
+      python_version: "{{ python_version }}"
+"""
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        f.write(yaml_content)
+        temp_path = Path(f.name)
+
+    try:
+        from super_pocket.project.init.manifest import parse_manifest
+        manifest = parse_manifest(temp_path)
+
+        assert manifest.name == "python-cli"
+        assert manifest.display_name == "Python CLI Tool"
+        assert "cli_framework" in manifest.tool_choices
+        assert len(manifest.features) == 2
+        assert len(manifest.structure) == 2
+        assert len(manifest.post_generation) == 2
+    finally:
+        temp_path.unlink()

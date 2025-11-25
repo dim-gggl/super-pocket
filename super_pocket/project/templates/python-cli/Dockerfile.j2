@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY . /app
+
+{% if tool_choices.package_manager == "uv" %}
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN uv sync
+{% elif tool_choices.package_manager == "poetry" %}
+RUN pip install poetry
+RUN poetry install --no-dev
+{% else %}
+RUN pip install -e .
+{% endif %}
+
+ENTRYPOINT ["{{ project_name }}"]

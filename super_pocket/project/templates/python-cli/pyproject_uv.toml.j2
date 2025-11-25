@@ -1,0 +1,34 @@
+[project]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ description }}"
+requires-python = "{{ python_version }}"
+dependencies = [
+{% if tool_choices.cli_framework == "click" %}
+    "click>=8.0.0",
+{% elif tool_choices.cli_framework == "typer" %}
+    "typer>=0.9.0",
+{% endif %}
+{% if features.rich_output %}
+    "rich>=13.0.0",
+{% endif %}
+{% if features.config_file %}
+    "pyyaml>=6.0.0",
+    "toml>=0.10.0",
+{% endif %}
+]
+
+[project.optional-dependencies]
+dev = [
+{% if features.testing %}
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+{% endif %}
+]
+
+[project.scripts]
+{{ project_name }} = "{{ project_name }}.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

@@ -1,0 +1,51 @@
+# {{ project_display_name }}
+
+{{ description }}
+
+## Installation
+
+```bash
+{% if tool_choices.package_manager == "uv" %}
+# Create virtual environment
+uv venv
+
+# Install dependencies
+uv sync
+{% elif tool_choices.package_manager == "poetry" %}
+# Install dependencies
+poetry install
+{% else %}
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -e .
+{% endif %}
+```
+
+## Usage
+
+```bash
+{{ project_name }} hello --name YourName
+```
+
+{% if features.testing %}
+## Testing
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest
+{% else %}
+pytest
+{% endif %}
+```
+{% endif %}
+
+## Development
+
+This project was generated with [super-pocket](https://github.com/yourusername/super-pocket).
+
+## License
+
+MIT

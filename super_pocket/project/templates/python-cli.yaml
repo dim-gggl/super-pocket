@@ -1,0 +1,101 @@
+name: python-cli
+display_name: "Python CLI Tool"
+description: "Command-line tool with Click, rich output, and testing"
+
+python_version: ">=3.11"
+
+tool_choices:
+  cli_framework:
+    prompt: "Which CLI framework?"
+    default: click
+    options:
+      - name: click
+        description: "Click - composable command line interface"
+      - name: typer
+        description: "Typer - type hints for CLI (FastAPI style)"
+      - name: argparse
+        description: "argparse - Standard library (minimal deps)"
+
+  package_manager:
+    prompt: "Which package manager?"
+    default: uv
+    options:
+      - name: uv
+        description: "uv - blazingly fast (recommended)"
+      - name: poetry
+        description: "poetry - mature, feature-rich"
+      - name: pip
+        description: "pip + requirements.txt - simple, universal"
+
+features:
+  - name: rich_output
+    description: "Rich terminal output (colors, tables, progress)"
+    default: true
+
+  - name: config_file
+    description: "Config file support (TOML/YAML parsing)"
+    default: false
+
+  - name: testing
+    description: "Testing setup with pytest"
+    default: true
+
+  - name: github_actions
+    description: "GitHub Actions CI/CD workflow"
+    default: false
+
+  - name: docker
+    description: "Docker containerization"
+    default: false
+
+structure:
+  - path: "src/{{ project_name }}"
+    type: directory
+
+  - path: "src/{{ project_name }}/__init__.py"
+    template: "python-cli/__init__.py.j2"
+
+  - path: "src/{{ project_name }}/cli.py"
+    template: "python-cli/cli_{{ tool_choices.cli_framework }}.py.j2"
+
+  - path: "tests"
+    type: directory
+    condition: "features.testing"
+
+  - path: "tests/__init__.py"
+    condition: "features.testing"
+
+  - path: "tests/test_cli.py"
+    template: "python-cli/test_cli.py.j2"
+    condition: "features.testing"
+
+  - path: "pyproject.toml"
+    template: "python-cli/pyproject_{{ tool_choices.package_manager }}.toml.j2"
+
+  - path: "README.md"
+    template: "python-cli/README.md.j2"
+
+  - path: ".gitignore"
+    template: "python-cli/gitignore.j2"
+
+  - path: ".github/workflows/ci.yml"
+    template: "python-cli/github_workflow.yml.j2"
+    condition: "features.github_actions"
+
+  - path: "Dockerfile"
+    template: "python-cli/Dockerfile.j2"
+    condition: "features.docker"
+
+post_generation:
+  - action: git_init
+
+  - action: create_venv
+    params:
+      package_manager: "{{ tool_choices.package_manager }}"
+
+  - action: install_dependencies
+    params:
+      package_manager: "{{ tool_choices.package_manager }}"
+      dev: true
+
+  - action: display_next_steps

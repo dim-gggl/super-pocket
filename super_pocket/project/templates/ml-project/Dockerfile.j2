@@ -1,0 +1,66 @@
+{% if tool_choices.framework == "pytorch" %}
+# PyTorch with CUDA support
+FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+{% elif tool_choices.framework == "tensorflow" %}
+# TensorFlow with GPU support
+FROM tensorflow/tensorflow:2.13.0-gpu
+{% else %}
+# Python base image
+FROM python:3.11-slim
+{% endif %}
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files
+COPY . /app
+
+{% if tool_choices.package_manager == "uv" %}
+# Install uv
+RUN pip install uv
+
+# Install dependencies
+RUN uv venv && \
+    . .venv/bin/activate && \
+    uv sync
+
+# Set path to use virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
+
+{% elif tool_choices.package_manager == "poetry" %}
+# Install poetry
+RUN pip install poetry
+
+# Install dependencies
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi
+
+{% else %}
+# Install dependencies with pip
+{% if tool_choices.framework in ["pytorch", "tensorflow"] %}
+# Install GPU requirements if available
+RUN if [ -f requirements_gpu.txt ]; then \
+        pip install -r requirements_gpu.txt; \
+    else \
+        pip install -r requirements.txt; \
+    fi
+{% else %}
+RUN pip install -r requirements.txt
+{% endif %}
+{% endif %}
+
+# Create directories
+RUN mkdir -p data/raw data/processed models
+
+# Expose Jupyter port (optional)
+EXPOSE 8888
+
+# Default command
+CMD ["python", "-m", "{{ project_name }}.train"]
+
+# To run Jupyter instead:
+# CMD ["jupyter", "{{ "lab" if tool_choices.notebook_type == "jupyterlab" else "notebook" }}", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]

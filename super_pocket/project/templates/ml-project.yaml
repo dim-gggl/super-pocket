@@ -1,0 +1,150 @@
+name: ml-project
+display_name: "ML/Data Science Project"
+description: "Machine learning project with experiment tracking and data versioning"
+
+python_version: ">=3.11"
+
+tool_choices:
+  framework:
+    prompt: "Which ML framework?"
+    default: none
+    options:
+      - name: pytorch
+        description: "PyTorch - flexible deep learning framework"
+      - name: tensorflow
+        description: "TensorFlow - production-ready ML platform"
+      - name: sklearn
+        description: "scikit-learn - traditional ML algorithms"
+      - name: none
+        description: "No framework - custom or multi-framework"
+
+  notebook_type:
+    prompt: "Which notebook environment?"
+    default: jupyter
+    options:
+      - name: jupyter
+        description: "Jupyter Notebook - classic notebook interface"
+      - name: jupyterlab
+        description: "JupyterLab - next-gen notebook IDE"
+
+  package_manager:
+    prompt: "Which package manager?"
+    default: uv
+    options:
+      - name: uv
+        description: "uv - blazingly fast (recommended)"
+      - name: poetry
+        description: "poetry - mature, feature-rich"
+      - name: pip
+        description: "pip + requirements.txt - simple, universal"
+
+  experiment_tracking:
+    prompt: "Which experiment tracking framework?"
+    default: none
+    options:
+      - name: mlflow
+        description: "MLflow - comprehensive tracking"
+      - name: wandb
+        description: "Weights & Biases - collaborative tracking"
+      - name: none
+        description: "No experiment tracking"
+
+features:
+  - name: dvc
+    description: "Data Version Control (DVC) for datasets"
+    default: false
+
+  - name: docker
+    description: "Docker with GPU support"
+    default: false
+
+  - name: testing
+    description: "Testing setup with pytest for data pipelines"
+    default: true
+
+structure:
+  - path: "src/{{ project_name }}"
+    type: directory
+
+  - path: "src/{{ project_name }}/__init__.py"
+    template: "__init__.py.j2"
+
+  - path: "src/{{ project_name }}/train.py"
+    template: "train.py.j2"
+
+  - path: "src/{{ project_name }}/config.py"
+    template: "config.py.j2"
+
+  - path: "notebooks"
+    type: directory
+
+  - path: "notebooks/01_exploration.ipynb"
+    template: "notebook_exploration.ipynb.j2"
+
+  - path: "data"
+    type: directory
+
+  - path: "data/.gitkeep"
+
+  - path: "models"
+    type: directory
+
+  - path: "models/.gitkeep"
+
+  - path: "tests"
+    type: directory
+    condition: "features.testing"
+
+  - path: "tests/__init__.py"
+    condition: "features.testing"
+
+  - path: "tests/test_data.py"
+    template: "test_data.py.j2"
+    condition: "features.testing"
+
+  - path: "pyproject.toml"
+    template: "pyproject_{{ tool_choices.package_manager }}.toml.j2"
+
+  - path: "requirements.txt"
+    template: "requirements.txt.j2"
+    condition: "tool_choices.package_manager == 'pip'"
+
+  - path: "requirements_gpu.txt"
+    template: "requirements_gpu.txt.j2"
+    condition: "tool_choices.package_manager == 'pip' and features.docker"
+
+  - path: "README.md"
+    template: "README.md.j2"
+
+  - path: ".gitignore"
+    template: "gitignore.j2"
+
+  - path: "Dockerfile"
+    template: "Dockerfile.j2"
+    condition: "features.docker"
+
+  - path: ".dvc"
+    type: directory
+    condition: "features.dvc"
+
+  - path: ".dvc/.gitignore"
+    template: "dvc_gitignore.j2"
+    condition: "features.dvc"
+
+  - path: ".dvcignore"
+    template: "dvcignore.j2"
+    condition: "features.dvc"
+
+post_generation:
+  - action: git_init
+
+  - action: create_venv
+    params:
+      package_manager: "{{ tool_choices.package_manager }}"
+
+  - action: install_dependencies
+    params:
+      package_manager: "{{ tool_choices.package_manager }}"
+      dev: true
+
+  - action: display_next_steps

@@ -1,0 +1,36 @@
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+{% if tool_choices.framework == "pytorch" %}
+torch>=2.0.0
+torchvision>=0.15.0
+{% elif tool_choices.framework == "tensorflow" %}
+tensorflow>=2.13.0
+{% endif %}
+{% if tool_choices.notebook_type == "jupyter" %}
+jupyter>=1.0.0
+notebook>=7.0.0
+{% elif tool_choices.notebook_type == "jupyterlab" %}
+jupyterlab>=4.0.0
+{% endif %}
+{% if tool_choices.experiment_tracking == "mlflow" %}
+mlflow>=2.8.0
+{% elif tool_choices.experiment_tracking == "wandb" %}
+wandb>=0.15.0
+{% endif %}
+{% if features.dvc %}
+dvc>=3.0.0
+{% endif %}
+{% if tool_choices.framework == "sklearn" %}
+joblib>=1.3.0
+{% endif %}
+
+# Development dependencies
+{% if features.testing %}
+pytest>=7.0.0
+pytest-cov>=4.0.0
+{% endif %}
+black>=23.0.0
+ruff>=0.1.0

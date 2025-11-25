@@ -1,0 +1,12 @@
+# GPU-specific requirements
+{% if tool_choices.framework == "pytorch" %}
+# PyTorch with CUDA support
+# Install from: https://pytorch.org/get-started/locally/
+torch>=2.0.0
+torchvision>=0.15.0
+{% elif tool_choices.framework == "tensorflow" %}
+# TensorFlow with GPU support
+tensorflow[and-cuda]>=2.13.0
+{% else %}
+# Add GPU-specific packages here if needed
+{% endif %}

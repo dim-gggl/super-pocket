@@ -1,0 +1,59 @@
+"""Configuration management for {{ project_name }}."""
+from pathlib import Path
+from dataclasses import dataclass
+
+
+@dataclass
+class Config:
+    """Project configuration."""
+
+    # Project paths
+    project_root: Path = Path(__file__).parent.parent.parent
+    data_dir: Path = project_root / "data"
+    models_dir: Path = project_root / "models"
+
+    # Data paths
+    raw_data_dir: Path = data_dir / "raw"
+    processed_data_dir: Path = data_dir / "processed"
+
+    # Model settings
+    random_seed: int = 42
+    test_size: float = 0.2
+
+{% if tool_choices.framework == "pytorch" %}
+    # PyTorch settings
+    device: str = "cuda"  # or "cpu"
+    batch_size: int = 32
+    learning_rate: float = 0.001
+    num_epochs: int = 10
+{% elif tool_choices.framework == "tensorflow" %}
+    # TensorFlow settings
+    batch_size: int = 32
+    learning_rate: float = 0.001
+    epochs: int = 10
+{% elif tool_choices.framework == "sklearn" %}
+    # Scikit-learn settings
+    n_estimators: int = 100
+    max_depth: int = 10
+{% endif %}
+
+{% if tool_choices.experiment_tracking == "mlflow" %}
+    # MLflow settings
+    mlflow_tracking_uri: str = "file:./mlruns"
+    experiment_name: str = "{{ project_name }}"
+{% elif tool_choices.experiment_tracking == "wandb" %}
+    # Weights & Biases settings
+    wandb_project: str = "{{ project_name }}"
+    wandb_entity: str = None  # Set your W&B username/team
+{% endif %}
+
+    def __post_init__(self):
+        """Create directories if they don't exist."""
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.models_dir.mkdir(parents=True, exist_ok=True)
+        self.raw_data_dir.mkdir(parents=True, exist_ok=True)
+        self.processed_data_dir.mkdir(parents=True, exist_ok=True)
+
+
+# Global config instance
+config = Config()

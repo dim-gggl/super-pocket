@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data files
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Models
+models/*
+!models/.gitkeep
+*.pt
+*.pth
+*.h5
+*.pkl
+*.joblib
+*.onnx
+
+# Experiment tracking
+{% if tool_choices.experiment_tracking == "mlflow" %}
+mlruns/
+mlartifacts/
+{% elif tool_choices.experiment_tracking == "wandb" %}
+wandb/
+{% endif %}
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.spyproject/
+.ropeproject/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+
+{% if features.dvc %}
+# DVC
+/dvc.lock
+{% endif %}

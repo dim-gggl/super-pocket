@@ -1,0 +1,244 @@
+# {{ project_display_name }}
+
+{{ description }}
+
+## Project Structure
+
+```
+{{ project_name }}/
+├── src/
+│   └── {{ project_name }}/
+│       ├── __init__.py
+│       ├── config.py          # Configuration management
+│       └── train.py           # Training script
+├── notebooks/
+│   └── 01_exploration.ipynb   # Exploratory data analysis
+├── data/
+│   ├── raw/                   # Raw data (gitignored)
+│   └── processed/             # Processed data (gitignored)
+├── models/                    # Trained models (gitignored)
+{% if features.testing %}
+├── tests/
+│   └── test_data.py           # Data pipeline tests
+{% endif %}
+{% if features.docker %}
+├── Dockerfile                 # Docker configuration
+{% endif %}
+{% if features.dvc %}
+├── .dvc/                      # DVC configuration
+├── .dvcignore                 # DVC ignore patterns
+{% endif %}
+├── pyproject.toml             # Project dependencies
+└── README.md
+```
+
+## Setup
+
+### Installation
+
+```bash
+{% if tool_choices.package_manager == "uv" %}
+# Create virtual environment
+uv venv
+
+# Activate virtual environment
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+uv sync
+{% elif tool_choices.package_manager == "poetry" %}
+# Install dependencies
+poetry install
+
+# Activate virtual environment
+poetry shell
+{% else %}
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+{% endif %}
+```
+
+{% if features.docker and tool_choices.framework in ["pytorch", "tensorflow"] %}
+### GPU Support
+
+For GPU support, ensure you have:
+- NVIDIA GPU with CUDA support
+- NVIDIA drivers installed
+{% if tool_choices.framework == "pytorch" %}
+- PyTorch with CUDA (see https://pytorch.org/get-started/locally/)
+{% elif tool_choices.framework == "tensorflow" %}
+- TensorFlow with CUDA support installed
+{% endif %}
+
+{% if features.docker %}
+#### Docker with GPU
+
+```bash
+# Build image
+docker build -t {{ project_name }} .
+
+# Run with GPU support
+docker run --gpus all {{ project_name }}
+```
+{% endif %}
+{% endif %}
+
+## Usage
+
+### Training
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run python -m {{ project_name }}.train
+{% else %}
+python -m {{ project_name }}.train
+{% endif %}
+```
+
+### Jupyter Notebooks
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run jupyter {{ "lab" if tool_choices.notebook_type == "jupyterlab" else "notebook" }}
+{% else %}
+jupyter {{ "lab" if tool_choices.notebook_type == "jupyterlab" else "notebook" }}
+{% endif %}
+```
+
+{% if features.testing %}
+## Testing
+
+Run tests with pytest:
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest
+{% else %}
+pytest
+{% endif %}
+```
+
+Run tests with coverage:
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest --cov={{ project_name }} --cov-report=html
+{% else %}
+pytest --cov={{ project_name }} --cov-report=html
+{% endif %}
+```
+{% endif %}
+
+{% if tool_choices.experiment_tracking == "mlflow" %}
+## Experiment Tracking
+
+This project uses MLflow for experiment tracking.
+
+Start MLflow UI:
+
+```bash
+mlflow ui
+```
+
+View experiments at http://localhost:5000
+
+{% elif tool_choices.experiment_tracking == "wandb" %}
+## Experiment Tracking
+
+This project uses Weights & Biases for experiment tracking.
+
+1. Sign up at https://wandb.ai
+2. Login:
+   ```bash
+   wandb login
+   ```
+3. Run training - experiments will be tracked automatically
+
+{% endif %}
+{% if features.dvc %}
+## Data Version Control
+
+This project uses DVC for data versioning.
+
+### Initialize DVC remote (first time)
+
+```bash
+# For local remote
+dvc remote add -d local /path/to/dvc/storage
+
+# For S3
+dvc remote add -d myremote s3://mybucket/path
+
+# For other storage options, see: https://dvc.org/doc/command-reference/remote/add
+```
+
+### Track data
+
+```bash
+# Add data file/directory
+dvc add data/raw/dataset.csv
+
+# Commit the .dvc file
+git add data/raw/dataset.csv.dvc data/raw/.gitignore
+git commit -m "Add dataset"
+
+# Push data to remote
+dvc push
+```
+
+### Pull data
+
+```bash
+dvc pull
+```
+
+{% endif %}
+## Development Workflow
+
+1. **Explore data** in `notebooks/01_exploration.ipynb`
+2. **Engineer features** and experiment with models
+3. **Move final code** to `src/{{ project_name }}/train.py`
+4. **Write tests** for data pipelines in `tests/`
+5. **Track experiments**{% if tool_choices.experiment_tracking != "none" %} with {{ tool_choices.experiment_tracking }}{% endif %}
+6. **Version data**{% if features.dvc %} with DVC{% endif %}
+7. **Document findings** and update README
+
+## Configuration
+
+Edit `src/{{ project_name }}/config.py` to customize:
+- Data paths
+- Model hyperparameters
+{% if tool_choices.experiment_tracking != "none" %}
+- Experiment tracking settings
+{% endif %}
+- Random seeds
+
+## Tech Stack
+
+- **Framework**: {% if tool_choices.framework != "none" %}{{ tool_choices.framework }}{% else %}Custom/Multi-framework{% endif %}
+- **Notebooks**: {{ tool_choices.notebook_type }}
+- **Package Manager**: {{ tool_choices.package_manager }}
+{% if tool_choices.experiment_tracking != "none" %}
+- **Experiment Tracking**: {{ tool_choices.experiment_tracking }}
+{% endif %}
+{% if features.dvc %}
+- **Data Version Control**: DVC
+{% endif %}
+{% if features.testing %}
+- **Testing**: pytest
+{% endif %}
+{% if features.docker %}
+- **Containerization**: Docker
+{% endif %}
+
+## License
+
+MIT
+
+---
+
+Generated with [super-pocket](https://github.com/yourusername/super-pocket)

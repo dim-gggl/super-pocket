@@ -1,0 +1,87 @@
+"""Configuration loader for {{ project_display_name }}."""
+import os
+from pathlib import Path
+{% if tool_choices.config_format == "yaml" %}
+import yaml
+{% elif tool_choices.config_format == "toml" %}
+import tomllib
+{% elif tool_choices.config_format == "json" %}
+import json
+{% elif tool_choices.config_format == "env" %}
+from dotenv import load_dotenv
+{% endif %}
+{% if features.logging %}
+import logging
+
+logger = logging.getLogger(__name__)
+{% endif %}
+
+
+def load_config():
+    """Load configuration from file."""
+    {% if tool_choices.config_format == "yaml" %}
+    config_path = Path("config.yaml")
+    if not config_path.exists():
+        {% if features.logging %}
+        logger.warning(f"Config file not found: {config_path}, using defaults")
+        {% endif %}
+        return {}
+
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+        {% if features.logging %}
+        logger.info(f"Loaded configuration from {config_path}")
+        {% endif %}
+        return config or {}
+
+    {% elif tool_choices.config_format == "toml" %}
+    config_path = Path("config.toml")
+    if not config_path.exists():
+        {% if features.logging %}
+        logger.warning(f"Config file not found: {config_path}, using defaults")
+        {% endif %}
+        return {}
+
+    with open(config_path, 'rb') as f:
+        config = tomllib.load(f)
+        {% if features.logging %}
+        logger.info(f"Loaded configuration from {config_path}")
+        {% endif %}
+        return config or {}
+
+    {% elif tool_choices.config_format == "json" %}
+    config_path = Path("config.json")
+    if not config_path.exists():
+        {% if features.logging %}
+        logger.warning(f"Config file not found: {config_path}, using defaults")
+        {% endif %}
+        return {}
+
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+        {% if features.logging %}
+        logger.info(f"Loaded configuration from {config_path}")
+        {% endif %}
+        return config or {}
+
+    {% elif tool_choices.config_format == "env" %}
+    env_path = Path(".env")
+    if env_path.exists():
+        load_dotenv(env_path)
+        {% if features.logging %}
+        logger.info(f"Loaded environment variables from {env_path}")
+        {% endif %}
+
+    # Return environment variables as config dict
+    return {
+        'schedule': os.getenv('SCHEDULE', '0 * * * *'),
+        'log_level': os.getenv('LOG_LEVEL', 'INFO'),
+        {% if features.notifications %}
+        'email_to': os.getenv('EMAIL_TO', ''),
+        'email_from': os.getenv('EMAIL_FROM', ''),
+        'smtp_host': os.getenv('SMTP_HOST', ''),
+        'smtp_port': int(os.getenv('SMTP_PORT', '587')),
+        'slack_webhook': os.getenv('SLACK_WEBHOOK', ''),
+        {% endif %}
+    }
+    {% endif %}

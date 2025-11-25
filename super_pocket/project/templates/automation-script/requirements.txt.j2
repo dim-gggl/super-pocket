@@ -1,0 +1,22 @@
+# Production dependencies
+{% if tool_choices.config_format == "yaml" %}
+pyyaml>=6.0.0
+{% elif tool_choices.config_format == "toml" %}
+# tomllib is built-in for Python 3.11+
+{% elif tool_choices.config_format == "env" %}
+python-dotenv>=1.0.0
+{% endif %}
+{% if tool_choices.scheduler == "cron" %}
+python-crontab>=3.0.0
+{% elif tool_choices.scheduler == "apscheduler" %}
+apscheduler>=3.10.0
+{% endif %}
+{% if features.notifications %}
+requests>=2.31.0
+{% endif %}
+
+# Development dependencies
+{% if features.testing %}
+pytest>=7.0.0
+pytest-cov>=4.0.0
+{% endif %}

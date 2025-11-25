@@ -1,0 +1,45 @@
+"""Tests for {{ project_name }} tasks."""
+import pytest
+from {{ project_name }}.tasks import example_task, data_processing_task, cleanup_task
+
+
+def test_example_task():
+    """Test example task execution."""
+    result = example_task()
+    assert result == "Task completed successfully"
+
+
+def test_data_processing_task():
+    """Test data processing task."""
+    result = data_processing_task()
+    assert isinstance(result, list)
+    assert len(result) == 5
+    assert result == [2, 4, 6, 8, 10]
+
+
+def test_cleanup_task():
+    """Test cleanup task."""
+    result = cleanup_task()
+    assert result is True
+
+
+{% if features.logging %}
+def test_logging_integration():
+    """Test that tasks log correctly."""
+    import logging
+    from {{ project_name }}.logging_config import setup_logging
+
+    setup_logging(log_level=logging.DEBUG)
+    result = example_task()
+    assert result is not None
+{% endif %}
+
+
+{% if tool_choices.config_format == "yaml" %}
+def test_config_loader():
+    """Test configuration loading."""
+    from {{ project_name }}.config_loader import load_config
+
+    config = load_config()
+    assert isinstance(config, dict)
+{% endif %}

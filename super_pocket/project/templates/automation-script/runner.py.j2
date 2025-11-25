@@ -1,0 +1,133 @@
+"""Main runner for {{ project_display_name }}."""
+import sys
+{% if features.logging %}
+import logging
+from {{ project_name }}.logging_config import setup_logging
+{% endif %}
+from {{ project_name }}.config_loader import load_config
+from {{ project_name }}.tasks import example_task, data_processing_task
+{% if features.notifications %}
+from {{ project_name }}.notifications import notify_error
+{% endif %}
+{% if tool_choices.scheduler == "cron" %}
+from crontab import CronTab
+import time
+{% elif tool_choices.scheduler == "apscheduler" %}
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
+{% endif %}
+
+{% if features.logging %}
+logger = logging.getLogger(__name__)
+{% endif %}
+
+
+def run_tasks():
+    """Run all scheduled tasks."""
+    {% if features.logging %}
+    logger.info("Starting task execution")
+    {% endif %}
+
+    try:
+        # Run tasks
+        result1 = example_task()
+        {% if features.logging %}
+        logger.info(f"Example task completed: {result1}")
+        {% endif %}
+
+        result2 = data_processing_task()
+        {% if features.logging %}
+        logger.info(f"Data processing task completed: {result2}")
+        {% endif %}
+
+        {% if features.logging %}
+        logger.info("All tasks completed successfully")
+        {% endif %}
+
+    except Exception as e:
+        {% if features.logging %}
+        logger.error(f"Error during task execution: {e}", exc_info=True)
+        {% endif %}
+        {% if features.notifications %}
+        notify_error(f"Task execution failed: {e}")
+        {% endif %}
+        raise
+
+
+{% if tool_choices.scheduler == "cron" %}
+def schedule_with_cron(config):
+    """Schedule tasks using cron syntax."""
+    cron_schedule = config.get('schedule', '0 * * * *')  # Default: every hour
+    {% if features.logging %}
+    logger.info(f"Scheduling tasks with cron: {cron_schedule}")
+    {% endif %}
+
+    # Note: This is a simple example. For production, use system cron or python-crontab
+    while True:
+        run_tasks()
+        time.sleep(3600)  # Sleep for 1 hour
+
+
+{% elif tool_choices.scheduler == "apscheduler" %}
+def schedule_with_apscheduler(config):
+    """Schedule tasks using APScheduler."""
+    scheduler = BlockingScheduler()
+
+    # Get schedule from config or use default
+    cron_expr = config.get('schedule', '0 * * * *')  # Default: every hour
+    hour, minute, day, month, day_of_week = cron_expr.split()[:5] if ' ' in cron_expr else ('*', '0', '*', '*', '*')
+
+    scheduler.add_job(
+        run_tasks,
+        CronTrigger(
+            hour=hour,
+            minute=minute,
+            day=day,
+            month=month,
+            day_of_week=day_of_week
+        )
+    )
+
+    {% if features.logging %}
+    logger.info(f"Scheduled tasks with: {cron_expr}")
+    {% endif %}
+
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        {% if features.logging %}
+        logger.info("Scheduler stopped")
+        {% endif %}
+
+
+{% endif %}
+def main():
+    """Main entry point."""
+    {% if features.logging %}
+    setup_logging()
+    logger.info("Starting {{ project_display_name }}")
+    {% endif %}
+
+    # Load configuration
+    config = load_config()
+
+    {% if tool_choices.scheduler == "none" %}
+    # Run tasks once
+    run_tasks()
+    {% elif tool_choices.scheduler == "cron" %}
+    # Schedule with cron
+    schedule_with_cron(config)
+    {% elif tool_choices.scheduler == "apscheduler" %}
+    # Schedule with APScheduler
+    schedule_with_apscheduler(config)
+    {% endif %}
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        {% if features.logging %}
+        logger.error(f"Fatal error: {e}", exc_info=True)
+        {% endif %}
+        sys.exit(1)

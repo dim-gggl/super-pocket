@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ description }}"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "{{ python_version }}"
+{% if tool_choices.config_format == "yaml" %}
+pyyaml = "^6.0.0"
+{% elif tool_choices.config_format == "toml" %}
+# tomllib is built-in for Python 3.11+
+{% elif tool_choices.config_format == "json" %}
+# json is built-in
+{% elif tool_choices.config_format == "env" %}
+python-dotenv = "^1.0.0"
+{% endif %}
+{% if tool_choices.scheduler == "cron" %}
+python-crontab = "^3.0.0"
+{% elif tool_choices.scheduler == "apscheduler" %}
+apscheduler = "^3.10.0"
+{% endif %}
+{% if features.notifications %}
+requests = "^2.31.0"
+{% endif %}
+
+[tool.poetry.group.dev.dependencies]
+{% if features.testing %}
+pytest = "^7.0.0"
+pytest-cov = "^4.0.0"
+{% endif %}
+
+[tool.poetry.scripts]
+{{ project_name }} = "{{ project_name }}.runner:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,216 @@
+# {{ project_display_name }}
+
+{{ description }}
+
+## Features
+
+{% if tool_choices.scheduler != "none" %}
+- Scheduled task execution using {{ tool_choices.scheduler }}
+{% else %}
+- Manual task execution (run on-demand or via system cron)
+{% endif %}
+{% if features.logging %}
+- Structured logging with rotation
+{% endif %}
+{% if features.notifications %}
+- Error notifications via email and Slack
+{% endif %}
+- Configuration via {{ tool_choices.config_format|upper }} files
+{% if features.testing %}
+- Comprehensive test suite
+{% endif %}
+{% if features.docker %}
+- Docker containerization
+{% endif %}
+{% if features.systemd %}
+- systemd service integration
+{% endif %}
+
+## Installation
+
+```bash
+{% if tool_choices.package_manager == "uv" %}
+# Create virtual environment and install dependencies
+uv venv
+uv sync
+{% elif tool_choices.package_manager == "poetry" %}
+# Install dependencies
+poetry install
+{% else %}
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -e .
+{% endif %}
+```
+
+## Configuration
+
+{% if tool_choices.config_format == "yaml" %}
+Edit `config.yaml` to configure the automation script:
+{% elif tool_choices.config_format == "toml" %}
+Edit `config.toml` to configure the automation script:
+{% elif tool_choices.config_format == "json" %}
+Edit `config.json` to configure the automation script:
+{% elif tool_choices.config_format == "env" %}
+Copy `.env` and configure environment variables:
+{% endif %}
+
+```bash
+{% if tool_choices.config_format == "env" %}
+cp .env .env.local
+# Edit .env.local with your settings
+{% endif %}
+# See config file for available options
+```
+
+{% if tool_choices.scheduler != "none" %}
+### Scheduling
+
+{% if tool_choices.scheduler == "cron" %}
+The script uses cron syntax for scheduling. Default: `0 * * * *` (every hour)
+{% elif tool_choices.scheduler == "apscheduler" %}
+The script uses APScheduler for advanced scheduling. Configure schedule in config file.
+{% endif %}
+
+Cron format: `minute hour day month day_of_week`
+
+Examples:
+- `0 * * * *` - Every hour
+- `*/15 * * * *` - Every 15 minutes
+- `0 2 * * *` - Daily at 2 AM
+- `0 0 * * 0` - Weekly on Sunday at midnight
+{% endif %}
+
+## Usage
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run {{ project_name }}
+{% else %}
+{{ project_name }}
+{% endif %}
+```
+
+{% if tool_choices.scheduler == "none" %}
+### Running with System Cron
+
+Add to your crontab:
+
+```bash
+# Run every hour
+0 * * * * cd /path/to/{{ project_name }} && /path/to/.venv/bin/{{ project_name }}
+```
+{% endif %}
+
+{% if features.systemd %}
+### Running as systemd Service
+
+```bash
+# Copy service file
+sudo cp {{ project_name }}.service /etc/systemd/system/
+
+# Edit service file to set correct paths
+sudo nano /etc/systemd/system/{{ project_name }}.service
+
+# Enable and start service
+sudo systemctl enable {{ project_name }}
+sudo systemctl start {{ project_name }}
+
+# Check status
+sudo systemctl status {{ project_name }}
+
+# View logs
+sudo journalctl -u {{ project_name }} -f
+```
+{% endif %}
+
+{% if features.docker %}
+### Running with Docker
+
+```bash
+# Build image
+docker build -t {{ project_name }} .
+
+# Run container
+docker run -d \
+  --name {{ project_name }} \
+{% if tool_choices.config_format == "env" %}
+  --env-file .env \
+{% else %}
+  -v $(pwd)/config.{{ tool_choices.config_format }}:/app/config.{{ tool_choices.config_format }} \
+{% endif %}
+  {{ project_name }}
+
+# View logs
+docker logs -f {{ project_name }}
+```
+{% endif %}
+
+{% if features.testing %}
+## Testing
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest
+{% else %}
+pytest
+{% endif %}
+
+# With coverage
+{% if tool_choices.package_manager == "poetry" %}
+poetry run pytest --cov={{ project_name }}
+{% else %}
+pytest --cov={{ project_name }}
+{% endif %}
+```
+{% endif %}
+
+## Project Structure
+
+```
+{{ project_name }}/
+├── src/{{ project_name }}/
+│   ├── __init__.py
+│   ├── runner.py          # Main entry point
+│   ├── tasks.py           # Task functions
+│   ├── config_loader.py   # Configuration loader
+{% if features.logging %}
+│   ├── logging_config.py  # Logging setup
+{% endif %}
+{% if features.notifications %}
+│   └── notifications.py   # Notification handlers
+{% endif %}
+{% if features.testing %}
+├── tests/
+│   └── test_tasks.py
+{% endif %}
+{% if tool_choices.config_format == "yaml" %}
+├── config.yaml            # Configuration
+{% elif tool_choices.config_format == "toml" %}
+├── config.toml            # Configuration
+{% elif tool_choices.config_format == "json" %}
+├── config.json            # Configuration
+{% elif tool_choices.config_format == "env" %}
+├── .env                   # Configuration
+{% endif %}
+└── pyproject.toml
+```
+
+## Development
+
+This project was generated with [super-pocket](https://github.com/yourusername/super-pocket).
+
+### Adding New Tasks
+
+1. Define task functions in `src/{{ project_name }}/tasks.py`
+2. Import and call tasks in `src/{{ project_name }}/runner.py`
+{% if features.testing %}
+3. Add tests in `tests/test_tasks.py`
+{% endif %}
+
+## License
+
+MIT

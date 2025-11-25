@@ -1,0 +1,32 @@
+# Configuration for {{ project_display_name }}
+
+{% if tool_choices.scheduler != "none" %}
+# Schedule (cron format: minute hour day month day_of_week)
+schedule = "0 * * * *"  # Every hour
+{% endif %}
+
+{% if features.logging %}
+# Logging configuration
+log_level = "INFO"
+log_file = "logs/{{ project_name }}.log"
+{% endif %}
+
+{% if features.notifications %}
+# Notification settings
+[notifications.email]
+enabled = false
+to = ""
+from = ""
+
+[notifications.slack]
+enabled = false
+webhook_url = ""
+{% endif %}
+
+# Task-specific settings
+[tasks.example_task]
+enabled = true
+
+[tasks.data_processing]
+enabled = true
+batch_size = 100

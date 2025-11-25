@@ -1,0 +1,55 @@
+"""Task functions for {{ project_display_name }}."""
+{% if features.logging %}
+import logging
+
+logger = logging.getLogger(__name__)
+{% endif %}
+
+
+def example_task():
+    """Example task that can be scheduled."""
+    {% if features.logging %}
+    logger.info("Running example task")
+    {% endif %}
+
+    # Your task logic here
+    result = "Task completed successfully"
+
+    {% if features.logging %}
+    logger.debug(f"Example task result: {result}")
+    {% endif %}
+
+    return result
+
+
+def data_processing_task():
+    """Example data processing task."""
+    {% if features.logging %}
+    logger.info("Running data processing task")
+    {% endif %}
+
+    # Simulate data processing
+    data = [1, 2, 3, 4, 5]
+    processed = [x * 2 for x in data]
+
+    {% if features.logging %}
+    logger.info(f"Processed {len(data)} items")
+    {% endif %}
+
+    return processed
+
+
+def cleanup_task():
+    """Example cleanup task."""
+    {% if features.logging %}
+    logger.info("Running cleanup task")
+    {% endif %}
+
+    # Your cleanup logic here
+    # e.g., delete old files, clear cache, etc.
+
+    {% if features.logging %}
+    logger.info("Cleanup completed")
+    {% endif %}
+
+    return True

@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy project files
+COPY . /app
+
+{% if tool_choices.package_manager == "uv" %}
+# Install uv and dependencies
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.cargo/bin:$PATH"
+RUN uv sync --no-dev
+{% elif tool_choices.package_manager == "poetry" %}
+# Install poetry and dependencies
+RUN pip install poetry
+RUN poetry install --no-dev --no-interaction --no-ansi
+{% else %}
+# Install dependencies with pip
+RUN pip install --no-cache-dir -e .
+{% endif %}
+
+# Create logs directory
+RUN mkdir -p logs
+
+# Run the automation script
+{% if tool_choices.package_manager == "poetry" %}
+CMD ["poetry", "run", "{{ project_name }}"]
+{% else %}
+CMD ["{{ project_name }}"]
+{% endif %}

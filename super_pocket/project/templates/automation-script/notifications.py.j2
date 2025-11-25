@@ -1,0 +1,102 @@
+"""Notification handlers for {{ project_display_name }}."""
+import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import requests
+{% if features.logging %}
+import logging
+
+logger = logging.getLogger(__name__)
+{% endif %}
+
+
+def send_email(subject, body, to_email=None, from_email=None):
+    """Send email notification.
+
+    Args:
+        subject: Email subject
+        body: Email body
+        to_email: Recipient email (default: from config)
+        from_email: Sender email (default: from config)
+    """
+    to_email = to_email or os.getenv('EMAIL_TO')
+    from_email = from_email or os.getenv('EMAIL_FROM')
+    smtp_host = os.getenv('SMTP_HOST')
+    smtp_port = int(os.getenv('SMTP_PORT', '587'))
+    smtp_user = os.getenv('SMTP_USER')
+    smtp_pass = os.getenv('SMTP_PASS')
+
+    if not all([to_email, from_email, smtp_host, smtp_user, smtp_pass]):
+        {% if features.logging %}
+        logger.warning("Email configuration incomplete, skipping email notification")
+        {% endif %}
+        return
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = to_email
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        server = smtplib.SMTP(smtp_host, smtp_port)
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+        server.send_message(msg)
+        server.quit()
+
+        {% if features.logging %}
+        logger.info(f"Email sent to {to_email}")
+        {% endif %}
+
+    except Exception as e:
+        {% if features.logging %}
+        logger.error(f"Failed to send email: {e}")
+        {% endif %}
+
+
+def send_slack_message(message, webhook_url=None):
+    """Send Slack notification.
+
+    Args:
+        message: Message to send
+        webhook_url: Slack webhook URL (default: from config)
+    """
+    webhook_url = webhook_url or os.getenv('SLACK_WEBHOOK')
+
+    if not webhook_url:
+        {% if features.logging %}
+        logger.warning("Slack webhook URL not configured, skipping Slack notification")
+        {% endif %}
+        return
+
+    try:
+        payload = {'text': message}
+        response = requests.post(webhook_url, json=payload)
+        response.raise_for_status()
+
+        {% if features.logging %}
+        logger.info("Slack message sent successfully")
+        {% endif %}
+
+    except Exception as e:
+        {% if features.logging %}
+        logger.error(f"Failed to send Slack message: {e}")
+        {% endif %}
+
+
+def notify_error(error_message):
+    """Send error notification via all configured channels.
+
+    Args:
+        error_message: Error message to send
+    """
+    subject = "{{ project_display_name }} - Error Notification"
+
+    # Try email
+    send_email(subject, error_message)
+
+    # Try Slack
+    send_slack_message(f":warning: {subject}\n{error_message}")

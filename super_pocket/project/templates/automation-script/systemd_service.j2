@@ -1,0 +1,20 @@
+[Unit]
+Description={{ project_display_name }}
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USER
+WorkingDirectory=/path/to/{{ project_name }}
+Environment="PATH=/path/to/{{ project_name }}/.venv/bin"
+ExecStart=/path/to/{{ project_name }}/.venv/bin/{{ project_name }}
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier={{ project_name }}
+
+[Install]
+WantedBy=multi-user.target

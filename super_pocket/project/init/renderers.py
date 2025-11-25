@@ -4,7 +4,7 @@ Template rendering with Jinja2.
 Provides context building and template rendering functionality.
 """
 from pathlib import Path
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Template
 
 
 def build_context(

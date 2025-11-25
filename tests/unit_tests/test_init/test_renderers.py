@@ -1,6 +1,7 @@
 """Tests for template rendering."""
 import pytest
 import tempfile
+from pathlib import Path
 from super_pocket.project.init.renderers import build_context
 
 
@@ -56,3 +57,21 @@ def main():
     context = {"features": {"testing": True}}
     result = render_template_string(template, context)
     assert "import pytest" in result
+
+
+def test_render_template_file():
+    """Test rendering a template file."""
+    from super_pocket.project.init.renderers import render_template_file
+
+    # Create a temporary template file
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.jinja', delete=False) as f:
+        f.write("Project: {{ project_name }}\nVersion: {{ version }}")
+        template_path = Path(f.name)
+
+    try:
+        context = {"project_name": "test_project", "version": "1.0.0"}
+        result = render_template_file(template_path, context)
+        assert "Project: test_project" in result
+        assert "Version: 1.0.0" in result
+    finally:
+        template_path.unlink()  # Clean up temp file

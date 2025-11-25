@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+{% if tool_choices.docs_tool in ['sphinx', 'mkdocs'] -%}
+venv/
+env/
+ENV/
+.venv
+{% endif %}
+
+{% if tool_choices.docs_tool == 'sphinx' -%}
+# Sphinx
+docs/build/
+docs/source/_autosummary/
+docs/source/_static/
+docs/source/_templates/
+{%- elif tool_choices.docs_tool == 'mkdocs' -%}
+# MkDocs
+site/
+{%- elif tool_choices.docs_tool == 'docusaurus' -%}
+# Docusaurus
+node_modules/
+build/
+.docusaurus/
+.cache-loader/
+{% endif %}
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp

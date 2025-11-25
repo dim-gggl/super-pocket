@@ -1,0 +1,55 @@
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+version: 2
+
+{% if tool_choices.docs_tool == 'sphinx' -%}
+sphinx:
+  configuration: docs/source/conf.py
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+
+python:
+  install:
+{% if tool_choices.package_manager == 'pip' -%}
+    - requirements: requirements.txt
+{%- elif tool_choices.package_manager == 'poetry' -%}
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+{%- elif tool_choices.package_manager == 'uv' -%}
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+{%- endif %}
+
+{%- elif tool_choices.docs_tool == 'mkdocs' -%}
+mkdocs:
+  configuration: mkdocs.yml
+
+build:
+  os: ubuntu-22.04
+  tools:
+    python: "3.11"
+
+python:
+  install:
+{% if tool_choices.package_manager == 'pip' -%}
+    - requirements: requirements.txt
+{%- elif tool_choices.package_manager == 'poetry' -%}
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+{%- elif tool_choices.package_manager == 'uv' -%}
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
+{%- endif %}
+{%- endif %}

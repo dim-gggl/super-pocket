@@ -1,0 +1,48 @@
+Installation
+============
+
+This guide covers different ways to install {{ project_name }}.
+
+Using pip
+---------
+
+The simplest way to install {{ project_name }} is using pip::
+
+    pip install {{ project_name }}
+
+From Source
+-----------
+
+To install from source::
+
+    git clone https://github.com/yourusername/{{ project_name }}.git
+    cd {{ project_name }}
+    pip install -e .
+
+Development Installation
+------------------------
+
+If you want to contribute to {{ project_name }}, install it in development mode::
+
+    git clone https://github.com/yourusername/{{ project_name }}.git
+    cd {{ project_name }}
+    pip install -e ".[dev]"
+
+This will install all development dependencies including testing tools.
+
+Requirements
+------------
+
+{{ project_name }} requires:
+
+- Python {{ python_version }}
+- Add your dependencies here
+
+Verifying Installation
+----------------------
+
+To verify that {{ project_name }} is installed correctly::
+
+    python -c "import {{ project_name }}; print({{ project_name }}.__version__)"
+
+This should print the version number without any errors.

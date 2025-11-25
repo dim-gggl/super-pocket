@@ -1,0 +1,46 @@
+# Welcome to {{ project_name }}
+
+{{ description }}
+
+## Overview
+
+{{ project_name }} provides a comprehensive solution for your documentation needs.
+
+## Quick Links
+
+- [Getting Started](getting-started.md) - Start here if you're new
+- [Installation](installation.md) - How to install {{ project_name }}
+- [Usage](usage.md) - Learn how to use {{ project_name }}
+{% if features.api_docs -%}
+- [API Reference](api.md) - Complete API documentation
+{% endif -%}
+- [Contributing](contributing.md) - Help improve {{ project_name }}
+
+## Features
+
+- Easy to use
+- Well documented
+{% if features.api_docs -%}
+- Auto-generated API docs
+{% endif -%}
+{% if features.versioning -%}
+- Multi-version support
+{% endif -%}
+{% if features.search -%}
+- Full-text search
+{% endif -%}
+{% if features.i18n -%}
+- Internationalization ready
+{% endif -%}
+
+## Getting Help
+
+If you need help, check out:
+
+- The [Usage Guide](usage.md)
+- [Contributing Guidelines](contributing.md)
+- GitHub Issues
+
+## License
+
+Add your license information here.

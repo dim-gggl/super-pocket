@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "{{ project_name }}-docs"
+version = "0.1.0"
+description = "{{ description }}"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "{{ python_version }}"
+{% if tool_choices.docs_tool == 'sphinx' -%}
+sphinx = "^7.0.0"
+{%- if tool_choices.theme == 'readthedocs' %}
+sphinx-rtd-theme = "^2.0.0"
+{%- elif tool_choices.theme == 'book' %}
+sphinx-book-theme = "^1.0.0"
+{%- endif %}
+{%- if features.api_docs %}
+sphinx-autodoc-typehints = "^1.24.0"
+{%- endif %}
+{%- if features.versioning %}
+sphinx-multiversion = "^0.2.4"
+{%- endif %}
+{%- elif tool_choices.docs_tool == 'mkdocs' -%}
+mkdocs = "^1.5.0"
+{%- if tool_choices.theme == 'material' %}
+mkdocs-material = "^9.0.0"
+{%- elif tool_choices.theme == 'readthedocs_mkdocs' %}
+mkdocs-readthedocs = "^0.1.0"
+{%- endif %}
+{%- if features.api_docs %}
+mkdocstrings = {extras = ["python"], version = "^0.24.0"}
+{%- endif %}
+{%- if features.i18n %}
+mkdocs-static-i18n = "^1.0.0"
+{%- endif %}
+{%- if features.versioning %}
+mike = "^2.0.0"
+{%- endif %}
+{%- endif %}
+
+[tool.poetry.group.dev.dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

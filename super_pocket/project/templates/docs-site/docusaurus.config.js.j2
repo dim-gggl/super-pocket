@@ -1,0 +1,119 @@
+// @ts-check
+// Note: type annotations allow type checking and IDEs autocompletion
+
+const lightCodeTheme = require('prism-react-renderer/themes/github');
+const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
+  title: '{{ project_name }}',
+  tagline: '{{ description }}',
+  favicon: 'img/favicon.ico',
+
+  url: 'https://yourusername.github.io',
+  baseUrl: '/{{ project_name }}/',
+
+  organizationName: 'yourusername',
+  projectName: '{{ project_name }}',
+
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
+
+{% if features.i18n -%}
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en'],
+  },
+{% endif %}
+
+  presets: [
+    [
+      'classic',
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
+        docs: {
+          sidebarPath: require.resolve('./sidebars.js'),
+          editUrl: 'https://github.com/yourusername/{{ project_name }}/tree/main/',
+        },
+        blog: false,
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
+      }),
+    ],
+  ],
+
+  themeConfig:
+    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    ({
+      navbar: {
+        title: '{{ project_name }}',
+        logo: {
+          alt: '{{ project_name }} Logo',
+          src: 'img/logo.svg',
+        },
+        items: [
+          {
+            type: 'doc',
+            docId: 'intro',
+            position: 'left',
+            label: 'Documentation',
+          },
+{% if features.deploy_github -%}
+          {
+            href: 'https://github.com/yourusername/{{ project_name }}',
+            label: 'GitHub',
+            position: 'right',
+          },
+{% endif -%}
+{% if features.versioning -%}
+          {
+            type: 'docsVersionDropdown',
+            position: 'right',
+          },
+{% endif -%}
+        ],
+      },
+      footer: {
+        style: 'dark',
+        links: [
+          {
+            title: 'Docs',
+            items: [
+              {
+                label: 'Getting Started',
+                to: '/docs/getting-started',
+              },
+              {
+                label: 'Usage',
+                to: '/docs/usage',
+              },
+            ],
+          },
+          {
+            title: 'Community',
+            items: [
+              {
+                label: 'GitHub',
+                href: 'https://github.com/yourusername/{{ project_name }}',
+              },
+            ],
+          },
+        ],
+        copyright: `Copyright © ${new Date().getFullYear()} {{ project_name }} Team. Built with Docusaurus.`,
+      },
+      prism: {
+        theme: lightCodeTheme,
+        darkTheme: darkCodeTheme,
+      },
+{% if features.search -%}
+      algolia: {
+        appId: 'YOUR_APP_ID',
+        apiKey: 'YOUR_SEARCH_API_KEY',
+        indexName: '{{ project_name }}',
+      },
+{% endif -%}
+    }),
+};
+
+module.exports = config;

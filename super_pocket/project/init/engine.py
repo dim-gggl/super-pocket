@@ -89,6 +89,11 @@ class ProjectGenerator:
 
             # Render path template
             rendered_path = render_template_string(item.path, context)
+
+            # Skip if path is empty (from conditional template)
+            if not rendered_path or rendered_path.isspace():
+                continue
+
             full_path = self.output_path / rendered_path
 
             if item.type == "directory":
@@ -98,6 +103,11 @@ class ProjectGenerator:
                 if item.template:
                     # Render template field name (in case it has variables)
                     rendered_template = render_template_string(item.template, context)
+
+                    # Skip if template is empty (from conditional template)
+                    if not rendered_template or rendered_template.isspace():
+                        continue
+
                     # Render from template file
                     template_path = self.template_base_path / self.manifest.name / rendered_template
                     if template_path.exists():

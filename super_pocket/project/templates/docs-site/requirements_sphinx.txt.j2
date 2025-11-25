@@ -1,0 +1,12 @@
+sphinx>=7.0.0
+{% if tool_choices.theme == 'readthedocs' -%}
+sphinx-rtd-theme>=2.0.0
+{%- elif tool_choices.theme == 'book' -%}
+sphinx-book-theme>=1.0.0
+{%- endif %}
+{% if features.api_docs -%}
+sphinx-autodoc-typehints>=1.24.0
+{%- endif %}
+{% if features.versioning -%}
+sphinx-multiversion>=0.2.4
+{%- endif %}

@@ -1,0 +1,125 @@
+---
+sidebar_position: 5
+---
+
+# Contributing
+
+Thank you for your interest in contributing to {{ project_name }}!
+
+## Getting Started
+
+1. Fork the repository on GitHub
+2. Clone your fork locally:
+
+```bash
+git clone https://github.com/yourusername/{{ project_name }}.git
+cd {{ project_name }}
+```
+
+3. Create a new branch for your changes:
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+4. Install development dependencies:
+
+```bash
+pip install -e ".[dev]"
+```
+
+## Development Workflow
+
+### Code Style
+
+We follow PEP 8 style guidelines. Run the linter before submitting:
+
+```bash
+# Run linting
+ruff check .
+
+# Run formatting
+ruff format .
+```
+
+### Testing
+
+All changes should include tests. Run the test suite:
+
+```bash
+pytest tests/
+
+# With coverage
+pytest --cov={{ project_name }} tests/
+```
+
+### Documentation
+
+Update documentation for any new features or changes:
+
+```bash
+cd docs
+npm start
+
+# View the docs at http://localhost:3000/
+```
+
+## Submitting Changes
+
+1. Commit your changes with a clear message:
+
+```bash
+git commit -m "Add feature: description of your changes"
+```
+
+2. Push to your fork:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+3. Open a Pull Request on GitHub
+
+## Pull Request Guidelines
+
+- Include a clear description of the changes
+- Reference any related issues
+- Ensure all tests pass
+- Update documentation as needed
+- Follow the existing code style
+
+## Code Review Process
+
+1. A maintainer will review your PR
+2. Address any feedback or requested changes
+3. Once approved, your PR will be merged
+
+## Reporting Bugs
+
+When reporting bugs, please include:
+
+- Python version
+- {{ project_name }} version
+- Steps to reproduce
+- Expected behavior
+- Actual behavior
+- Error messages or logs
+
+## Suggesting Features
+
+We welcome feature suggestions! Please:
+
+1. Check if the feature has already been suggested
+2. Describe the use case
+3. Explain how it would work
+4. Consider alternative approaches
+
+## Questions?
+
+If you have questions, feel free to:
+
+- Open an issue on GitHub
+- Start a discussion
+- Reach out to the maintainers
+
+Thank you for contributing!

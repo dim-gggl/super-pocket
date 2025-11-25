@@ -1,0 +1,37 @@
+Welcome to {{ project_name }}'s documentation!
+{{ '=' * (project_name|length + 31) }}
+
+{{ description }}
+
+Contents
+--------
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Getting Started
+
+   getting-started
+   installation
+   usage
+
+{% if features.api_docs -%}
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+
+   api
+{% endif %}
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Development
+
+   contributing
+   changelog
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,0 +1,222 @@
+name: docs-site
+display_name: "Documentation Site"
+description: "Documentation website with Sphinx, MkDocs, or Docusaurus"
+
+python_version: ">=3.11"
+
+tool_choices:
+  docs_tool:
+    prompt: "Which documentation tool?"
+    default: sphinx
+    options:
+      - name: sphinx
+        description: "Sphinx - Python documentation generator with autodoc"
+      - name: mkdocs
+        description: "MkDocs - Fast, simple documentation from Markdown"
+      - name: docusaurus
+        description: "Docusaurus - Modern documentation website (React-based)"
+
+  theme:
+    prompt: "Which theme?"
+    default: readthedocs
+    options:
+      - name: readthedocs
+        description: "Read the Docs theme (Sphinx)"
+      - name: alabaster
+        description: "Alabaster theme (Sphinx)"
+      - name: book
+        description: "Book theme (Sphinx)"
+      - name: material
+        description: "Material theme (MkDocs)"
+      - name: readthedocs_mkdocs
+        description: "ReadTheDocs theme (MkDocs)"
+      - name: classic
+        description: "Classic theme (Docusaurus)"
+
+  package_manager:
+    prompt: "Which package manager?"
+    default: uv
+    options:
+      - name: uv
+        description: "uv - blazingly fast (recommended)"
+      - name: poetry
+        description: "poetry - mature, feature-rich"
+      - name: pip
+        description: "pip + requirements.txt - simple, universal"
+
+features:
+  - name: api_docs
+    description: "Auto-generate API documentation from docstrings"
+    default: true
+
+  - name: versioning
+    description: "Multi-version documentation support"
+    default: false
+
+  - name: search
+    description: "Full-text search functionality"
+    default: true
+
+  - name: i18n
+    description: "Internationalization support"
+    default: false
+
+  - name: deploy_github
+    description: "GitHub Pages deployment config"
+    default: true
+
+structure:
+  # Root README
+  - path: "README.md"
+    template: "README.md.j2"
+
+  - path: ".gitignore"
+    template: "gitignore.j2"
+
+  # Sphinx structure
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/conf.py{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}conf_sphinx.py.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/index.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}index_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/getting-started.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}getting-started_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/installation.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}installation_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/usage.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}usage_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' and features.api_docs %}docs/source/api.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' and features.api_docs %}api_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/contributing.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}contributing_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/source/changelog.rst{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}changelog_sphinx.rst.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/Makefile{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}Makefile.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' %}docs/make.bat{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}make.bat.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' and tool_choices.package_manager == 'pip' %}requirements.txt{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' and tool_choices.package_manager == 'pip' %}requirements_sphinx.txt.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'sphinx' and tool_choices.package_manager != 'pip' %}pyproject.toml{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'sphinx' %}pyproject_{{ tool_choices.package_manager }}.toml.j2{% endif %}"
+
+  # MkDocs structure
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}mkdocs.yml{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}mkdocs.yml.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs/index.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}index_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs/getting-started.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}getting-started_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs/installation.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}installation_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs/usage.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}usage_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' and features.api_docs %}docs/api.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' and features.api_docs %}api_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs/contributing.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}contributing_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' %}docs/changelog.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}changelog_mkdocs.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' and tool_choices.package_manager == 'pip' %}requirements.txt{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' and tool_choices.package_manager == 'pip' %}requirements_mkdocs.txt.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'mkdocs' and tool_choices.package_manager != 'pip' %}pyproject.toml{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'mkdocs' %}pyproject_{{ tool_choices.package_manager }}.toml.j2{% endif %}"
+
+  # Docusaurus structure
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docusaurus.config.js{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}docusaurus.config.js.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}sidebars.js{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}sidebars.js.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}package.json{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}package.json.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs/intro.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}index_docusaurus.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs/getting-started.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}getting-started_docusaurus.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs/installation.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}installation_docusaurus.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs/usage.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}usage_docusaurus.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs/contributing.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}contributing_docusaurus.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}docs/changelog.md{% endif %}"
+    template: "{% if tool_choices.docs_tool == 'docusaurus' %}changelog_docusaurus.md.j2{% endif %}"
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' and features.i18n %}i18n{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' and features.i18n %}i18n/en{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}static{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}static/img{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}src{% endif %}"
+    type: directory
+
+  - path: "{% if tool_choices.docs_tool == 'docusaurus' %}src/pages{% endif %}"
+    type: directory
+
+  # GitHub Actions workflow
+  - path: ".github"
+    type: directory
+    condition: "features.deploy_github"
+
+  - path: ".github/workflows"
+    type: directory
+    condition: "features.deploy_github"
+
+  - path: ".github/workflows/deploy.yml"
+    template: "github_pages.yml.j2"
+    condition: "features.deploy_github"
+
+  # Read the Docs config
+  - path: "{% if tool_choices.docs_tool in ['sphinx', 'mkdocs'] %}.readthedocs.yml{% endif %}"
+    template: "{% if tool_choices.docs_tool in ['sphinx', 'mkdocs'] %}readthedocs.yml.j2{% endif %}"
+
+post_generation:
+  - action: git_init
+
+  - action: display_next_steps

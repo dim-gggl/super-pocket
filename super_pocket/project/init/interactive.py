@@ -8,7 +8,6 @@ from typing import Tuple
 from rich.console import Console
 from rich.prompt import Prompt, Confirm
 from rich.panel import Panel
-from rich.table import Table
 
 from .manifest import TemplateManifest
 
@@ -90,15 +89,13 @@ def prompt_tool_choices(manifest: TemplateManifest) -> dict[str, str]:
             console.print(f"  {i}. {option.name} - {option.description}{default_marker}")
 
         # Prompt for selection
-        while True:
-            selection = Prompt.ask(
-                "Select option",
-                choices=[str(i) for i in range(1, len(choice.options) + 1)],
-                default="1"
-            )
-            idx = int(selection) - 1
-            selected = choice.options[idx].name
-            break
+        selection = Prompt.ask(
+            "Select option",
+            choices=[str(i) for i in range(1, len(choice.options) + 1)],
+            default="1"
+        )
+        idx = int(selection) - 1
+        selected = choice.options[idx].name
 
         selections[key] = selected
 

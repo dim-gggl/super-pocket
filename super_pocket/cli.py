@@ -21,11 +21,12 @@ from super_pocket.templates_and_cheatsheets.cli import view_item
 from super_pocket.templates_and_cheatsheets.cli import copy_item
 from super_pocket.templates_and_cheatsheets.cli import init_agents
 from super_pocket.pdf.converter import pdf_convert
-from super_pocket.web.favicon import favicon_convert
+from super_pocket.web.favicon import convert_to_favicon as favicon_convert
 from super_pocket.project.req_to_date import run_req_to_date
 from super_pocket.readme.cli import readme_cli
 from super_pocket.web.favicon import favicon
 from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_results
+from super_pocket.project.init.cli import init_group
 
 
 
@@ -198,6 +199,7 @@ def req_to_date(packages: tuple[str, ...]):
         ),
     )
 
+project_group.add_command(init_group)
 # ==================== Templates Commands ====================
 @cli.group(name="templates")
 def templates_group():

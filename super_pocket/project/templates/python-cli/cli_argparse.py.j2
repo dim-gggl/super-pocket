@@ -1,0 +1,39 @@
+"""Main CLI module for {{ project_display_name }}."""
+import argparse
+{% if features.rich_output %}
+from rich.console import Console
+
+console = Console()
+{% endif %}
+
+
+def hello(name: str):
+    """Say hello to someone."""
+    {% if features.rich_output %}
+    console.print(f"[bold green]Hello {name}![/bold green]")
+    {% else %}
+    print(f"Hello {name}!")
+    {% endif %}
+
+
+def main():
+    """Entry point for the CLI."""
+    parser = argparse.ArgumentParser(description="{{ description }}")
+    parser.add_argument('--version', action='version', version='0.1.0')
+
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+    # Hello command
+    hello_parser = subparsers.add_parser('hello', help='Say hello to someone')
+    hello_parser.add_argument('--name', '-n', default='World', help='Name to greet')
+
+    args = parser.parse_args()
+
+    if args.command == 'hello':
+        hello(args.name)
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

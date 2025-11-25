@@ -1,0 +1,32 @@
+"""Main CLI module for {{ project_display_name }}."""
+import click
+from rich.console import Console
+
+console = Console()
+
+
+@click.group()
+@click.version_option(version="0.1.0")
+def cli():
+    """{{ description }}"""
+    pass
+
+
+@cli.command()
+@click.option('--name', '-n', default='World', help='Name to greet')
+def hello(name: str):
+    """Say hello to someone."""
+    {% if features.rich_output %}
+    console.print(f"[bold green]Hello {name}![/bold green]")
+    {% else %}
+    click.echo(f"Hello {name}!")
+    {% endif %}
+
+
+def main():
+    """Entry point for the CLI."""
+    cli()
+
+
+if __name__ == "__main__":
+    main()

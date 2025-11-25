@@ -1,0 +1,28 @@
+"""Main CLI module for {{ project_display_name }}."""
+import typer
+{% if features.rich_output %}
+from rich.console import Console
+
+console = Console()
+{% endif %}
+
+app = typer.Typer()
+
+
+@app.command()
+def hello(name: str = typer.Option("World", "--name", "-n", help="Name to greet")):
+    """Say hello to someone."""
+    {% if features.rich_output %}
+    console.print(f"[bold green]Hello {name}![/bold green]")
+    {% else %}
+    typer.echo(f"Hello {name}!")
+    {% endif %}
+
+
+def main():
+    """Entry point for the CLI."""
+    app()
+
+
+if __name__ == "__main__":
+    main()

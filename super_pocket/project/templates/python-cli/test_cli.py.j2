@@ -1,0 +1,31 @@
+"""Tests for {{ project_name }} CLI."""
+import pytest
+from {{ project_name }}.cli import cli
+{% if tool_choices.cli_framework == "click" %}
+from click.testing import CliRunner
+{% elif tool_choices.cli_framework == "typer" %}
+from typer.testing import CliRunner
+{% endif %}
+
+
+{% if tool_choices.cli_framework in ["click", "typer"] %}
+def test_hello_default():
+    """Test hello command with default name."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ['hello'])
+    assert result.exit_code == 0
+    assert 'Hello World' in result.output
+
+
+def test_hello_custom_name():
+    """Test hello command with custom name."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ['hello', '--name', 'Alice'])
+    assert result.exit_code == 0
+    assert 'Hello Alice' in result.output
+{% else %}
+def test_placeholder():
+    """Placeholder test for argparse CLI."""
+    # Add tests for argparse CLI
+    assert True
+{% endif %}

@@ -53,10 +53,10 @@ structure:
     type: directory
 
   - path: "src/{{ project_name }}/__init__.py"
-    template: "python-cli/__init__.py.j2"
+    template: "__init__.py.j2"
 
   - path: "src/{{ project_name }}/cli.py"
-    template: "python-cli/cli_{{ tool_choices.cli_framework }}.py.j2"
+    template: "cli_{{ tool_choices.cli_framework }}.py.j2"
 
   - path: "tests"
     type: directory
@@ -66,24 +66,24 @@ structure:
     condition: "features.testing"
 
   - path: "tests/test_cli.py"
-    template: "python-cli/test_cli.py.j2"
+    template: "test_cli.py.j2"
     condition: "features.testing"
 
   - path: "pyproject.toml"
-    template: "python-cli/pyproject_{{ tool_choices.package_manager }}.toml.j2"
+    template: "pyproject_{{ tool_choices.package_manager }}.toml.j2"
 
   - path: "README.md"
-    template: "python-cli/README.md.j2"
+    template: "README.md.j2"
 
   - path: ".gitignore"
-    template: "python-cli/gitignore.j2"
+    template: "gitignore.j2"
 
   - path: ".github/workflows/ci.yml"
-    template: "python-cli/github_workflow.yml.j2"
+    template: "github_workflow.yml.j2"
     condition: "features.github_actions"
 
   - path: "Dockerfile"
-    template: "python-cli/Dockerfile.j2"
+    template: "Dockerfile.j2"
     condition: "features.docker"
 
 post_generation:

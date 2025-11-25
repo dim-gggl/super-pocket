@@ -96,8 +96,10 @@ class ProjectGenerator:
                 results.append(result)
             else:  # file
                 if item.template:
+                    # Render template field name (in case it has variables)
+                    rendered_template = render_template_string(item.template, context)
                     # Render from template file
-                    template_path = self.template_base_path / self.manifest.name / item.template
+                    template_path = self.template_base_path / self.manifest.name / rendered_template
                     if template_path.exists():
                         content = render_template_file(template_path, context)
                     else:

@@ -1,0 +1,39 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy dependency files
+{% if tool_choices.package_manager == "poetry" %}
+COPY pyproject.toml poetry.lock* /app/
+RUN pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-interaction --no-ansi
+{% elif tool_choices.package_manager == "pip" %}
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+{% else %}
+COPY pyproject.toml /app/
+RUN pip install uv && \
+    uv pip install --system -e .
+{% endif %}
+
+# Copy application code
+COPY src/ /app/src/
+{% if features.migrations %}
+COPY alembic/ /app/alembic/
+COPY alembic.ini /app/
+{% endif %}
+
+# Set Python path
+ENV PYTHONPATH=/app/src
+
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["uvicorn", "{{ project_name }}.main:app", "--host", "0.0.0.0", "--port", "8000"]

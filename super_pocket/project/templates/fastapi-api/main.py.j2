@@ -1,0 +1,52 @@
+"""{{ project_display_name }} - Main FastAPI application"""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+{% if features.database %}
+from {{ project_name }}.database import engine
+from {{ project_name }}.models import Base
+{% endif %}
+{% if features.auth %}
+from {{ project_name }}.auth import router as auth_router
+{% endif %}
+from {{ project_name }}.routers import items
+
+app = FastAPI(
+    title="{{ project_display_name }}",
+    description="{{ description }}",
+    version="0.1.0",
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+{% if features.database %}
+# Create database tables
+@app.on_event("startup")
+async def startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+{% endif %}
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "version": "0.1.0",
+    }
+
+{% if features.auth %}
+# Authentication routes
+app.include_router(auth_router, prefix="/auth", tags=["authentication"])
+
+{% endif %}
+# API routes
+app.include_router(items.router, prefix="/api/v1", tags=["items"])

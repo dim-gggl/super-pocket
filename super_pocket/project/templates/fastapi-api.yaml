@@ -1,0 +1,152 @@
+name: fastapi-api
+display_name: "FastAPI REST API"
+description: "REST API with FastAPI, SQLAlchemy, and async support"
+
+python_version: ">=3.11"
+
+tool_choices:
+  package_manager:
+    prompt: "Which package manager?"
+    default: uv
+    options:
+      - name: uv
+        description: "uv - blazingly fast (recommended)"
+      - name: poetry
+        description: "poetry - mature, feature-rich"
+      - name: pip
+        description: "pip + requirements.txt - simple, universal"
+
+features:
+  - name: database
+    description: "SQLAlchemy ORM with async support"
+    default: true
+
+  - name: migrations
+    description: "Alembic migrations for database schema"
+    default: true
+
+  - name: auth
+    description: "JWT authentication with bearer tokens"
+    default: false
+
+  - name: docker
+    description: "Docker + docker-compose setup"
+    default: false
+
+  - name: testing
+    description: "Testing setup with pytest and httpx"
+    default: true
+
+  - name: github_actions
+    description: "GitHub Actions CI/CD workflow"
+    default: false
+
+  - name: pip_requirements
+    description: "Generate requirements.txt for pip"
+    default: false
+
+structure:
+  - path: "src/{{ project_name }}"
+    type: directory
+
+  - path: "src/{{ project_name }}/__init__.py"
+    template: "__init__.py.j2"
+
+  - path: "src/{{ project_name }}/main.py"
+    template: "main.py.j2"
+
+  - path: "src/{{ project_name }}/schemas.py"
+    template: "schemas.py.j2"
+
+  - path: "src/{{ project_name }}/routers"
+    type: directory
+
+  - path: "src/{{ project_name }}/routers/__init__.py"
+
+  - path: "src/{{ project_name }}/routers/items.py"
+    template: "router_example.py.j2"
+
+  - path: "src/{{ project_name }}/models.py"
+    template: "models.py.j2"
+    condition: "features.database"
+
+  - path: "src/{{ project_name }}/database.py"
+    template: "database.py.j2"
+    condition: "features.database"
+
+  - path: "src/{{ project_name }}/auth.py"
+    template: "auth.py.j2"
+    condition: "features.auth"
+
+  - path: "alembic"
+    type: directory
+    condition: "features.migrations"
+
+  - path: "alembic/env.py"
+    template: "alembic_env.py.j2"
+    condition: "features.migrations"
+
+  - path: "alembic/script.py.mako"
+    template: "alembic_script.mako.j2"
+    condition: "features.migrations"
+
+  - path: "alembic.ini"
+    template: "alembic.ini.j2"
+    condition: "features.migrations"
+
+  - path: "tests"
+    type: directory
+    condition: "features.testing"
+
+  - path: "tests/__init__.py"
+    condition: "features.testing"
+
+  - path: "tests/test_main.py"
+    template: "test_main.py.j2"
+    condition: "features.testing"
+
+  - path: "tests/conftest.py"
+    template: "conftest.py.j2"
+    condition: "features.testing"
+
+  - path: "pyproject.toml"
+    template: "pyproject_{{ tool_choices.package_manager }}.toml.j2"
+
+  - path: "requirements.txt"
+    template: "requirements.txt.j2"
+    condition: "features.pip_requirements"
+
+  - path: "README.md"
+    template: "README.md.j2"
+
+  - path: ".gitignore"
+    template: "gitignore.j2"
+
+  - path: ".env.example"
+    template: "env.example.j2"
+
+  - path: ".github/workflows/ci.yml"
+    template: "github_workflow.yml.j2"
+    condition: "features.github_actions"
+
+  - path: "Dockerfile"
+    template: "Dockerfile.j2"
+    condition: "features.docker"
+
+  - path: "docker-compose.yml"
+    template: "docker-compose.yml.j2"
+    condition: "features.docker"
+
+post_generation:
+  - action: git_init
+
+  - action: create_venv
+    params:
+      package_manager: "{{ tool_choices.package_manager }}"
+
+  - action: install_dependencies
+    params:
+      package_manager: "{{ tool_choices.package_manager }}"
+      dev: true
+
+  - action: display_next_steps

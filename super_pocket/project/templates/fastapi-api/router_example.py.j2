@@ -1,0 +1,192 @@
+"""{{ project_display_name }} - Items router"""
+
+from fastapi import APIRouter, HTTPException{% if features.database %}, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from {{ project_name }}.database import get_db
+from {{ project_name }}.models import Item as ItemModel{% endif %}
+from {{ project_name }}.schemas import Item, ItemCreate, ItemUpdate
+from typing import List
+
+router = APIRouter()
+
+{% if features.database %}
+@router.get("/items", response_model=List[Item])
+async def list_items(
+    skip: int = 0,
+    limit: int = 100,
+    db: AsyncSession = Depends(get_db)
+):
+    """List all items with pagination"""
+    result = await db.execute(
+        select(ItemModel).offset(skip).limit(limit)
+    )
+    items = result.scalars().all()
+    return items
+
+
+@router.post("/items", response_model=Item, status_code=201)
+async def create_item(
+    item: ItemCreate,
+    db: AsyncSession = Depends(get_db)
+):
+    """Create a new item"""
+    db_item = ItemModel(**item.model_dump())
+    db.add(db_item)
+    await db.commit()
+    await db.refresh(db_item)
+    return db_item
+
+
+@router.get("/items/{item_id}", response_model=Item)
+async def get_item(
+    item_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    """Get a specific item by ID"""
+    result = await db.execute(
+        select(ItemModel).where(ItemModel.id == item_id)
+    )
+    item = result.scalar_one_or_none()
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
+
+@router.put("/items/{item_id}", response_model=Item)
+async def update_item(
+    item_id: int,
+    item_update: ItemUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    """Update an item"""
+    result = await db.execute(
+        select(ItemModel).where(ItemModel.id == item_id)
+    )
+    db_item = result.scalar_one_or_none()
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    update_data = item_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_item, field, value)
+
+    await db.commit()
+    await db.refresh(db_item)
+    return db_item
+
+
+@router.delete("/items/{item_id}", status_code=204)
+async def delete_item(
+    item_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    """Delete an item"""
+    result = await db.execute(
+        select(ItemModel).where(ItemModel.id == item_id)
+    )
+    item = result.scalar_one_or_none()
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    await db.delete(item)
+    await db.commit()
+    return None
+{% else %}
+# In-memory storage (for demonstration without database)
+_items_db = {}
+_next_id = 1
+
+
+@router.get("/items", response_model=List[Item])
+async def list_items(skip: int = 0, limit: int = 100):
+    """List all items with pagination"""
+    from datetime import datetime
+    items = [
+        Item(
+            id=item_id,
+            name=item["name"],
+            description=item.get("description"),
+            created_at=item.get("created_at", datetime.now()),
+            updated_at=item.get("updated_at", datetime.now()),
+        )
+        for item_id, item in list(_items_db.items())[skip:skip + limit]
+    ]
+    return items
+
+
+@router.post("/items", response_model=Item, status_code=201)
+async def create_item(item: ItemCreate):
+    """Create a new item"""
+    global _next_id
+    from datetime import datetime
+
+    item_id = _next_id
+    _next_id += 1
+
+    now = datetime.now()
+    _items_db[item_id] = {
+        "name": item.name,
+        "description": item.description,
+        "created_at": now,
+        "updated_at": now,
+    }
+
+    return Item(
+        id=item_id,
+        name=item.name,
+        description=item.description,
+        created_at=now,
+        updated_at=now,
+    )
+
+
+@router.get("/items/{item_id}", response_model=Item)
+async def get_item(item_id: int):
+    """Get a specific item by ID"""
+    if item_id not in _items_db:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    item_data = _items_db[item_id]
+    return Item(
+        id=item_id,
+        name=item_data["name"],
+        description=item_data.get("description"),
+        created_at=item_data["created_at"],
+        updated_at=item_data["updated_at"],
+    )
+
+
+@router.put("/items/{item_id}", response_model=Item)
+async def update_item(item_id: int, item_update: ItemUpdate):
+    """Update an item"""
+    if item_id not in _items_db:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    from datetime import datetime
+    item_data = _items_db[item_id]
+
+    update_data = item_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        item_data[field] = value
+
+    item_data["updated_at"] = datetime.now()
+
+    return Item(
+        id=item_id,
+        name=item_data["name"],
+        description=item_data.get("description"),
+        created_at=item_data["created_at"],
+        updated_at=item_data["updated_at"],
+    )
+
+
+@router.delete("/items/{item_id}", status_code=204)
+async def delete_item(item_id: int):
+    """Delete an item"""
+    if item_id not in _items_db:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    del _items_db[item_id]
+    return None
+{% endif %}

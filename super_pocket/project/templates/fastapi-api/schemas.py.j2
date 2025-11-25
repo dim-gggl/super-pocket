@@ -1,0 +1,58 @@
+"""{{ project_display_name }} - Pydantic schemas"""
+
+from pydantic import BaseModel, ConfigDict
+from datetime import datetime
+from typing import Optional
+
+
+class ItemBase(BaseModel):
+    """Base schema for Item"""
+    name: str
+    description: Optional[str] = None
+
+
+class ItemCreate(ItemBase):
+    """Schema for creating an Item"""
+    pass
+
+
+class ItemUpdate(BaseModel):
+    """Schema for updating an Item"""
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+
+class Item(ItemBase):
+    """Schema for Item with database fields"""
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+{% if features.auth %}
+
+class Token(BaseModel):
+    """Schema for JWT token response"""
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    """Schema for JWT token data"""
+    username: Optional[str] = None
+
+
+class User(BaseModel):
+    """Schema for User"""
+    username: str
+    email: Optional[str] = None
+    is_active: bool = True
+
+
+class UserCreate(BaseModel):
+    """Schema for creating a User"""
+    username: str
+    email: str
+    password: str
+{% endif %}

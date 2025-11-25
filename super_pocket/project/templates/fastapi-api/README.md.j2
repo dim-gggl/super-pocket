@@ -1,0 +1,166 @@
+# {{ project_display_name }}
+
+{{ description }}
+
+## Features
+
+- FastAPI framework with async support
+- Pydantic for data validation
+{% if features.database %}
+- SQLAlchemy ORM with async support
+{% endif %}
+{% if features.migrations %}
+- Alembic for database migrations
+{% endif %}
+{% if features.auth %}
+- JWT authentication
+{% endif %}
+{% if features.testing %}
+- pytest with async support
+{% endif %}
+{% if features.docker %}
+- Docker and docker-compose setup
+{% endif %}
+
+## Installation
+
+```bash
+{% if tool_choices.package_manager == "uv" %}
+# Create virtual environment
+uv venv
+
+# Install dependencies
+uv sync
+{% elif tool_choices.package_manager == "poetry" %}
+# Install dependencies
+poetry install
+{% else %}
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+{% endif %}
+```
+
+{% if features.docker %}
+## Running with Docker
+
+```bash
+# Build and start the services
+docker-compose up --build
+
+# The API will be available at http://localhost:8000
+```
+{% endif %}
+
+## Running the API
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+# Development server with auto-reload
+poetry run uvicorn {{ project_name }}.main:app --reload
+
+# Or with custom host and port
+poetry run uvicorn {{ project_name }}.main:app --host 0.0.0.0 --port 8000 --reload
+{% else %}
+# Development server with auto-reload
+uvicorn {{ project_name }}.main:app --reload
+
+# Or with custom host and port
+uvicorn {{ project_name }}.main:app --host 0.0.0.0 --port 8000 --reload
+{% endif %}
+```
+
+The API will be available at:
+- API: http://localhost:8000
+- Interactive API docs (Swagger): http://localhost:8000/docs
+- Alternative API docs (ReDoc): http://localhost:8000/redoc
+
+{% if features.migrations %}
+## Database Migrations
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+# Create a new migration
+poetry run alembic revision --autogenerate -m "description"
+
+# Apply migrations
+poetry run alembic upgrade head
+
+# Rollback migration
+poetry run alembic downgrade -1
+{% else %}
+# Create a new migration
+alembic revision --autogenerate -m "description"
+
+# Apply migrations
+alembic upgrade head
+
+# Rollback migration
+alembic downgrade -1
+{% endif %}
+```
+{% endif %}
+
+{% if features.testing %}
+## Testing
+
+```bash
+{% if tool_choices.package_manager == "poetry" %}
+# Run all tests
+poetry run pytest
+
+# Run with coverage
+poetry run pytest --cov={{ project_name }} --cov-report=html
+
+# Run specific test file
+poetry run pytest tests/test_main.py
+{% else %}
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov={{ project_name }} --cov-report=html
+
+# Run specific test file
+pytest tests/test_main.py
+{% endif %}
+```
+{% endif %}
+
+## API Endpoints
+
+- `GET /health` - Health check
+- `GET /api/v1/items` - List all items
+- `POST /api/v1/items` - Create a new item
+- `GET /api/v1/items/{id}` - Get a specific item
+- `PUT /api/v1/items/{id}` - Update an item
+- `DELETE /api/v1/items/{id}` - Delete an item
+{% if features.auth %}
+- `POST /auth/register` - Register a new user
+- `POST /auth/token` - Login and get access token
+- `GET /auth/me` - Get current user information
+{% endif %}
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+{% if features.database %}
+DATABASE_URL=sqlite+aiosqlite:///./{{ project_name }}.db
+{% endif %}
+{% if features.auth %}
+SECRET_KEY=your-secret-key-here
+{% endif %}
+```
+
+## Development
+
+This project was generated with [super-pocket](https://github.com/yourusername/super-pocket).
+
+## License
+
+MIT

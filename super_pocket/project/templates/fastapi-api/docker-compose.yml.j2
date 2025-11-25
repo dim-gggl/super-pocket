@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+{% if features.database %}
+      - DATABASE_URL=sqlite+aiosqlite:///./{{ project_name }}.db
+{% endif %}
+{% if features.auth %}
+      - SECRET_KEY=your-secret-key-change-in-production
+{% endif %}
+    volumes:
+      - ./src:/app/src
+{% if features.database %}
+      - ./data:/app/data
+{% endif %}
+    command: uvicorn {{ project_name }}.main:app --host 0.0.0.0 --port 8000 --reload
+
+{% if features.database and features.migrations %}
+volumes:
+  data:
+{% endif %}

@@ -12,6 +12,12 @@ from rich.table import Table
 from .manifest import parse_manifest
 from .engine import ProjectGenerator
 from .interactive import customize_interactively
+from .validation import (
+    validate_project_name,
+    validate_output_path,
+    validate_template_name,
+    ValidationError
+)
 
 
 console = Console()
@@ -125,14 +131,12 @@ def new(template_name: str, path: str | None, quick: bool):
     templates_dir = Path(__file__).parent.parent / "templates"
     manifest_path = templates_dir / f"{template_name}.yaml"
 
-    if not manifest_path.exists():
-        console.print(f"[red]Template not found: {template_name}[/red]")
-        console.print("\nAvailable templates:")
-        for template in list_templates(templates_dir):
-            console.print(f"  - {template['name']}")
-        return
-
     try:
+        # Validate template name
+        available_templates = list_templates(templates_dir)
+        available_names = [t['name'] for t in available_templates]
+        validate_template_name(template_name, available_names)
+
         # Load manifest
         manifest = parse_manifest(manifest_path)
 
@@ -141,15 +145,25 @@ def new(template_name: str, path: str | None, quick: bool):
             manifest, quick=quick
         )
 
+        # Validate project name
+        try:
+            validate_project_name(project_name)
+        except ValidationError as e:
+            console.print(f"[red]Invalid project name:[/red] {e}")
+            raise click.Abort()
+
         # Determine output path
         if path:
             output_path = Path(path)
         else:
             output_path = Path.cwd() / project_name
 
-        if output_path.exists() and any(output_path.iterdir()):
-            console.print(f"[red]Directory already exists and is not empty: {output_path}[/red]")
-            return
+        # Validate output path
+        try:
+            validate_output_path(output_path, allow_existing=False)
+        except ValidationError as e:
+            console.print(f"[red]Invalid output path:[/red] {e}")
+            raise click.Abort()
 
         # Generate project
         console.print(f"\n[bold]Generating project in {output_path}...[/bold]")
@@ -179,6 +193,9 @@ def new(template_name: str, path: str | None, quick: bool):
         console.print(f"\n[bold green]Project created successfully![/bold green]")
         console.print(f"Location: {output_path}")
 
+    except ValidationError as e:
+        console.print(f"\n[red]Validation Error:[/red] {e}")
+        raise click.Abort()
     except KeyboardInterrupt:
         console.print("\n[yellow]Cancelled[/yellow]")
     except Exception as e:

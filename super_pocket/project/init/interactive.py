@@ -10,6 +10,7 @@ from rich.prompt import Prompt, Confirm
 from rich.panel import Panel
 
 from .manifest import TemplateManifest
+from .validation import validate_project_name, ValidationError
 
 
 console = Console()
@@ -40,20 +41,27 @@ def get_default_selections(manifest: TemplateManifest) -> Tuple[dict[str, str], 
 
 def prompt_project_info() -> Tuple[str, str]:
     """
-    Prompt for project name and description.
+    Prompt for project name and description with validation.
 
     Returns:
         Tuple of (project_name, description)
     """
     console.print("\n[bold cyan]Project Information[/bold cyan]")
 
-    project_name = Prompt.ask(
-        "Project name (snake_case)",
-        default="my_project"
-    )
+    # Prompt for project name with validation loop
+    while True:
+        project_name = Prompt.ask(
+            "Project name (letters, numbers, underscores, hyphens)",
+            default="my_project"
+        )
 
-    # Validate project name (basic validation)
-    project_name = project_name.lower().replace("-", "_").replace(" ", "_")
+        # Try to validate the project name
+        try:
+            validate_project_name(project_name)
+            break  # Valid name, exit loop
+        except ValidationError as e:
+            console.print(f"[red]{e}[/red]")
+            console.print("Please try again with a valid project name.")
 
     description = Prompt.ask(
         "Project description",

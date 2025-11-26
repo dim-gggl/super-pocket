@@ -15,7 +15,7 @@ from super_pocket import __version__
 from super_pocket.web.job_search import main as job_search
 from super_pocket.markdown.renderer import markd
 from super_pocket.project.to_file import create_codebase_markdown
-from super_pocket.project.readme import run_readme_wizard
+# from super_pocket.project.readme import run_readme_wizard  # Module moved
 from super_pocket.templates_and_cheatsheets.cli import list_items
 from super_pocket.templates_and_cheatsheets.cli import view_item
 from super_pocket.templates_and_cheatsheets.cli import copy_item

@@ -110,13 +110,14 @@ def parse_manifest(manifest_path: Path) -> TemplateManifest:
             # Simple action name only
             post_gen.append(PostGenAction(action=action))
         elif isinstance(action, dict):
-            # Action with params
-            action_name = action.pop("action")
-            condition = action.pop("condition", None)
+            # Action with params - create a copy to avoid mutating input
+            action_copy = action.copy()
+            action_name = action_copy.pop("action")
+            condition = action_copy.pop("condition", None)
             post_gen.append(PostGenAction(
                 action=action_name,
                 condition=condition,
-                params=action
+                params=action_copy
             ))
 
     return TemplateManifest(

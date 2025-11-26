@@ -10,6 +10,9 @@ from typing import Any
 from .manifest import TemplateManifest, StructureItem
 from .renderers import build_context, render_template_file, render_template_string
 from .actions import ActionExecutor, ActionResult
+from rich.console import Console
+
+console = Console()
 
 
 class ProjectGenerator:
@@ -62,76 +65,129 @@ class ProjectGenerator:
 
     def generate(self) -> list[ActionResult]:
         """
-        Generate the project.
+        Generate the project with comprehensive error handling.
 
         Returns:
             List of action results
         """
         results = []
 
-        # Build context
-        context = build_context(
-            project_name=self.project_name,
-            description=self.description,
-            tool_choices=self.tool_selections,
-            features=self.feature_selections,
-            python_version=self.manifest.python_version
-        )
+        try:
+            # Build context
+            context = build_context(
+                project_name=self.project_name,
+                description=self.description,
+                tool_choices=self.tool_selections,
+                features=self.feature_selections,
+                python_version=self.manifest.python_version
+            )
 
-        # Create output directory
-        self.output_path.mkdir(parents=True, exist_ok=True)
+            # Create output directory
+            try:
+                self.output_path.mkdir(parents=True, exist_ok=True)
+            except Exception as e:
+                results.append(ActionResult(
+                    success=False,
+                    message=f"Failed to create output directory: {self.output_path}",
+                    error=str(e)
+                ))
+                return results
 
-        # Generate structure
-        for item in self.manifest.structure:
-            # Check condition if present
-            if item.condition and not self._evaluate_condition(item.condition, context):
-                continue
-
-            # Render path template
-            rendered_path = render_template_string(item.path, context)
-
-            # Skip if path is empty (from conditional template)
-            if not rendered_path or rendered_path.isspace():
-                continue
-
-            full_path = self.output_path / rendered_path
-
-            if item.type == "directory":
-                result = self.action_executor.create_directory(full_path)
-                results.append(result)
-            else:  # file
-                if item.template:
-                    # Render template field name (in case it has variables)
-                    rendered_template = render_template_string(item.template, context)
-
-                    # Skip if template is empty (from conditional template)
-                    if not rendered_template or rendered_template.isspace():
+            # Generate structure
+            for item in self.manifest.structure:
+                try:
+                    # Check condition if present
+                    if item.condition and not self._evaluate_condition(item.condition, context):
                         continue
 
-                    # Render from template file
-                    template_path = self.template_base_path / self.manifest.name / rendered_template
-                    if template_path.exists():
-                        content = render_template_file(template_path, context)
-                    else:
-                        # If template doesn't exist, create empty file
-                        content = ""
-                else:
-                    # Create empty file
-                    content = ""
+                    # Render path template
+                    rendered_path = render_template_string(item.path, context)
 
-                result = self.action_executor.write_file(full_path, content)
-                results.append(result)
+                    # Skip if path is empty (from conditional template)
+                    if not rendered_path or rendered_path.isspace():
+                        continue
 
-        # Execute post-generation actions
-        for action in self.manifest.post_generation:
-            # Check condition
-            if action.condition and not self._evaluate_condition(action.condition, context):
-                continue
+                    full_path = self.output_path / rendered_path
 
-            result = self._execute_action(action.action, action.params, context)
-            results.append(result)
+                    if item.type == "directory":
+                        result = self.action_executor.create_directory(full_path)
+                        results.append(result)
+                    else:  # file
+                        if item.template:
+                            # Render template field name (in case it has variables)
+                            rendered_template = render_template_string(item.template, context)
 
-        return results
+                            # Skip if template is empty (from conditional template)
+                            if not rendered_template or rendered_template.isspace():
+                                continue
+
+                            # Render from template file
+                            template_path = self.template_base_path / self.manifest.name / rendered_template
+                            if template_path.exists():
+                                content = render_template_file(template_path, context)
+                            else:
+                                # If template doesn't exist, log warning but continue
+                                console.print(f"[yellow]Warning: Template not found: {template_path}[/yellow]")
+                                content = ""
+                        else:
+                            # Create empty file
+                            content = ""
+
+                        result = self.action_executor.write_file(full_path, content)
+                        results.append(result)
+
+                    # Log error but continue with next items
+                    if not result.success:
+                        console.print(f"[yellow]Warning:[/yellow] {result.message}")
+                        if result.error:
+                            console.print(f"  Error details: {result.error}")
+
+                except Exception as e:
+                    error_result = ActionResult(
+                        success=False,
+                        message=f"Failed to process item {item.path}",
+                        error=str(e)
+                    )
+                    results.append(error_result)
+                    console.print(f"[yellow]Warning:[/yellow] {error_result.message}")
+                    # Continue with next items
+
+            # Execute post-generation actions
+            for action in self.manifest.post_generation:
+                try:
+                    # Check condition
+                    if action.condition and not self._evaluate_condition(action.condition, context):
+                        continue
+
+                    result = self._execute_action(action.action, action.params, context)
+                    results.append(result)
+
+                    # Log error but continue with next actions
+                    if not result.success:
+                        console.print(f"[yellow]Warning:[/yellow] {result.message}")
+                        if result.error:
+                            console.print(f"  Error details: {result.error}")
+
+                except Exception as e:
+                    error_result = ActionResult(
+                        success=False,
+                        message=f"Failed to execute action {action.action}",
+                        error=str(e)
+                    )
+                    results.append(error_result)
+                    console.print(f"[yellow]Warning:[/yellow] {error_result.message}")
+                    # Continue with next actions
+
+            return results
+
+        except Exception as e:
+            console.print(f"[red]Fatal error during generation:[/red] {e}")
+            results.append(ActionResult(
+                success=False,
+                message="Fatal error during project generation",
+                error=str(e)
+            ))
+            raise
 
     def _evaluate_condition(self, condition: str, context: dict) -> bool:
         """
@@ -182,7 +238,11 @@ class ProjectGenerator:
         elif action_name == "run_command":
             command = params.get("command", "")
             command = render_template_string(command, context)
-            return self.action_executor.run_command(command)
+            # Convert command string to list for safe execution
+            # Split by spaces but preserve quoted strings
+            import shlex
+            command_list = shlex.split(command) if isinstance(command, str) else command
+            return self.action_executor.run_command(command_list)
         elif action_name == "display_next_steps":
             return ActionResult(
                 success=True,

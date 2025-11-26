@@ -176,12 +176,12 @@ class ActionExecutor:
                 error=str(e)
             )
 
-    def run_command(self, command: str) -> ActionResult:
+    def run_command(self, command: list[str]) -> ActionResult:
         """
-        Run an arbitrary shell command.
+        Run a command safely without shell injection risk.
 
         Args:
-            command: Command to run
+            command: Command as list of strings (e.g., ["git", "init"])
 
         Returns:
             ActionResult with execution status
@@ -189,18 +189,18 @@ class ActionExecutor:
         try:
             subprocess.run(
                 command,
-                shell=True,
                 cwd=self.project_path,
                 check=True,
-                capture_output=True
+                capture_output=True,
+                text=True
             )
             return ActionResult(
                 success=True,
-                message=f"Executed: {command}"
+                message=f"Executed: {' '.join(command)}"
             )
         except subprocess.CalledProcessError as e:
             return ActionResult(
                 success=False,
-                message=f"Command failed: {command}",
+                message=f"Command failed: {' '.join(command)}",
                 error=str(e)
             )

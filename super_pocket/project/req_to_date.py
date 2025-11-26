@@ -54,11 +54,12 @@ def _read_requirements_file(path: Path) -> List[str]:
     for line in lines:
         if not line or line.startswith("#") or line.startswith("--"):
             continue
-        else:
-            specs.append(line)
+        spec = _normalize_dependency_spec(line)
+        specs.append(spec)
 
     if not specs:
-        raise ValueError(f"No valid package found in {path}")
+        console.print(f"No valid package found in {path}", style="bold", justify="center")
+        return []
 
     return specs
 
@@ -318,7 +319,6 @@ def print_req_to_date_results(
 
 @click.command(name="req-to-date")
 @click.argument("packages", nargs=-1)
-@click.argument("packages", nargs=-1)
 def req_to_date_cli(packages: tuple[str, ...]):
     """Commande standalone: accepte nom==version, liste avec virgules ou requirements.txt."""
     packages = _expand_spec_inputs(packages)
@@ -330,10 +330,12 @@ def req_to_date_cli(packages: tuple[str, ...]):
 
     for result in results:
         if result.current_version != result.latest_overall:
-            click.echo(
-                f"\033[31m{result.package} {result.current_version})\033[0m ---> "
-                f"\033[32m {result.latest_overall}\033[0m"
+            console.print(
+                f"{result.package} [red]{result.current_version}[/red] ---> "
+                f"[green]{result.latest_overall}[/green]",
+                style="bold",
+                justify="center",
             )
             count += 1
     if count == 0:
-        click.echo("Aucune mise à jour disponible")
+        console.print("\n\n\nEverything's up to date !\n\n\n", style="bold", justify="center")

@@ -4,15 +4,14 @@ PDF conversion tools.
 
 This module provides functionality to convert text and Markdown files to PDF format.
 """
-
 import os
 import sys
 from pathlib import Path
 from typing import Optional
 
-import click
+from super_pocket.settings import click
 from rich.console import Console
-
+from super_pocket.utils import print_error
 
 console = Console()
 
@@ -30,7 +29,8 @@ def convert_to_pdf(input_file: Path, output_file: Path) -> None:
         FileNotFoundError: If input file doesn't exist.
     """
     if not input_file.exists():
-        raise FileNotFoundError(f"Input file not found: {input_file}")
+        print_error(FileNotFoundError(f"Input file not found: {input_file}"))
+        raise
 
     file_extension = input_file.suffix.lower()
 
@@ -39,10 +39,11 @@ def convert_to_pdf(input_file: Path, output_file: Path) -> None:
     elif file_extension == '.md':
         convert_md_to_pdf(input_file, output_file)
     else:
-        raise ValueError(
+        print_error(ValueError(
             f"Unsupported file extension '{file_extension}'. "
             "Only .txt and .md are supported."
-        )
+        ))
+        raise
 
     console.print(
         f"[green]✓[/green] Successfully converted '{input_file}' to '{output_file}'",
@@ -67,16 +68,11 @@ def convert_txt_to_pdf(input_file: Path, output_file: Path) -> None:
     try:
         from fpdf import FPDF
     except ImportError:
-        console.print(
-            "[red]Error:[/red] fpdf2 is not installed. "
-            "Install it with: pip install fpdf2",
-            style="bold"
-        )
-        raise
+        print_error(ImportError("fpdf2 is not installed. Install it with: pip install fpdf2"))
 
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.set_font("Helvetica Neue", size=12)
 
     with open(input_file, 'r', encoding='utf-8') as f:
         for line in f:
@@ -101,12 +97,8 @@ def convert_md_to_pdf(input_file: Path, output_file: Path) -> None:
     """
     try:
         from markdown_pdf import Section, MarkdownPdf
-    except ImportError:
-        console.print(
-            "[red]Error:[/red] markdown-pdf is not installed. "
-            "Install it with: pip install markdown-pdf",
-            style="bold"
-        )
+    except ImportError as e:
+        print_error(e, custom=True, message="markdown-pdf is not installed. Install it with: pip install markdown-pdf")
         raise
 
     pdf = MarkdownPdf()
@@ -149,30 +141,28 @@ def pdf_convert(input_file: Path, output: Optional[Path]) -> None:
         conv-to-pdf document.md output.pdf
     """
     # Determine output path
-    if output is None:
+    if not output:
         output = input_file.with_suffix('.pdf')
 
     # Validate output extension
     if output.suffix.lower() != '.pdf':
-        console.print(
-            "[red]Error:[/red] Output file must have .pdf extension.",
-            style="bold"
-        )
-        raise click.Abort()
+        print_error(ValueError("Output file must have .pdf extension."))
+        raise
 
     try:
         convert_to_pdf(input_file, output)
     except FileNotFoundError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
+        print_error(e)
+        raise
     except ValueError as e:
-        console.print(f"[red]Error:[/red] {e}", style="bold")
-        raise click.Abort()
-    except ImportError:
-        raise click.Abort()
+        print_error(e)
+        raise
+    except ImportError as e:
+        print_error(e, custom=True, message="Import error")
+        raise
     except Exception as e:
-        console.print(f"[red]Unexpected error:[/red] {e}", style="bold")
-        raise click.Abort()
+        print_error(e)
+        raise
 
 
 def main():

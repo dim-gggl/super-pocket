@@ -1,6 +1,6 @@
 """CLI commands for README generator."""
 
-import click
+from super_pocket.settings import click
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table

@@ -12,10 +12,14 @@ Combines functionality from both fancy_md.py and markd.py.
 from pathlib import Path
 from typing import Optional
 
-import click
+from super_pocket.settings import click
 from rich.console import Console
 from rich.markdown import Markdown
 from rich import errors
+from rich.prompt import Prompt
+from super_pocket.utils import print_error
+
+
 
 
 def read_markdown_file(file_path: Path) -> str:
@@ -45,7 +49,8 @@ def read_markdown_file(file_path: Path) -> str:
     except PermissionError:
         raise
     except Exception as e:
-        raise IOError(f"Error reading file {file_path}: {e}")
+        print_error(e, custom=True, message=f"Error reading file {file_path}")
+        raise
 
 
 def render_markdown(content: str, console: Optional[Console] = None) -> None:
@@ -59,72 +64,49 @@ def render_markdown(content: str, console: Optional[Console] = None) -> None:
     Raises:
         errors.MarkdownError: If there's an error rendering the markdown.
     """
-    if console is None:
+    if not console:
         console = Console()
 
     try:
         md = Markdown(content)
         console.print(md)
     except errors.MarkdownError as e:
-        console.print(f"[red]Error rendering Markdown:[/red] {e}", style="bold")
+        print_error(e, custom=True, message="Error rendering Markdown")
         raise
 
 
 @click.command()
 @click.argument(
-    'file_arg',
+    'file',
     type=click.Path(exists=True, path_type=Path),
     required=False
 )
-@click.option(
-    '-f', '--file',
-    type=click.Path(exists=True, path_type=Path),
-    help='Path to the Markdown file to render.'
-)
-@click.option(
-    '-o', '--output',
-    type=click.Path(path_type=Path),
-    help='Alternative option for input file path (for backward compatibility).'
-)
-@click.option(
-    '-i', '--input',
-    type=click.Path(path_type=Path),
-    help='Alternative option for input file path.'
-)
-def markd(file_arg: Optional[Path], file: Optional[Path], output: Optional[Path], input: Optional[Path]) -> None:
+def markd(file: Path) -> None:
     """
-    Render Markdown files beautifully in the terminal using Rich.
+    Render Markdown files in the terminal.
 
     This command-line tool reads a Markdown file and displays it with enhanced
     formatting, syntax highlighting, and beautiful terminal rendering using the
     Rich library. Supports multiple input methods for flexibility.
 
     Args:
-        file_arg: Positional argument for the file path (preferred method).
-        file: File path specified via -f/--file option.
-        output: File path via -o/--output option (legacy compatibility).
-        input: File path via -i/--input option (legacy compatibility).
+        file: Positional argument for the file path (preferred method).
 
     Note:
-        Priority order: file_arg > file > output > input.
         If no file is specified, the user will be prompted interactively.
 
     Examples:
         markd README.md
-        markd -f README.md
-        markd --file documentation.md
-        markd -o guide.md
-        markd -i ./docs/guide.md
     """
     console = Console()
 
-    # Determine which file path to use (priority: argument > file > output > input)
-    file_path = file_arg or file or output or input
+    # Determine which file path to use (priority: file)
+    file_path = file
 
     # If no file specified, prompt the user
-    if file_path is None:
-        file_path_str = click.prompt('Enter the path to the Markdown file', type=str)
-        file_path = Path(file_path_str)
+    if not file_path:
+        file_path_str = Prompt.ask('Enter the path to the Markdown file')
+        file_path = Path(file_path_str.strip())
 
     try:
         # Read the Markdown file
@@ -133,20 +115,13 @@ def markd(file_arg: Optional[Path], file: Optional[Path], output: Optional[Path]
         # Render the Markdown
         render_markdown(content, console)
 
-    except FileNotFoundError as e:
-        raise e(f"[red]Error:[/red] {e}", style="bold")
-
-    except ValueError as e:
-        raise e(f"[red]Error:[/red] {e}", style="bold")
-
-    except PermissionError as e:
-        raise e(f"[red]Error:[/red] {e}", style="bold")
-
-    except IOError as e:
-        raise e(f"[red]Error:[/red] {e}", style="bold")
+    except (FileNotFoundError, ValueError, PermissionError, IOError) as e:
+        print_error(e)
+        raise
 
     except Exception as e:
-        raise e(f"[red]Unexpected error:[/red] {e}", style="bold")
+        print_error(e, custom=True, message="Unexpected error")
+        raise
 
 
 if __name__ == '__main__':

@@ -6,8 +6,9 @@ This module provides a unified command-line interface for all Pocket
 functionalities, organized into logical subcommands.
 """
 import asyncio
+import sys
+from super_pocket.settings import click
 
-import click
 from rich.console import Console
 from pathlib import Path
 
@@ -16,10 +17,9 @@ from super_pocket.web.job_search import main as job_search
 from super_pocket.markdown.renderer import markd
 from super_pocket.project.to_file import create_codebase_markdown
 # from super_pocket.project.readme import run_readme_wizard  # Module moved
-from super_pocket.templates_and_cheatsheets.cli import list_items
-from super_pocket.templates_and_cheatsheets.cli import view_item
-from super_pocket.templates_and_cheatsheets.cli import copy_item
-from super_pocket.templates_and_cheatsheets.cli import init_agents
+from super_pocket.templates_and_cheatsheets.cli import (
+    list_items, view_item, copy_item, init_agents
+)
 from super_pocket.pdf.converter import pdf_convert
 from super_pocket.web.favicon import convert_to_favicon as favicon_convert
 from super_pocket.project.req_to_date import run_req_to_date
@@ -27,31 +27,45 @@ from super_pocket.readme.cli import readme_cli
 from super_pocket.web.favicon import favicon
 from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_results
 from super_pocket.project.init.cli import init_group
+from super_pocket.interactive import pocket_cmd
+from super_pocket.xml.cli import xml as xml_cmd
 
 
 
 console = Console()
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.version_option(version=__version__, prog_name="pocket")
-def cli():
+@click.pass_context
+def cli(ctx):
     """
-    Pocket - A collection of developer productivity tools.
+    A collection of tools.
 
     Available commands:
     - markdown: Render markdown files in terminal
     - project: Project management tools (export to file, etc.)
     - templates: Manage agent templates and cheatsheets
-    - pdf: PDF conversion tools (coming soon)
-    - web: Web utilities (coming soon)
+    - pdf: PDF conversion tools
+    - web: Web utilities (favicon conversion, etc.)
+    - readme: Generate README.md files or analyze your project
+    - req-to-date: Check for outdated dependencies
+    - xml: Convert custom tag syntax into formatted XML
 
     Examples:
         pocket markdown render README.md
-        pocket project to-file . -o project.md
+        pocket project to-file . -o project-to-file.md
         pocket templates list
+        pocket readme generate README.md
+        pocket project req-to-date pyproject.toml
     """
-    pass
+    if ctx.invoked_subcommand is None and not ctx.args:
+        if sys.stdin is None or not sys.stdin.isatty():
+            click.echo(ctx.get_help())
+            return
+
+        pocket_cmd()
+        return
 
 
 # ==================== Markdown Commands ====================
@@ -192,8 +206,8 @@ def req_to_date(packages: tuple[str, ...]):
     print_req_to_date_results(
         results,
         lambda result: console.print(
-            f"{result.package} [red]{result.currentVersion}[/red] -> "
-            f"[green]{result.latestOverall}[/green]",
+            f"{result.package} [red]{result.current_version}[/red] -> "
+            f"[green]{result.latest_overall}[/green]",
             style="bold",
             justify="center",
         ),
@@ -446,6 +460,9 @@ def web_favicon_cmd(input_file: str, output: str, sizes: str):
 
 # ==================== README Commands ====================
 cli.add_command(readme_cli, name="readme")
+
+# ==================== XML Commands ====================
+cli.add_command(xml_cmd, name="xml")
 
 
 def main():

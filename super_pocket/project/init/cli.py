@@ -4,11 +4,16 @@ CLI commands for project initialization.
 Provides Click commands for listing, showing, and initializing projects
 from templates.
 """
-import click
+from super_pocket.settings import click
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 
+from super_pocket.settings import (
+    centered_spinner,
+    display_logo
+)
+from super_pocket.utils import print_error
 from .manifest import parse_manifest
 from .engine import ProjectGenerator
 from .interactive import customize_interactively
@@ -33,18 +38,21 @@ def list_templates(templates_dir: Path) -> list[dict]:
     Returns:
         List of template info dicts
     """
-    templates = []
-    for manifest_file in templates_dir.glob("*.yaml"):
-        try:
-            manifest = parse_manifest(manifest_file)
-            templates.append({
-                "name": manifest.name,
-                "display_name": manifest.display_name,
-                "description": manifest.description
-            })
-        except Exception as e:
-            console.print(f"[red]Error loading {manifest_file.name}: {e}[/red]")
+    display_logo()
+    with Live(centered_spinner("Loading templates..."), refresh_per_second=20, transient=True):
+        templates = []
+        for manifest_file in templates_dir.glob("*.yaml"):
+            try:
+                manifest = parse_manifest(manifest_file)
+                templates.append({
+                    "name": manifest.name,
+                    "display_name": manifest.display_name,
+                    "description": manifest.description
+                })
+            except Exception as e:
+                print_error(e, custom=True, message=f"Error loading {manifest_file.name}")
 
+    display_logo()
     return templates
 
 
@@ -61,7 +69,8 @@ def list_cmd():
     templates = list_templates(templates_dir)
 
     if not templates:
-        console.print("[yellow]No templates found[/yellow]")
+        display_logo()
+        console.print("[yellow]No templates found[/yellow]", justify="center")
         return
 
     table = Table(title="Available Templates")
@@ -112,7 +121,8 @@ def show_cmd(template_name: str):
                 console.print(f"  [{default}] {feature.description}")
 
     except Exception as e:
-        console.print(f"[red]Error loading template: {e}[/red]")
+        print_error(e, custom=True, message="Error loading template")
+        raise
 
 
 @init_group.command()
@@ -149,7 +159,7 @@ def new(template_name: str, path: str | None, quick: bool):
         try:
             validate_project_name(project_name)
         except ValidationError as e:
-            console.print(f"[red]Invalid project name:[/red] {e}")
+            print_error(e, custom=True, message="Invalid project name")
             raise click.Abort()
 
         # Determine output path
@@ -162,20 +172,20 @@ def new(template_name: str, path: str | None, quick: bool):
         try:
             validate_output_path(output_path, allow_existing=False)
         except ValidationError as e:
-            console.print(f"[red]Invalid output path:[/red] {e}")
+            print_error(e, custom=True, message="Invalid output path")
             raise click.Abort()
 
         # Generate project
-        console.print(f"\n[bold]Generating project in {output_path}...[/bold]")
+        with Live(centered_spinner("Generating project..."), refresh_per_second=20, transient=True):
 
-        generator = ProjectGenerator(
-            manifest=manifest,
-            project_name=project_name,
-            output_path=output_path
-        )
-        generator.set_selections(tool_sel, feat_sel, description)
+            generator = ProjectGenerator(
+                manifest=manifest,
+                project_name=project_name,
+                output_path=output_path
+            )
+            generator.set_selections(tool_sel, feat_sel, description)
 
-        results = generator.generate()
+            results = generator.generate()
 
         # Display results
         success_count = sum(1 for r in results if r.success)
@@ -194,11 +204,10 @@ def new(template_name: str, path: str | None, quick: bool):
         console.print(f"Location: {output_path}")
 
     except ValidationError as e:
-        console.print(f"\n[red]Validation Error:[/red] {e}")
-        raise click.Abort()
+        print_error(e, custom=True, message="Validation Error")
+        raise
     except KeyboardInterrupt:
         console.print("\n[yellow]Cancelled[/yellow]")
     except Exception as e:
-        console.print(f"\n[red]Error: {e}[/red]")
-        import traceback
-        traceback.print_exc()
+        print_error(e, custom=True, message="Error")
+        raise

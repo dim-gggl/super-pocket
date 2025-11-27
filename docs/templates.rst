@@ -1,17 +1,16 @@
 Templates & Cheatsheets
 =======================
 
-Super Pocket includes a curated collection of AI agent templates and development cheatsheets
-to boost your productivity.
+Super Pocket ships with ready-to-use AI agent templates and handy cheatsheets so you can get moving fast without reinventing prompts.
 
 Overview
 --------
 
-The templates system provides:
+The templates system gives you:
 
 * **Agent Templates**: Pre-configured AI agent setups for common development tasks
-* **Cheatsheets**: Quick reference guides for various technologies and tools
-* **Easy Management**: Simple CLI for viewing, copying, and managing templates
+* **Cheatsheets**: Quick references for tech you use daily
+* **Easy Management**: ``pocket templates list/view/copy/init``—all the verbs you need
 
 Agent Templates
 ---------------

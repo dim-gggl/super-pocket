@@ -52,6 +52,7 @@ proj2md = "super_pocket.project.to_file:proj_to_file"
 req-to-date = "super_pocket.project.req_to_date:req_to_date_cli"
 conv2pdf = "super_pocket.pdf.converter:main"
 favicon = "super_pocket.web.favicon:main"
+xml = "super_pocket.xml.cli:xml"
 
 [build-system]
 requires = ["hatchling"]

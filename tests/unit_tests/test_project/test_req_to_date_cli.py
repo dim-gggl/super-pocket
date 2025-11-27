@@ -16,16 +16,16 @@ def test_pocket_req_to_date_subcommand_invokes_runner(monkeypatch, runner):
     fake_results = [
         PackageResult(
             package="click",
-            currentVersion="8.1.0",
-            latestPatch=None,
-            latestOverall="8.1.7",
+            current_version="8.1.0",
+            latest_patch=None,
+            latest_overall="8.1.7",
             status="outdated",
         ),
         PackageResult(
             package="rich",
-            currentVersion="13.0.0",
-            latestPatch=None,
-            latestOverall="13.0.0",
+            current_version="13.0.0",
+            latest_patch=None,
+            latest_overall="13.0.0",
             status="up-to-date",
         ),
     ]
@@ -55,16 +55,16 @@ def test_standalone_req_update_accepts_multiple_inputs(tmp_path, monkeypatch, ru
     fake_results = [
         PackageResult(
             package="demo",
-            currentVersion="0.1.0",
-            latestPatch=None,
-            latestOverall="0.2.0",
+            current_version="0.1.0",
+            latest_patch=None,
+            latest_overall="0.2.0",
             status="outdated",
         ),
         PackageResult(
             package="other",
-            currentVersion="1.0.0",
-            latestPatch=None,
-            latestOverall="1.1.0",
+            current_version="1.0.0",
+            latest_patch=None,
+            latest_overall="1.1.0",
             status="outdated",
         ),
     ]

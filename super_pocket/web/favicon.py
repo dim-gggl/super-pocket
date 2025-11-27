@@ -9,7 +9,7 @@ with multiple sizes for web compatibility.
 from pathlib import Path
 from typing import Optional, List, Tuple
 
-import click
+from super_pocket.settings import click
 from rich.console import Console
 
 try:

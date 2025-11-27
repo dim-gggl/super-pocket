@@ -1,14 +1,14 @@
 Installation
 ============
 
-Super Pocket supports multiple installation methods to suit your workflow.
+Pick the install path that matches your workflow; all routes are quick.
 
 Requirements
 ------------
 
 * Python 3.11 or higher
-* pip or uv package manager
-* Virtual environment (recommended)
+* pip or uv
+* Virtual environment (recommended so your globals stay clean)
 
 Installation Methods
 --------------------
@@ -147,17 +147,13 @@ Install everything except development dependencies:
 Verifying Installation
 ----------------------
 
-After installation, verify that Super Pocket is correctly installed:
+Sanity check right after install:
 
 .. code-block:: bash
 
-   # Check version
    pocket --version
-
-   # View available commands
    pocket --help
-
-   # Test markdown rendering
+   pocket markdown render README.md
    echo "# Hello Super Pocket" > test.md
    pocket markdown render test.md
 

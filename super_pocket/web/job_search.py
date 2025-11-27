@@ -8,7 +8,7 @@ to JSON format.
 
 import requests
 import json
-import click
+from super_pocket.settings import click
 import os
 from dotenv import load_dotenv
 

@@ -1,5 +1,7 @@
-import httpx, re, asyncio, uvicorn, click
+import httpx, re, asyncio, uvicorn
 import tomllib
+from super_pocket.settings import click
+from super_pocket.utils import print_error
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -46,9 +48,11 @@ def _read_requirements_file(path: Path) -> List[str]:
             lines = [l.strip() for l in f.readlines()[2:]]
 
     except FileNotFoundError as exc:
-        raise exc(f"Fichier requirements introuvable: {path}: {exc}")
+        print_error(exc, custom=True, message=f"Fichier requirements introuvable: {path}")
+        raise
     except OSError as exc:
-        raise exc(f"Impossible de lire {path}: {exc}")
+        print_error(exc, custom=True, message=f"Impossible de lire {path}")
+        raise
 
     specs: List[str] = []
     for line in lines:
@@ -58,7 +62,7 @@ def _read_requirements_file(path: Path) -> List[str]:
         specs.append(spec)
 
     if not specs:
-        console.print(f"No valid package found in {path}", style="bold", justify="center")
+        print_error(ValueError(f"No valid package found in {path}"), custom=True, message="No valid package found in {path}")
         return []
 
     return specs
@@ -68,15 +72,18 @@ def _read_pyproject_file(path: Path) -> List[str]:
     """Returns the dependencies extracted from a pyproject.toml file."""
     try:
         content = path.read_bytes()
-    except FileNotFoundError:
-        raise ValueError(f"pyproject.toml file not found: {path}") from None
+    except FileNotFoundError as e:
+        print_error(e, custom=True, message=f"pyproject.toml file not found: {path}")
+        raise
     except OSError as exc:
-        raise ValueError(f"Unable to read {path}: {exc}") from None
+        print_error(exc, custom=True, message=f"Unable to read {path}")
+        raise
 
     try:
         data = tomllib.loads(content.decode("utf-8"))
     except tomllib.TOMLDecodeError as exc:
-        raise ValueError(f"TOML parsing error in {path}: {exc}") from None
+        print_error(exc, custom=True, message=f"TOML parsing error in {path}")
+        raise
 
     specs: List[str] = []
     
@@ -98,7 +105,8 @@ def _read_pyproject_file(path: Path) -> List[str]:
                 specs.append(spec)
 
     if not specs:
-        raise ValueError(f"No dependencies found in {path}")
+        print_error(ValueError, custom=True, message=f"No dependencies found in {path}")
+        raise
 
     return specs
 
@@ -156,7 +164,8 @@ def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
         expanded.append(entry)
 
     if not expanded:
-        raise ValueError("The list of packages cannot be empty")
+        print_error(ValueError, custom=True, message="The list of packages cannot be empty")
+        raise
 
     return expanded
 
@@ -167,12 +176,18 @@ def parse_package_specs(specs: Sequence[str]) -> List[PackageInput]:
     parsed: List[PackageInput] = []
     for spec in expanded_specs:
         if "==" not in spec:
-            raise ValueError("Each package must be provided in the form name==version")
+            print_error(ValueError, 
+                        custom=True, 
+                        message="Each package must be provided in the form name==version")
+            raise
         package, version = spec.split("==", 1)
         package = package.strip()
         version = version.strip()
         if not package or not version:
-            raise ValueError(f"Invalid format for '{spec}': name or version missing")
+            print_error(ValueError, 
+                        custom=True, 
+                        message=f"Invalid format for '{spec}': name or version missing")
+            raise
         parsed.append(PackageInput(package=package, version=version))
 
     return parsed
@@ -308,10 +323,10 @@ def print_req_to_date_results(
     can control its own styling/output mechanism.
     """
     for result in results:
-        if result.currentVersion != result.latestOverall:
+        if result.current_version != result.latest_overall:
             console.print(
-                f"{result.package} [red]{result.currentVersion}[/red] ---> "
-                f"[green]{result.latestOverall}[/green]",
+                f"{result.package} [red]{result.current_version}[/red] ---> "
+                f"[green]{result.latest_overall}[/green]",
                 style="bold",
                 justify="center",
             )
@@ -326,7 +341,8 @@ def req_to_date_cli(packages: tuple[str, ...]):
     try:
         results = run_req_to_date(packages)
     except ValueError as exc:
-        raise click.BadParameter(str(exc))
+        print_error(exc, custom=True, message="ValueError")
+        raise
 
     for result in results:
         if result.current_version != result.latest_overall:

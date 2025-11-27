@@ -1,69 +1,87 @@
 API Reference
 =============
 
-Complete API documentation for Super Pocket modules.
+Friendly tour of the public modules you can import when you want to script Super Pocket instead of clicking around the CLI.
 
-This page provides detailed API documentation for all public modules, classes, and functions
-in Super Pocket. Use this as a reference when using Super Pocket programmatically or extending its functionality.
-
-Core Module
------------
+Core & CLI
+----------
 
 .. automodule:: super_pocket
    :members:
    :undoc-members:
    :show-inheritance:
 
-CLI Module
-----------
-
-Command-line interface implementation.
-
 .. automodule:: super_pocket.cli
    :members:
    :undoc-members:
    :show-inheritance:
 
-Markdown Module
----------------
+.. automodule:: super_pocket.interactive
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-Markdown rendering and processing tools.
+Markdown
+--------
 
 .. automodule:: super_pocket.markdown
    :members:
    :undoc-members:
    :show-inheritance:
 
-markdown.renderer
-~~~~~~~~~~~~~~~~~
-
 .. automodule:: super_pocket.markdown.renderer
    :members:
    :undoc-members:
    :show-inheritance:
 
-Project Module
---------------
-
-Project export and management tools.
+Projects
+--------
 
 .. automodule:: super_pocket.project
    :members:
    :undoc-members:
    :show-inheritance:
 
-project.to_file
-~~~~~~~~~~~~~~~
-
 .. automodule:: super_pocket.project.to_file
    :members:
    :undoc-members:
    :show-inheritance:
 
-PDF Module
-----------
+.. automodule:: super_pocket.project.req_to_date
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-PDF conversion tools.
+.. automodule:: super_pocket.project.init.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+README Generator
+----------------
+
+.. automodule:: super_pocket.readme
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: super_pocket.readme.detector
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: super_pocket.readme.generator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: super_pocket.readme.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+PDF
+---
 
 .. note::
    Requires ``super-pocket[pdf]`` optional dependencies.
@@ -73,18 +91,13 @@ PDF conversion tools.
    :undoc-members:
    :show-inheritance:
 
-pdf.converter
-~~~~~~~~~~~~~
-
 .. automodule:: super_pocket.pdf.converter
    :members:
    :undoc-members:
    :show-inheritance:
 
-Web Module
-----------
-
-Web utilities including favicon generation.
+Web
+---
 
 .. note::
    Requires ``super-pocket[web]`` optional dependencies.
@@ -94,258 +107,154 @@ Web utilities including favicon generation.
    :undoc-members:
    :show-inheritance:
 
-web.favicon
-~~~~~~~~~~~
-
 .. automodule:: super_pocket.web.favicon
    :members:
    :undoc-members:
    :show-inheritance:
-
-web.job_search
-~~~~~~~~~~~~~~
 
 .. automodule:: super_pocket.web.job_search
    :members:
    :undoc-members:
    :show-inheritance:
 
-Templates Module
-----------------
-
-Agent templates and cheatsheets management.
+Templates & Cheatsheets
+-----------------------
 
 .. automodule:: super_pocket.templates_and_cheatsheets
    :members:
    :undoc-members:
    :show-inheritance:
 
-templates_and_cheatsheets.cli
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 .. automodule:: super_pocket.templates_and_cheatsheets.cli
    :members:
    :undoc-members:
    :show-inheritance:
-
-templates_and_cheatsheets.validator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: super_pocket.templates_and_cheatsheets.validator
    :members:
    :undoc-members:
    :show-inheritance:
 
-Using the API
--------------
+XML Helper
+----------
 
-Programmatic Usage
+.. automodule:: super_pocket.xml
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: super_pocket.xml.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: super_pocket.xml.xml
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Utilities
+---------
+
+.. automodule:: super_pocket.settings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: super_pocket.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Programmatic Examples
+---------------------
+
+Render Markdown
+~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from pathlib import Path
+   from super_pocket.markdown.renderer import read_markdown_file, render_markdown
+
+   content = read_markdown_file(Path("README.md"))
+   render_markdown(content)  # prints to the terminal via Rich
+
+Export a project to one file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from super_pocket.project.to_file import create_codebase_markdown
+
+   create_codebase_markdown(
+       project_path=".",
+       output_file="export.md",
+       exclude_str=".git,venv,node_modules"
+   )
+
+Audit dependencies
 ~~~~~~~~~~~~~~~~~~
 
-You can use Super Pocket's modules (imported via the ``super_pocket`` package) programmatically in your Python code:
+.. code-block:: python
 
-Markdown Rendering Example
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   from super_pocket.project.req_to_date import run_req_to_date
+
+   results = run_req_to_date(("requests==2.31.0", "rich>=13"))
+   for pkg in results:
+       print(pkg.package, pkg.current_version, "->", pkg.latest_overall)
+
+Generate a README programmatically
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-   from super_pocket.markdown.renderer import render_markdown
+   from pathlib import Path
+   from super_pocket.readme.detector import ProjectDetector
+   from super_pocket.readme.generator import ReadmeGenerator
 
-   # Render a markdown file
-   render_markdown('README.md')
+   context = ProjectDetector().detect(Path("."))
+   content = ReadmeGenerator().generate(context, selected_badges=[], selected_sections=[])
+   Path("README.md").write_text(content)
 
-   # Process markdown content
-   content = "# Hello World\n\nThis is **bold** text."
-   render_markdown(content, from_string=True)
-
-Project Export Example
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-   from super_pocket.project.to_file import export_project
-
-   # Export a project
-   export_project(
-       project_path='/path/to/project',
-       output_file='export.md',
-       exclude=['node_modules', '.git']
-   )
-
-Templates Management Example
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-   from super_pocket.templates_and_cheatsheets.cli import (
-       list_templates,
-       view_template,
-       copy_template
-   )
-
-   # List available templates
-   templates = list_templates(type='templates')
-
-   # View template content
-   content = view_template('unit_tests_agent')
-
-   # Copy template to location
-   copy_template('unit_tests_agent', output_path='.agents/')
-
-PDF Conversion Example
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-   from super_pocket.pdf.converter import convert_to_pdf
-
-   # Convert markdown to PDF
-   convert_to_pdf(
-       input_file='document.md',
-       output_file='document.pdf'
-   )
-
-Favicon Generation Example
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-   from super_pocket.web.favicon import generate_favicon
-
-   # Generate favicon from image
-   generate_favicon(
-       input_image='logo.png',
-       output_path='favicon.ico',
-       size=16
-   )
-
-Error Handling
+Convert to PDF
 ~~~~~~~~~~~~~~
 
-All Super Pocket functions raise appropriate exceptions on errors:
-
 .. code-block:: python
 
-   from super_pocket.markdown.renderer import render_markdown
-
-   try:
-       render_markdown('nonexistent.md')
-   except FileNotFoundError as e:
-       print(f"File not found: {e}")
-   except ValueError as e:
-       print(f"Invalid input: {e}")
-
-Common Exceptions
-^^^^^^^^^^^^^^^^^
-
-* ``FileNotFoundError`` - File or directory not found
-* ``ValueError`` - Invalid parameter value
-* ``IOError`` - I/O operation failed
-* ``PermissionError`` - Insufficient permissions
-
-Type Hints
-~~~~~~~~~~
-
-Super Pocket uses type hints throughout the codebase for better IDE support:
-
-.. code-block:: python
-
-   from typing import Optional, List
    from pathlib import Path
+   from super_pocket.pdf.converter import convert_to_pdf
 
-   def export_project(
-       project_path: str | Path,
-       output_file: str | Path,
-       exclude: Optional[List[str]] = None
-   ) -> None:
-       """Export project to file."""
-       pass
+   convert_to_pdf(Path("README.md"), Path("README.pdf"))
 
-Configuration
-~~~~~~~~~~~~~
-
-Some modules accept configuration options:
+Make a favicon
+~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-   from super_pocket.markdown.renderer import MarkdownRenderer
+   from pathlib import Path
+   from super_pocket.web.favicon import convert_to_favicon
 
-   # Create custom renderer
-   renderer = MarkdownRenderer(
-       theme='dark',
-       width=100,
-       show_links=True
+   convert_to_favicon(
+       input_file=Path("logo.png"),
+       output_file=Path("favicon.ico"),
+       sizes="64x64,32x32,16x16"
    )
 
-   renderer.render('document.md')
-
-Extending Super Pocket
-----------------------
-
-Custom Renderers
-~~~~~~~~~~~~~~~~
-
-Extend the markdown renderer:
+Build XML for LLMs
+~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-   from super_pocket.markdown.renderer import MarkdownRenderer
+   from super_pocket.xml.xml import parse_custom_syntax, format_xml
 
-   class CustomRenderer(MarkdownRenderer):
-       def render_heading(self, text: str, level: int) -> str:
-           # Custom heading rendering
-           return f"{'#' * level} {text.upper()}\n"
+   raw = parse_custom_syntax("note:hello world")
+   pretty = format_xml(raw)
+   print(pretty)
 
-Custom Exporters
-~~~~~~~~~~~~~~~~
-
-Create custom project exporters:
-
-.. code-block:: python
-
-   from super_pocket.project.to_file import ProjectExporter
-
-   class JSONExporter(ProjectExporter):
-       def export(self, project_path: str) -> dict:
-           # Export to JSON format
-           return {
-               'files': self.collect_files(project_path),
-               'structure': self.build_tree(project_path)
-           }
-
-Plugin System
-~~~~~~~~~~~~~
-
-Future versions will support a plugin system for extending functionality.
+Error handling is standard Python exceptions (``FileNotFoundError``, ``ValueError``, etc.). Most modules avoid fancy wrappers so you can catch and log as you like.
 
 API Stability
 -------------
 
-Version Compatibility
-~~~~~~~~~~~~~~~~~~~~~
-
-* **Stable API**: Public functions and classes in this documentation
-* **Unstable API**: Private functions (prefixed with ``_``) may change
-* **Deprecated**: Marked with deprecation warnings
-
-Semantic Versioning
-~~~~~~~~~~~~~~~~~~~
-
-Super Pocket follows semantic versioning:
-
-* **Major** (X.0.0): Breaking API changes
-* **Minor** (1.X.0): New features, backward compatible
-* **Patch** (1.0.X): Bug fixes, backward compatible
-
-Migration Guides
-~~~~~~~~~~~~~~~~
-
-For major version changes, see migration guides in the changelog.
-
-See Also
---------
-
-* :doc:`modules` - Module index
-* :doc:`quickstart` - Getting started
-* :doc:`contributing` - Contributing code
-* :doc:`testing` - Testing guidelines
+Public functions/classes documented here are the intended surface area. Private helpers (prefixed with ``_``) can change without notice. Super Pocket follows semantic versioning for releases.

@@ -13,7 +13,7 @@ import shutil
 from pathlib import Path
 from typing import Optional, Literal
 
-import click
+from super_pocket.settings import click
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.table import Table

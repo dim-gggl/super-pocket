@@ -10,9 +10,8 @@ super-pocket
 .. image:: https://img.shields.io/badge/license-MIT-green.svg
    :alt: MIT License
 
-**super-pocket** is a comprehensive collection of developer productivity tools that streamline your development workflow.
-From beautiful markdown rendering to project exporters, agent templates, and cheatsheets management - Super Pocket brings
-essential developer utilities into a single, unified CLI interface.
+**super-pocket** is a friendly grab-bag of developer tools in one CLI: pretty markdown rendering, one-file project exports,
+README generation, dependency checks, XML helpers, templates, cheatsheets, and more.
 
 Features
 --------
@@ -23,17 +22,26 @@ Features
 **Project Export**
    Convert entire projects to single Markdown files for easy sharing and documentation
 
+**README Generator**
+   Inspect a repo and spit out a push-ready README (interactive or one-shot)
+
 **Agent Templates**
    Manage and distribute AI agent configuration templates for consistent AI-assisted development
 
 **Cheatsheets**
    Quick access to development cheatsheets and reference materials
 
+**Dependency Scanner**
+   Spot outdated packages from inline specs, requirements.txt, or pyproject.toml
+
 **PDF Tools**
    Convert markdown and text files to professional PDF documents
 
 **Web Utilities**
    Generate favicons and other web assets from images
+
+**LLM-Friendly XML**
+   Turn ``tag:<content>`` syntax into clean XML for prompts
 
 Quick Start
 -----------
@@ -81,6 +89,7 @@ Table of Contents
    :caption: User Guide
 
    commands
+   readme-generator
    templates
 
 .. toctree::

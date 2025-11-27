@@ -9,10 +9,15 @@ containing the entire codebase with syntax highlighting and file tree structure.
 import os
 import argparse
 import sys
-import click
+from super_pocket.settings import click
+from rich.console import Console
 from collections.abc import Generator
 from pathlib import Path
 from typing import Set
+
+
+console = Console()
+
 
 # Language mapping for syntax highlighting in Markdown code blocks
 LANG_MAP = {
@@ -43,7 +48,7 @@ LANG_MAP = {
 DEFAULT_VALUES = {
     "project": ".",
     "output": None,
-    "exclude": "env,.env,venv,.venv,.gitignore,.git,.vscode,.idea,.cursor,lib,bin,site-packages,node_modules,__pycache__,.DS_Store",
+    "exclude": "env,.env,venv,.venv,.gitignore,.git,.vscode,.idea,.cursor,lib,bin,site-packages,node_modules,__pycache__,.DS_Store,.python-version",
     "extend_exclude": ""
 }
 
@@ -168,10 +173,10 @@ def create_codebase_markdown(
     if output_file is None:
         output_file = f"{project_name}-1-file.md"
 
-    print(f"|| Starting project scan: '{project_name}'")
-    print(f"|| Source directory: {project_path}")
-    print(f"|| Output file: {output_file}")
-    print(f"|| Excluded items: {exclude_set}")
+    console.print(f"|| Starting project scan: '{project_name}'", style="bold")
+    console.print(f"|| Source directory: {project_path}", style="bold")
+    console.print(f"|| Output file: {output_file}", style="bold")
+    console.print(f"|| Excluded items: {exclude_set}", style="bold")
 
     try:
         with open(output_file, 'w', encoding='utf-8') as md_file:
@@ -179,16 +184,16 @@ def create_codebase_markdown(
             md_file.write(f"# {project_name}\n\n")
 
             # 2. Generate and write project tree
-            print("|| Generating file tree...")
+            console.print("|| Generating file tree...", style="bold")
             md_file.write("```bash\n")
             md_file.write(f"{project_name}/\n")
             for line in generate_tree(project_path, exclude_set):
                 md_file.write(f"{line}\n")
             md_file.write("```\n\n")
-            print("|| File tree generated.")
+            console.print("|| File tree generated.", style="bold")
 
             # 3. Walk through files and write their content
-            print("|| Reading and writing file contents...")
+            console.print("|| Reading and writing file contents...", style="bold")
             for root, dirs, files in os.walk(project_path, topdown=True):
                 # Ensure we don't descend into excluded directories
                 dirs[:] = [d for d in dirs if d not in exclude_set]
@@ -212,20 +217,18 @@ def create_codebase_markdown(
                             md_file.write("\n```\n\n")
 
                     except UnicodeDecodeError:
-                        print(f"\033[31m|| Warning: Cannot read file \033[1m'{relative_path}'\033[0m\033[31m (probably binary). Skipping.\033[0m")
+                        console.print(f"[red]|| Warning: Cannot read file [/red]'{relative_path}'[red] (probably binary). Skipping.[/]", style="bold")
                     except Exception as e:
-                        print(f"\033[31m❌ Error reading file \033[1m'{relative_path}'\033[0m\033[31m: {e}\033[0m")
+                        console.print(f"[red]❌ Error reading file [/red]'{relative_path}'[red]: {e}[/]", style="bold")
 
-            print("|| File contents written.")
+            console.print("|| File contents written.", style="bold")
 
     except IOError as e:
-        print(f"\033[31m❌ Error writing to file \033[1m'{output_file}'\033[0m\033[31m: {e}\033[0m", file=sys.stderr)
-        sys.exit(1)
+        console.print(f"[red]❌ Error writing to file [/red]'{output_file}'[red]: {e}[/]", style="bold")
     except Exception as e:
-        print(f"\033[31m❌ An unexpected error occurred: {e}\033[0m", file=sys.stderr)
-        sys.exit(1)
+        console.print(f"[red]❌ An unexpected error occurred: {e}[/]", style="bold")
 
-    print(f"\n|| Success! Codebase compiled into '{output_file}'")
+    console.print(f"\n|| Success! Codebase compiled into '{output_file}'")
 
 @click.command(name="proj-to-file")
 @click.option('-p', '--project', default='.', help='Root directory of the project to scan.')

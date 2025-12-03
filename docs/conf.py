@@ -16,8 +16,8 @@ sys.path.insert(0, Path(__file__).parent.parent.absolute())
 project = 'super-pocket'
 copyright = '2025, Dimitri Gaggioli'
 author = 'Dimitri Gaggioli'
-release = '1.0.1'
-version = '1.0.1'
+release = '1.0'
+version = '1.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

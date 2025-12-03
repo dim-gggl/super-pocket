@@ -1,7 +1,8 @@
 # Super Pocket
 
 [![Documentation Status](https://readthedocs.org/projects/pocketdocs/badge/?version=latest)](https://pocketdocs.readthedocs.io/en/latest/?badge=latest)
-[![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Static Badge](https://img.shields.io/badge/python-3.11%2B-blue?style=plastic&logo=python&logoColor=yellow)
+](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 
@@ -21,14 +22,39 @@
 
 ## Install it fast
 
-- With pip/pipx: `pip install super-pocket` or `pipx install super-pocket` (Python 3.11+).
+- **With Homebrew (macOS/Linux):**
+  ```bash
+  brew tap dim-gggl/super-pocket && brew install super-pocket
+  ```
+
+- **With uv (recommended):**
+  ```bash
+  uv tool install super-pocket
+  ```
+
+- **With pip/pipx:**
+  ```bash
+  pip install super-pocket
+  # or
+  pipx install super-pocket
+  ```
+
 - Local wheel: `pip install dist/super_pocket-*.whl` if you build it yourself.
 - Quick check: `pocket --version` should answer without whining.
 
 ## Quick usage
 
-- Don’t know where to start? Type `pocket` and follow the interactive prompt.
-- Terminal-only: `pocket --help` for the menu, then `pocket <group> --help` to zoom in.
+### Interactive mode (the easy way)
+
+Don't know where to start? Just type:
+```bash
+pocket
+```
+This launches a guided interactive menu. Navigate through tools, get prompted for parameters, and explore features without memorizing commands. Type `exit` or `Q` to quit.
+
+### Direct commands
+
+- Terminal power-users: `pocket --help` for the menu, then `pocket <group> --help` to zoom in.
 - Concrete examples below (all available stand-alone).
 
 ### Craft a README without sweating

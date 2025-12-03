@@ -1,21 +1,21 @@
 [project]
 name = "super-pocket"
-version = "1.0.1"
+version = "1.0"
 description = "A collection of developer tools including markdown rendering, project exporters, agent templates, and cheatsheets management."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
     {name = "Dimitri Gaggioli", email = "dimitri.gaggioli@gmail.com"}
 ]
-keywords = ["developer-tools", "cli", "markdown", "productivity", "agents", "templates", "job", "assistant"]
+keywords = ["dev-tools", "cli", "markdown", "productivity", "agents", "templates", "job", "assistant", "xml", "llm"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14"
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 dependencies = [
     "click>=8.3.1",
@@ -55,8 +55,8 @@ favicon = "super_pocket.web.favicon:main"
 xml = "super_pocket.xml.cli:xml"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

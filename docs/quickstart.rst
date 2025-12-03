@@ -3,6 +3,17 @@ Quick Start Guide
 
 A fast, hands-on tour of Super Pocket with concrete commands and outputs. Keep your terminal open—everything below is copy/paste ready.
 
+Interactive mode (the easy way)
+-------------------------------
+
+Not sure where to start? Just type:
+
+.. code-block:: bash
+
+   pocket
+
+This launches an interactive menu that guides you through all available tools. Use it to explore features without memorizing commands. Type ``exit`` or ``Q`` to quit.
+
 First sanity check
 ------------------
 

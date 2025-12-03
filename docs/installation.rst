@@ -7,11 +7,23 @@ Requirements
 ------------
 
 * Python 3.11 or higher
-* pip or uv
+* pip, uv, or Homebrew
 * Virtual environment (recommended so your globals stay clean)
 
 Installation Methods
 --------------------
+
+Using Homebrew (macOS/Linux) — Recommended
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The easiest way to install Super Pocket on macOS or Linux:
+
+.. code-block:: bash
+
+   brew tap dim-gggl/super-pocket
+   brew install super-pocket
+
+This installs Super Pocket system-wide without needing to manage Python environments.
 
 Using pip (Standard)
 ~~~~~~~~~~~~~~~~~~~~
@@ -38,17 +50,27 @@ To install with optional dependencies:
    # Install with development dependencies
    pip install "super-pocket[dev]"
 
-Using uv (Recommended)
-~~~~~~~~~~~~~~~~~~~~~~
+Using uv (Recommended for Python users)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`uv <https://github.com/astral-sh/uv>`_ is a fast Python package installer and resolver:
+`uv <https://github.com/astral-sh/uv>`_ is a blazing-fast Python package installer and resolver:
 
 .. code-block:: bash
 
    # Install uv if you haven't already
    curl -LsSf https://astral.sh/uv/install.sh | sh
 
-   # Install Super Pocket
+   # Install Super Pocket as a tool (globally available)
+   uv tool install super-pocket
+
+   # Or install with all features
+   uv tool install "super-pocket[all]"
+
+To install in a project environment:
+
+.. code-block:: bash
+
+   # Install in current environment
    uv pip install super-pocket
 
    # Or install with all features

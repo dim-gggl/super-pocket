@@ -26,9 +26,9 @@ def pocket_cmd():
     while True:
         display_logo()
         user_input = Prompt.ask(
-            "[bold blue]help[/] [bold orange_red1]project templates pdf web readme[/] [bold blue]exit[/] >>>",
+            "[bold blue]help[/] [bold orange_red1]project templates pdf web readme xml[/] [bold blue]exit/Q[/] >>>",
             default="help",
-            choices=["help", "project", "templates", "pdf", "web", "readme", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            choices=["help", "project", "templates", "pdf", "web", "readme", "xml", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
             show_choices=False
         )
 
@@ -52,6 +52,9 @@ def pocket_cmd():
             case "readme":
                 if readme_cmd() == "exit":
                     return
+            case "xml":
+                if xml_cmd() == "exit":
+                    return
             case "exit" | "quit" | "q" | "Q" | "X" | "x" | "EXIT" | "QUIT":
                 return
 
@@ -60,9 +63,10 @@ def project_cmd():
     while True:
         display_logo()
         user_input = Prompt.ask(
-            "> ",
-            default="help",
-            choices=["help", "to-file", "readme", "req-to-date", "back", "exit"],
+            "[bold blue]help[/] [bold orange_red1]to-file readme req-to-date init[/] [bold blue]exit/Q[/] >>>",
+            default="help", 
+            choices=["help", "to-file", "readme", "req-to-date", "init", "back", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            show_choices=False
         )
 
         match user_input:
@@ -103,6 +107,33 @@ def project_cmd():
                 _run_with_spinner("Checking requirements...", command)
                 _pause()
 
+            case "init":
+                # Show available templates first
+                _run_with_spinner("Loading templates...", ["pocket", "project", "init", "list"])
+                _pause()
+                
+                template = Prompt.ask("Template name (or 'back' to cancel)", default="")
+                if not template.strip() or template.lower() == "back":
+                    continue
+                
+                # Show template details
+                _run_with_spinner("Loading template details...", ["pocket", "project", "init", "show", template])
+                _pause()
+                
+                confirm = Prompt.ask("Create project with this template?", choices=["y", "n"], default="y")
+                if confirm == "n":
+                    continue
+                
+                path = Prompt.ask("Output path", default=".")
+                quick = Prompt.ask("Quick mode (skip prompts)?", choices=["y", "n"], default="n")
+                
+                command = ["pocket", "project", "init", "new", template, "-p", path]
+                if quick == "y":
+                    command.append("--quick")
+                
+                _run_with_spinner("Creating project...", command)
+                _pause()
+
             case "back":
                 return "back"
             case "exit" | "quit" | "q" | "Q" | "X" | "x" | "EXIT" | "QUIT":
@@ -113,9 +144,10 @@ def templates_cmd():
     while True:
         display_logo()
         user_input = Prompt.ask(
-            "> ",
+            "[bold blue]help[/] [bold orange_red1]list view copy init[/] [bold blue]exit/Q[/] >>>",
             default="help",
-            choices=["help", "list", "view", "copy", "init", "back", "exit"],
+            choices=["help", "list", "view", "copy", "init", "back", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            show_choices=False
         )
 
         match user_input:
@@ -173,9 +205,10 @@ def pdf_cmd():
     while True:
         display_logo()
         user_input = Prompt.ask(
-            "> ",
+            "[bold blue]help[/] [bold orange_red1]convert[/] [bold blue]exit/Q[/] >>>",
             default="help",
-            choices=["help", "convert", "back", "exit"],
+            choices=["help", "convert", "back", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            show_choices=False
         )
 
         match user_input:
@@ -201,9 +234,10 @@ def web_cmd():
     while True:
         display_logo()
         user_input = Prompt.ask(
-            "> ",
+            "[bold blue]help[/] [bold orange_red1]favicon job-search[/] [bold blue]exit/Q[/] >>>",
             default="help",
-            choices=["help", "favicon", "job-search", "back", "exit"],
+            choices=["help", "favicon", "job-search", "back", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            show_choices=False
         )
 
         match user_input:
@@ -276,7 +310,10 @@ def readme_cmd():
     while True:
         display_logo()
         user_input = Prompt.ask(
-            "> ", default="help", choices=["help", "analyze", "generate", "back", "exit"]
+            "[bold blue]help[/] [bold orange_red1]analyze generate[/] [bold blue]exit/Q[/] >>>",
+            default="help",
+            choices=["help", "analyze", "generate", "back", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            show_choices=False
         )
 
         match user_input:
@@ -294,6 +331,49 @@ def readme_cmd():
                 output = Prompt.ask("Output file", default="README.md")
                 command = ["pocket", "readme", "generate", "--path", path, "--output", output]
                 _run_with_spinner("Generating README...", command)
+                _pause()
+            case "back":
+                return "back"
+            case "exit" | "quit" | "q" | "Q" | "X" | "x" | "EXIT" | "QUIT":
+                return "exit"
+
+
+def xml_cmd():
+    while True:
+        display_logo()
+        user_input = Prompt.ask(
+            "[bold blue]help[/] [bold orange_red1]convert[/] [bold blue]exit/Q[/] >>>",
+            default="help",
+            choices=["help", "convert", "back", "exit", "quit", "q", "Q", "X", "x", "EXIT", "QUIT"],
+            show_choices=False
+        )
+
+        match user_input:
+            case "help":
+                display_logo()
+                _run_with_spinner("Loading XML help...", ["pocket", "xml", "--help"])
+                _pause()
+            case "convert":
+                source_type = Prompt.ask(
+                    "Source type", choices=["text", "file"], default="text"
+                )
+                
+                if source_type == "text":
+                    text = Prompt.ask("Text to convert (custom tag syntax)")
+                    output = Prompt.ask("Output file (optional)", default="")
+                    
+                    command = ["pocket", "xml", text]
+                    if output.strip():
+                        command += ["--output", output]
+                else:
+                    input_file = Prompt.ask("Input file path")
+                    output = Prompt.ask("Output file (optional)", default="")
+                    
+                    command = ["pocket", "xml", "--file", input_file]
+                    if output.strip():
+                        command += ["--output", output]
+                
+                _run_with_spinner("Converting to XML...", command)
                 _pause()
             case "back":
                 return "back"

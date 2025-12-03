@@ -1,8 +1,8 @@
 super-pocket
 ============
 
-.. image:: https://img.shields.io/badge/version-1.0.1-blue.svg
-   :alt: Version 1.0.1
+.. image:: https://img.shields.io/badge/pypi-1.0-#ff5f00.svg
+   :alt: Version 1.0
 
 .. image:: https://img.shields.io/badge/python-3.11+-blue.svg
    :alt: Python 3.11+
@@ -50,6 +50,13 @@ Install super-pocket:
 
 .. code-block:: bash
 
+   # With Homebrew (macOS/Linux)
+   brew tap dim-gggl/super-pocket && brew install super-pocket
+
+   # Or with uv
+   uv tool install super-pocket
+
+   # Or with pip
    pip install super-pocket
 
 Render a markdown file:

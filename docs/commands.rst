@@ -3,6 +3,46 @@ Commands Reference
 
 Friendly, concrete tour of every Super Pocket CLI command (plus the stand-alone shortcuts when they exist).
 
+Interactive Mode
+----------------
+
+When you run ``pocket`` without any arguments, Super Pocket launches an interactive mode with a guided menu. This is great for discovering features or when you don't remember the exact command syntax.
+
+**Launch interactive mode:**
+
+.. code-block:: bash
+
+   pocket
+
+The interactive mode offers:
+
+* **Help** - Display the main help menu
+* **Project** - Access project tools (to-file, readme, req-to-date, init)
+* **Templates** - Manage templates and cheatsheets (list, view, copy, init)
+* **PDF** - Convert files to PDF
+* **Web** - Web utilities (favicon, job-search)
+* **README** - Analyze or generate README files
+* **XML** - Convert custom tag syntax to XML
+* **Exit** - Quit the interactive mode (or press ``Q``, ``q``, ``exit``, ``quit``)
+
+Each submenu guides you through the available options and prompts for required parameters. Perfect for beginners or occasional users who prefer a guided experience over memorizing CLI flags.
+
+**Example session:**
+
+.. code-block:: text
+
+   $ pocket
+   [Logo appears]
+   help project templates pdf web readme xml exit/Q >>> project
+   [Project menu]
+   help to-file readme req-to-date init exit/Q >>> to-file
+   Project path [.]: ./my-app
+   Output file (optional): export.md
+   Exclude (comma-separated, optional): node_modules,dist
+   [Spinner: Exporting project...]
+   [Output displayed]
+   Press Enter to continue
+
 Global Options
 --------------
 

@@ -1,6 +1,6 @@
 [project]
 name = "super-pocket"
-version = "1.0"
+version = "1.0.2"
 description = "A collection of developer tools including markdown rendering, project exporters, agent templates, and cheatsheets management."
 readme = "README.md"
 requires-python = ">=3.11"

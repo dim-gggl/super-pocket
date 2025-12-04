@@ -175,7 +175,7 @@ Render Markdown
 .. code-block:: python
 
    from pathlib import Path
-   from super_pocket.markdown.renderer import read_markdown_file, render_markdown
+   from src.super_pocket.markdown.renderer import read_markdown_file, render_markdown
 
    content = read_markdown_file(Path("README.md"))
    render_markdown(content)  # prints to the terminal via Rich
@@ -185,7 +185,7 @@ Export a project to one file
 
 .. code-block:: python
 
-   from super_pocket.project.to_file import create_codebase_markdown
+   from src.super_pocket.project.to_file import create_codebase_markdown
 
    create_codebase_markdown(
        project_path=".",
@@ -198,7 +198,7 @@ Audit dependencies
 
 .. code-block:: python
 
-   from super_pocket.project.req_to_date import run_req_to_date
+   from src.super_pocket.project.req_to_date import run_req_to_date
 
    results = run_req_to_date(("requests==2.31.0", "rich>=13"))
    for pkg in results:
@@ -210,8 +210,8 @@ Generate a README programmatically
 .. code-block:: python
 
    from pathlib import Path
-   from super_pocket.readme.detector import ProjectDetector
-   from super_pocket.readme.generator import ReadmeGenerator
+   from src.super_pocket.readme.detector import ProjectDetector
+   from src.super_pocket.readme.generator import ReadmeGenerator
 
    context = ProjectDetector().detect(Path("."))
    content = ReadmeGenerator().generate(context, selected_badges=[], selected_sections=[])
@@ -223,7 +223,7 @@ Convert to PDF
 .. code-block:: python
 
    from pathlib import Path
-   from super_pocket.pdf.converter import convert_to_pdf
+   from src.super_pocket.pdf.converter import convert_to_pdf
 
    convert_to_pdf(Path("README.md"), Path("README.pdf"))
 
@@ -233,7 +233,7 @@ Make a favicon
 .. code-block:: python
 
    from pathlib import Path
-   from super_pocket.web.favicon import convert_to_favicon
+   from src.super_pocket.web.favicon import convert_to_favicon
 
    convert_to_favicon(
        input_file=Path("logo.png"),
@@ -246,7 +246,7 @@ Build XML for LLMs
 
 .. code-block:: python
 
-   from super_pocket.xml.xml import parse_custom_syntax, format_xml
+   from src.super_pocket.xml.xml import parse_custom_syntax, format_xml
 
    raw = parse_custom_syntax("note:hello world")
    pretty = format_xml(raw)

@@ -27,7 +27,7 @@ Create `tests/unit_tests/test_readme/test_models.py`:
 
 import pytest
 from pathlib import Path
-from super_pocket.readme.models import ProjectContext, ProjectType
+from src.super_pocket.readme.models import ProjectContext, ProjectType
 
 
 def test_project_context_creation():
@@ -213,8 +213,8 @@ Create `tests/unit_tests/test_readme/test_analyzers/test_python.py`:
 
 import pytest
 from pathlib import Path
-from super_pocket.readme.analyzers.python import PythonAnalyzer
-from super_pocket.readme.models import ProjectType
+from src.super_pocket.readme.analyzers.python import PythonAnalyzer
+from src.super_pocket.readme.models import ProjectType
 
 
 @pytest.fixture
@@ -404,8 +404,8 @@ Create `tests/unit_tests/test_readme/test_detector.py`:
 
 import pytest
 from pathlib import Path
-from super_pocket.readme.detector import ProjectDetector
-from super_pocket.readme.models import ProjectType
+from src.super_pocket.readme.detector import ProjectDetector
+from src.super_pocket.readme.models import ProjectType
 
 
 @pytest.fixture
@@ -541,8 +541,8 @@ Create `tests/unit_tests/test_readme/test_badges.py`:
 
 import pytest
 from pathlib import Path
-from super_pocket.readme.badges import BadgeGenerator, BadgeType
-from super_pocket.readme.models import ProjectContext, ProjectType
+from src.super_pocket.readme.badges import BadgeGenerator, BadgeType
+from src.super_pocket.readme.models import ProjectContext, ProjectType
 
 
 @pytest.fixture
@@ -768,12 +768,12 @@ Create `tests/unit_tests/test_readme/test_templates/test_base.py`:
 
 import pytest
 from pathlib import Path
-from super_pocket.readme.templates.base import (
+from src.super_pocket.readme.templates.base import (
     TitleSection,
     PrerequisitesSection,
     InstallationSection
 )
-from super_pocket.readme.models import ProjectContext, ProjectType
+from src.super_pocket.readme.models import ProjectContext, ProjectType
 
 
 @pytest.fixture
@@ -997,8 +997,8 @@ Create `tests/unit_tests/test_readme/test_generator.py`:
 
 import pytest
 from pathlib import Path
-from super_pocket.readme.generator import ReadmeGenerator
-from super_pocket.readme.models import ProjectContext, ProjectType
+from src.super_pocket.readme.generator import ReadmeGenerator
+from src.super_pocket.readme.models import ProjectContext, ProjectType
 
 
 @pytest.fixture
@@ -1201,7 +1201,7 @@ Create `tests/unit_tests/test_readme/test_cli.py`:
 
 import pytest
 from click.testing import CliRunner
-from super_pocket.readme.cli import readme_cli
+from src.super_pocket.readme.cli import readme_cli
 
 
 def test_readme_cli_help():
@@ -1351,7 +1351,7 @@ if __name__ == "__main__":
 Add to `super_pocket/cli.py` (find the cli group and add):
 
 ```python
-from super_pocket.readme.cli import readme_cli
+from src.super_pocket.readme.cli import readme_cli
 
 # Add this line inside the cli() function or after cli.add_command() calls:
 cli.add_command(readme_cli, name="readme")

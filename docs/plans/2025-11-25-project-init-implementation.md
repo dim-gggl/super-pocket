@@ -123,7 +123,7 @@ File: `tests/unit_tests/test_init/test_manifest.py`
 ```python
 """Tests for manifest parsing and validation."""
 import pytest
-from super_pocket.project.init.manifest import (
+from src.super_pocket.project.init.manifest import (
     ToolChoice,
     ToolOption,
     Feature,
@@ -304,7 +304,7 @@ post_generation:
         temp_path = Path(f.name)
 
     try:
-        from super_pocket.project.init.manifest import parse_manifest
+        from src.super_pocket.project.init.manifest import parse_manifest
         manifest = parse_manifest(temp_path)
 
         assert manifest.name == "python-cli"
@@ -426,7 +426,7 @@ File: `tests/unit_tests/test_init/test_renderers.py`
 ```python
 """Tests for template rendering."""
 import pytest
-from super_pocket.project.init.renderers import build_context
+from src.super_pocket.project.init.renderers import build_context
 
 
 def test_build_context():
@@ -561,7 +561,7 @@ import tempfile
 
 def test_render_template_string():
     """Test rendering a template string."""
-    from super_pocket.project.init.renderers import render_template_string
+    from src.super_pocket.project.init.renderers import render_template_string
 
     template = "Hello {{ name }}!"
     context = {"name": "World"}
@@ -571,7 +571,7 @@ def test_render_template_string():
 
 def test_render_template_with_conditionals():
     """Test rendering with conditional logic."""
-    from super_pocket.project.init.renderers import render_template_string
+    from src.super_pocket.project.init.renderers import render_template_string
 
     template = """
 {% if features.testing %}
@@ -615,7 +615,7 @@ File: `tests/unit_tests/test_init/test_actions.py`
 import pytest
 import tempfile
 from pathlib import Path
-from super_pocket.project.init.actions import ActionExecutor
+from src.super_pocket.project.init.actions import ActionExecutor
 
 
 def test_git_init_action(tmp_path):
@@ -886,8 +886,8 @@ File: `tests/unit_tests/test_init/test_engine.py`
 import pytest
 import tempfile
 from pathlib import Path
-from super_pocket.project.init.engine import ProjectGenerator
-from super_pocket.project.init.manifest import (
+from src.super_pocket.project.init.engine import ProjectGenerator
+from src.super_pocket.project.init.manifest import (
     TemplateManifest,
     ToolChoice,
     ToolOption,
@@ -1174,8 +1174,8 @@ File: `tests/unit_tests/test_init/test_interactive.py`
 ```python
 """Tests for interactive UI."""
 import pytest
-from super_pocket.project.init.interactive import get_default_selections
-from super_pocket.project.init.manifest import (
+from src.super_pocket.project.init.interactive import get_default_selections
+from src.super_pocket.project.init.manifest import (
     TemplateManifest,
     ToolChoice,
     ToolOption,
@@ -1640,7 +1640,7 @@ Modify `super_pocket/cli.py`, add after line 200:
 
 ```python
 # Add import at top
-from super_pocket.project.init.cli import init_group
+from src.super_pocket.project.init.cli import init_group
 
 # Add to project_group (after req-to-date command, around line 200)
 project_group.add_command(init_group)
@@ -2359,9 +2359,9 @@ Each template should include:
 import pytest
 import tempfile
 from pathlib import Path
-from super_pocket.project.init.cli import list_templates
-from super_pocket.project.init.manifest import parse_manifest
-from super_pocket.project.init.engine import ProjectGenerator
+from src.super_pocket.project.init.cli import list_templates
+from src.super_pocket.project.init.manifest import parse_manifest
+from src.super_pocket.project.init.engine import ProjectGenerator
 
 
 def test_generate_all_templates():

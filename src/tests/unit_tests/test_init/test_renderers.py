@@ -64,7 +64,7 @@ def test_render_template_file():
     from super_pocket.project.init.renderers import render_template_file
 
     # Create a temporary template file
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.jinja', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.j2', delete=False) as f:
         f.write("Project: {{ project_name }}\nVersion: {{ version }}")
         template_path = Path(f.name)
 

@@ -153,13 +153,13 @@ Import Patterns
 
 .. code-block:: python
 
-   from super_pocket.markdown.renderer import read_markdown_file, render_markdown
-   from super_pocket.project.to_file import create_codebase_markdown
-   from super_pocket.project.req_to_date import run_req_to_date
-   from super_pocket.readme.generator import ReadmeGenerator
-   from super_pocket.readme.detector import ProjectDetector
-   from super_pocket.web.favicon import convert_to_favicon
-   from super_pocket.xml.xml import parse_custom_syntax
+   from src.super_pocket.markdown.renderer import read_markdown_file, render_markdown
+   from src.super_pocket.project.to_file import create_codebase_markdown
+   from src.super_pocket.project.req_to_date import run_req_to_date
+   from src.super_pocket.readme.generator import ReadmeGenerator
+   from src.super_pocket.readme.detector import ProjectDetector
+   from src.super_pocket.web.favicon import convert_to_favicon
+   from src.super_pocket.xml.xml import parse_custom_syntax
 
    # Render markdown
    render_markdown(read_markdown_file("README.md"))

@@ -24,7 +24,7 @@
 
 - **With Homebrew (macOS/Linux):**
   ```bash
-  brew tap dim-gggl/super-pocket && brew install super-pocket
+  brew tap dim-gggl/brew && brew install super-pocket
   ```
 
 - **With uv (recommended):**
@@ -39,7 +39,6 @@
   pipx install super-pocket
   ```
 
-- Local wheel: `pip install dist/super_pocket-*.whl` if you build it yourself.
 - Quick check: `pocket --version` should answer without whining.
 
 ## Quick usage

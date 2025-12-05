@@ -59,9 +59,9 @@ def cli(ctx):
         pocket readme generate README.md
         pocket project req-to-date pyproject.toml
     """
-    if ctx.invoked_subcommand is None and not ctx.args:
-        if sys.stdin is None or not sys.stdin.isatty():
-            click.echo(ctx.get_help())
+    if not ctx.invoked_subcommand and not ctx.args:
+        if not sys.stdin or not sys.stdin.isatty():
+            console.print(ctx.get_help())
             return
 
         pocket_cmd()
@@ -189,6 +189,7 @@ def req_to_date(packages: tuple[str, ...]):
 
     try:
         results = run_req_to_date(packages)
+    
     except ValueError as exc:
         raise click.BadParameter(str(exc))
 
@@ -394,7 +395,16 @@ def web_group():
 @click.option("-r", "--job_requirements", type=str, default="no_experience", help="Job requirements to search for")
 @click.option("--work_from_home", is_flag=True, default=False, help="Search for jobs that allow working from home")
 @click.option("-o", "--output", type=str, default="jobs.json", help="Output file name")
-def web_job_search_cmd(query: str, page: int, num_pages: int, country: str, language: str, date_posted: str, employment_types: str, job_requirements: str, work_from_home: bool, output: str):
+def web_job_search_cmd(query: str, 
+                       page: int, 
+                       num_pages: int, 
+                       country: str, 
+                       language: str, 
+                       date_posted: str, 
+                       employment_types: str, 
+                       job_requirements: str, 
+                       work_from_home: bool, 
+                       output: str):
     """
     Search for jobs using the JSearch API.
 

@@ -1,7 +1,7 @@
 super-pocket
 ============
 
-.. image:: https://img.shields.io/badge/pypi-1.0-#ff5f00.svg
+.. image:: https://img.shields.io/badge/pypi-1.0.2-#ff5f00.svg
    :alt: Version 1.0
 
 .. image:: https://img.shields.io/badge/python-3.11+-blue.svg
@@ -10,7 +10,7 @@ super-pocket
 .. image:: https://img.shields.io/badge/license-MIT-green.svg
    :alt: MIT License
 
-**super-pocket** is a friendly grab-bag of developer tools in one CLI: pretty markdown rendering, one-file project exports,
+**super-pocket** is a friendly grab-bag of developer tools in one CLI: pretty markdown rendering, one-file project codebase exports,
 README generation, dependency checks, XML helpers, templates, cheatsheets, and more.
 
 Features
@@ -20,13 +20,13 @@ Features
    Beautiful terminal rendering of Markdown files with syntax highlighting and rich formatting
 
 **Project Export**
-   Convert entire projects to single Markdown files for easy sharing and documentation
+   Convert entire projects to single Markdown files for easy sharing (e.g. for LLMs) and documentation
 
 **README Generator**
    Inspect a repo and spit out a push-ready README (interactive or one-shot)
 
 **Agent Templates**
-   Manage and distribute AI agent configuration templates for consistent AI-assisted development
+   Manage and distribute AI agent configuration templates for consistent AI-assisted development (e.g. AGENTS.md)
 
 **Cheatsheets**
    Quick access to development cheatsheets and reference materials
@@ -51,10 +51,12 @@ Install super-pocket:
 .. code-block:: bash
 
    # With Homebrew (macOS/Linux)
-   brew tap dim-gggl/super-pocket && brew install super-pocket
+   brew tap dim-gggl/brew && brew install super-pocket
 
    # Or with uv
-   uv tool install super-pocket
+   uv add super-pocket
+   # or
+   uv pip install super-pocket
 
    # Or with pip
    pip install super-pocket

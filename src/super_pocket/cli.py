@@ -7,7 +7,7 @@ functionalities, organized into logical subcommands.
 """
 import asyncio
 import sys
-from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command, add_help_argument
 
 from rich.console import Console
 from pathlib import Path
@@ -20,11 +20,11 @@ from super_pocket.project.to_file import create_codebase_markdown
 from super_pocket.documents.cli import (
     list_items, view_item, copy_item, init_agents
 )
-from super_pocket.pdf.converter import pdf_convert
+from super_pocket.pdf.converter import conv2pdf
 from super_pocket.web.favicon import convert_to_favicon as favicon_convert
 from super_pocket.project.req_to_date import run_req_to_date
 from super_pocket.readme.cli import readme_cli
-from super_pocket.web.favicon import favicon
+from super_pocket.web.favicon import web_favicon
 from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_results
 from super_pocket.project.init.cli import init_group
 from super_pocket.interactive import pocket_cmd
@@ -76,7 +76,7 @@ def markdown_group():
 
 
 @markdown_group.command(name="render", context_settings=CONTEXT_SETTINGS)
-@click.argument('file', type=click.Path(exists=True))
+@click.argument('file', type=click.Path())
 @click.option('--width', '-w', type=int, help='Output width in characters.')
 def markdown_render(file: str, width: int):
     """
@@ -93,10 +93,15 @@ def markdown_render(file: str, width: int):
         pocket markdown render README.md
         pocket markdown render docs/guide.md -w 100
     """
+    file_path = Path(file)
+    if not file_path.exists():
+        raise click.BadParameter(f"Path '{file}' does not exist.", param_hint="'FILE'")
 
     # Call the markd function with the file
     ctx = click.Context(markd)
-    ctx.invoke(markd, file=Path(file), output=None, input=None)
+    ctx.invoke(markd, file=file_path, output=None, input=None)
+
+add_help_argument(markdown_render)
 
 
 # ==================== Project Commands ====================
@@ -143,6 +148,8 @@ def project_to_file(path: str, output: str, exclude: str):
 
     create_codebase_markdown(path, output, exclude)
 
+add_help_argument(project_to_file)
+
 
 @project_group.command(name="readme", context_settings=CONTEXT_SETTINGS)
 @click.option(
@@ -174,6 +181,8 @@ def project_readme(path: str, output: str | None):
     """
 
     run_readme_wizard(path, output)
+
+add_help_argument(project_readme)
 
 @project_group.command(name="req-to-date", context_settings=CONTEXT_SETTINGS)
 @click.argument("packages", nargs=-1)
@@ -214,6 +223,8 @@ def req_to_date(packages: tuple[str, ...]):
         ),
     )
 
+add_help_argument(req_to_date)
+
 project_group.add_command(init_group)
 # ==================== Documents Commands ====================
 @cli.group(name="documents", context_settings=CONTEXT_SETTINGS)
@@ -248,6 +259,8 @@ def documents_list(type: str):
     ctx = click.Context(list_items)
     ctx.invoke(list_items, type=type)
 
+add_help_argument(documents_list)
+
 
 @documents_group.command(name="view", context_settings=CONTEXT_SETTINGS)
 @click.argument('name', type=str)
@@ -274,6 +287,8 @@ def documents_view(name: str, type: str):
 
     ctx = click.Context(view_item)
     ctx.invoke(view_item, name=name, type=type)
+
+add_help_argument(documents_view)
 
 
 @documents_group.command(name="copy", context_settings=CONTEXT_SETTINGS)
@@ -315,6 +330,8 @@ def documents_copy(name: str, output: str, type: str, force: bool):
     ctx = click.Context(copy_item)
     ctx.invoke(copy_item, name=name, output=output_path, type=type, force=force)
 
+add_help_argument(documents_copy)
+
 
 @documents_group.command(name="init", context_settings=CONTEXT_SETTINGS)
 @click.option(
@@ -341,6 +358,8 @@ def documents_init(output: str):
     ctx = click.Context(init_agents)
     ctx.invoke(init_agents, output=output_path)
 
+add_help_argument(documents_init)
+
 
 # ==================== PDF Commands ====================
 @cli.group(name="pdf", context_settings=CONTEXT_SETTINGS)
@@ -350,7 +369,7 @@ def pdf_group():
 
 
 @pdf_group.command(name="convert", context_settings=CONTEXT_SETTINGS)
-@click.argument('input_file', type=click.Path(exists=True))
+@click.argument('input_file', type=click.Path())
 @click.option(
     '-o', '--output',
     type=click.Path(),
@@ -371,10 +390,16 @@ def pdf_convert_cmd(input_file: str, output: str):
         pocket pdf convert document.txt
         pocket pdf convert README.md -o output.pdf
     """
+    input_path = Path(input_file)
+    if not input_path.exists():
+        raise click.BadParameter(f"Path '{input_file}' does not exist.", param_hint="'INPUT_FILE'")
+    
     output_path = Path(output) if output else None
 
-    ctx = click.Context(pdf_convert)
-    ctx.invoke(pdf_convert, input_file=Path(input_file), output=output_path)
+    ctx = click.Context(conv2pdf)
+    ctx.invoke(conv2pdf, input_file=input_path, output=output_path)
+
+add_help_argument(pdf_convert_cmd)
 
 
 # ==================== Web Commands ====================
@@ -432,9 +457,11 @@ def web_job_search_cmd(query: str,
                employment_types=employment_types, job_requirements=job_requirements,
                work_from_home=work_from_home, output=output)
 
+add_help_argument(web_job_search_cmd)
+
 
 @web_group.command(name="favicon", context_settings=CONTEXT_SETTINGS)
-@click.argument('input_file', type=click.Path(exists=True))
+@click.argument('input_file', type=click.Path())
 @click.option(
     '-o', '--output',
     type=click.Path(),
@@ -462,10 +489,16 @@ def web_favicon_cmd(input_file: str, output: str, sizes: str):
         pocket web favicon logo.png -o custom-favicon.ico
         pocket web favicon logo.png --sizes "64x64,32x32"
     """
+    input_path = Path(input_file)
+    if not input_path.exists():
+        raise click.BadParameter(f"Path '{input_file}' does not exist.", param_hint="'INPUT_FILE'")
+    
     output_path = Path(output) if output else None
 
     ctx = click.Context(favicon_convert)
-    ctx.invoke(favicon_convert, input_file=Path(input_file), output=output_path, sizes=sizes)
+    ctx.invoke(favicon_convert, input_file=input_path, output=output_path, sizes=sizes)
+
+add_help_argument(web_favicon_cmd)
 
 
 # ==================== README Commands ====================

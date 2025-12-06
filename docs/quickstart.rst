@@ -127,5 +127,5 @@ Next steps
 ----------
 
 * :doc:`commands` for the full, friendly reference
-* :doc:`templates` to see what ships in the box
+* :doc:`documents` to see what ships in the box
 * :doc:`installation` if you need extras (web/pdf) or dev setup

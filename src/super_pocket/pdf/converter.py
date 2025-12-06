@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_argument
 from rich.console import Console
 from super_pocket.utils import print_error
 
@@ -165,7 +165,7 @@ def conv2pdf(input_file: Path, output: Optional[Path]) -> None:
         raise
 
 
-add_help_command(conv2pdf)
+add_help_argument(conv2pdf)
 
 
 def main():

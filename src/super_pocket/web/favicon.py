@@ -9,7 +9,7 @@ with multiple sizes for web compatibility.
 from pathlib import Path
 from typing import Optional, List, Tuple
 
-from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_argument
 from rich.console import Console
 
 try:
@@ -123,7 +123,9 @@ def web_favicon(
         sizes = [tuple(map(int, size.split('x'))) for size in sizes.split(',')]
     convert_to_favicon(input_file, output, sizes)
 
-add_help_command(web_favicon)
+
+add_help_argument(web_favicon)
+
 
 def main():
     """Main entry point for standalone script."""

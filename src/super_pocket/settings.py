@@ -1,3 +1,5 @@
+import functools
+
 import rich_click as click
 from rich.panel import Panel
 from rich.text import Text
@@ -60,6 +62,31 @@ def add_help_command(group):
         click.echo(ctx.parent.get_help())
     return group
 
+def add_help_argument(command):
+    """
+    Make a command support 'help' as a positional argument.
+
+    For commands, this allows users to type 'pocket <cmd> help' to get help,
+    in addition to '-h' and '--help'.
+
+    Args:
+        command: A Click command to modify.
+
+    Returns:
+        The modified command.
+    """
+    original_make_context = command.make_context
+
+    @functools.wraps(original_make_context)
+    def new_make_context(info_name, args, parent=None, **extra):
+        # Check if 'help' is in arguments (first position or alone)
+        if args and 'help' in args:
+            # Replace 'help' with '--help' so Click handles it properly
+            args = ['--help'] + [a for a in args if a != 'help']
+        return original_make_context(info_name, args, parent=parent, **extra)
+
+    command.make_context = new_make_context
+    return command
 
 def centered_spinner(message: str = "Loading...", style: str = "bold blue"):
     text = Text(message, style=style)

@@ -9,7 +9,7 @@ containing the entire codebase with syntax highlighting and file tree structure.
 import os
 import argparse
 import sys
-from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_argument
 from rich.console import Console
 from collections.abc import Generator
 from pathlib import Path
@@ -261,4 +261,4 @@ def proj_to_file(project: str, output: str, exclude: str, extend_exclude: str):
 
     create_codebase_markdown(project_dir, output_path, exclude_pattern)
 
-add_help_command(proj_to_file)
+add_help_argument(proj_to_file)

@@ -1,6 +1,6 @@
 import httpx, re, asyncio, uvicorn
 import tomllib
-from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_argument
 from super_pocket.utils import print_error
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
@@ -361,4 +361,4 @@ def req_to_date_cli(packages: tuple[str, ...]):
     if count == 0:
         console.print("\n\n\nEverything's up to date !\n\n\n", style="bold", justify="center")
 
-add_help_command(req_to_date_cli)
+add_help_argument(req_to_date_cli)

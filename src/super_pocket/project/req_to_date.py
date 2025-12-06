@@ -1,6 +1,6 @@
 import httpx, re, asyncio, uvicorn
 import tomllib
-from super_pocket.settings import click
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
 from super_pocket.utils import print_error
 from pathlib import Path
 from fastapi import FastAPI, HTTPException
@@ -48,10 +48,10 @@ def _read_requirements_file(path: Path) -> List[str]:
             lines = [l.strip() for l in f.readlines()[2:]]
 
     except FileNotFoundError as exc:
-        print_error(exc, custom=True, message=f"Fichier requirements introuvable: {path}")
+        print_error(exc, custom=True, message=f"Requirements file not found: {path}")
         raise
     except OSError as exc:
-        print_error(exc, custom=True, message=f"Impossible de lire {path}")
+        print_error(exc, custom=True, message=f"Unable to read {path}")
         raise
 
     specs: List[str] = []
@@ -145,7 +145,7 @@ def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
             continue
         entry = entry.strip()
 
-        # Gestion des listes séparées par des virgules dans un seul argument
+        # Handle comma-separated lists in a single argument
         if ',' in entry:
             parts = [part.strip() for part in entry.split(',')]
             expanded.extend(parts)
@@ -332,10 +332,15 @@ def print_req_to_date_results(
             )
 
 
-@click.command(name="req-to-date")
+@click.command(name="req-to-date", context_settings=CONTEXT_SETTINGS)
 @click.argument("packages", nargs=-1)
 def req_to_date_cli(packages: tuple[str, ...]):
-    """Commande standalone: accepte nom==version, liste avec virgules ou requirements.txt."""
+    """Dependencies Scanner: scan dependencies and print outdated dependencies.
+    
+    Parameters:
+    - packages: package names in the form name==version, comma-separated lists of
+    name==version, path to a pyproject.toml or a requirements.txt file.
+    """
     packages = _expand_spec_inputs(packages)
     count = 0
     try:
@@ -355,3 +360,5 @@ def req_to_date_cli(packages: tuple[str, ...]):
             count += 1
     if count == 0:
         console.print("\n\n\nEverything's up to date !\n\n\n", style="bold", justify="center")
+
+add_help_command(req_to_date_cli)

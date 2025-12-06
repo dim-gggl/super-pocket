@@ -1,4 +1,4 @@
-from super_pocket.settings import click, display_logo
+from super_pocket.settings import click, display_logo, CONTEXT_SETTINGS
 from rich.console import Console
 from rich.prompt import Prompt
 from super_pocket.xml.xml import (
@@ -9,7 +9,7 @@ from super_pocket.xml.xml import (
 console = Console()
 
 
-@click.command()
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.argument('text', type=str, help='Text to process.', required=False)
 @click.option('--file', '-f', type=click.Path(exists=True), help='Path to the text file.')
 @click.option('--output', '-o', type=click.Path(), help='Path to the output file.')

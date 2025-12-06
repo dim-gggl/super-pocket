@@ -4,16 +4,17 @@ CLI commands for project initialization.
 Provides Click commands for listing, showing, and initializing projects
 from templates.
 """
-from super_pocket.settings import click
+from super_pocket.settings import (
+    click,
+    CONTEXT_SETTINGS,
+    add_help_command,
+    centered_spinner,
+    display_logo
+)
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 from rich.live import Live
-
-from super_pocket.settings import (
-    centered_spinner,
-    display_logo
-)
 from super_pocket.utils import print_error
 from .manifest import parse_manifest
 from .engine import ProjectGenerator
@@ -57,13 +58,13 @@ def list_templates(templates_dir: Path) -> list[dict]:
     return templates
 
 
-@click.group(name="init")
+@click.group(name="init", context_settings=CONTEXT_SETTINGS)
 def init_group():
     """Initialize new projects from templates."""
     pass
 
 
-@init_group.command(name="list")
+@init_group.command(name="list", context_settings=CONTEXT_SETTINGS)
 def list_cmd():
     """List available project templates."""
     templates_dir = Path(__file__).parent.parent / "templates"
@@ -89,7 +90,7 @@ def list_cmd():
     console.print(table)
 
 
-@init_group.command(name="show")
+@init_group.command(name="show", context_settings=CONTEXT_SETTINGS)
 @click.argument("template_name")
 def show_cmd(template_name: str):
     """Show details of a specific template."""
@@ -126,7 +127,7 @@ def show_cmd(template_name: str):
         raise
 
 
-@init_group.command()
+@init_group.command(context_settings=CONTEXT_SETTINGS)
 @click.argument("template_name")
 @click.option("--path", "-p", type=click.Path(), help="Output directory")
 @click.option("--quick", "-q", is_flag=True, help="Use defaults without prompting")
@@ -212,3 +213,7 @@ def new(template_name: str, path: str | None, quick: bool):
     except Exception as e:
         print_error(e, custom=True, message="Error")
         raise
+
+
+# Add 'help' subcommand to the group
+add_help_command(init_group)

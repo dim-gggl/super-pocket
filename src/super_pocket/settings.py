@@ -35,6 +35,32 @@ click.rich_click.STYLE_COMMANDS_PANEL_BOX = "SIMPLE_HEAD"
 click.rich_click.STYLE_COMMANDS_PANEL_TITLE_STYLE = "bold grey100"
 click.rich_click.STYLE_COMMANDS_TABLE_BOX = "SIMPLE"
 
+
+# Context settings to enable -h in addition to --help
+CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
+
+
+def add_help_command(group):
+    """
+    Add a 'help' subcommand to a Click group.
+
+    This allows users to get help via 'pocket <group> help' in addition
+    to 'pocket <group> --help' and 'pocket <group> -h'.
+
+    Args:
+        group: A Click group to add the help command to.
+
+    Returns:
+        The group with the help command added.
+    """
+    @group.command(name="help", context_settings=CONTEXT_SETTINGS)
+    @click.pass_context
+    def help_cmd(ctx):
+        """Show help for this command group."""
+        click.echo(ctx.parent.get_help())
+    return group
+
+
 def centered_spinner(message: str = "Loading...", style: str = "bold blue"):
     text = Text(message, style=style)
     return Align.center(Spinner("dots12", text=text, style=style))

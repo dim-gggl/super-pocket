@@ -78,7 +78,7 @@ As of the latest test run:
 - **markdown/renderer.py**: 71% coverage
 - **pdf/converter.py**: 54% coverage (requires optional dependencies for full testing)
 - **project/to_file.py**: 77% coverage
-- **templates_and_cheatsheets/validator.py**: 90% coverage
+- **documents/validator.py**: 90% coverage
 - **web/favicon.py**: 71% coverage (requires optional dependencies for full testing)
 
 ## Test Organization

@@ -1,6 +1,6 @@
 """CLI commands for README generator."""
 
-from super_pocket.settings import click
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
@@ -10,13 +10,13 @@ from .generator import ReadmeGenerator
 console = Console()
 
 
-@click.group()
+@click.group(context_settings=CONTEXT_SETTINGS)
 def readme_cli():
     """README generator commands."""
     pass
 
 
-@readme_cli.command("analyze")
+@readme_cli.command("analyze", context_settings=CONTEXT_SETTINGS)
 @click.argument("path", type=click.Path(exists=True), default=".")
 def analyze_command(path: str):
     """
@@ -57,7 +57,7 @@ def analyze_command(path: str):
         console.print(f"\n[cyan]Dependencies:[/cyan] {len(context.dependencies)} found")
 
 
-@readme_cli.command("generate")
+@readme_cli.command("generate", context_settings=CONTEXT_SETTINGS)
 @click.option("--output", "-o", default="README.md", help="Output file path")
 @click.option("--path", "-p", type=click.Path(exists=True), default=".", help="Project directory")
 def generate_command(output: str, path: str):
@@ -88,6 +88,10 @@ def generate_command(output: str, path: str):
     # Write to file
     output_path.write_text(content)
     console.print(f"[green]✓[/green] README generated: {output_path}")
+
+
+# Add 'help' subcommand to the group
+add_help_command(readme_cli)
 
 
 if __name__ == "__main__":

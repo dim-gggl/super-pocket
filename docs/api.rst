@@ -120,17 +120,17 @@ Web
 Templates & Cheatsheets
 -----------------------
 
-.. automodule:: super_pocket.templates_and_cheatsheets
+.. automodule:: super_pocket.documents
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: super_pocket.templates_and_cheatsheets.cli
+.. automodule:: super_pocket.documents.cli
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: super_pocket.templates_and_cheatsheets.validator
+.. automodule:: super_pocket.documents.validator
    :members:
    :undoc-members:
    :show-inheritance:

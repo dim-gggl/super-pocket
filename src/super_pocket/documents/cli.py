@@ -13,7 +13,7 @@ import shutil
 from pathlib import Path
 from typing import Optional, Literal
 
-from super_pocket.settings import click
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.table import Table
@@ -46,8 +46,8 @@ def get_available_items(item_type: Literal["templates", "cheatsheets"]) -> list[
     return sorted(directory.glob("*.md"))
 
 
-@click.group()
-def templates_cli():
+@click.group(context_settings=CONTEXT_SETTINGS)
+def documents_cli():
     """
     Manage agent templates and development cheatsheets.
 
@@ -57,7 +57,7 @@ def templates_cli():
     pass
 
 
-@templates_cli.command(name="list")
+@documents_cli.command(name="list", context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--type', '-t',
     type=click.Choice(['templates', 'cheatsheets', 'all'], case_sensitive=False),
@@ -75,9 +75,9 @@ def list_items(type: str):
         type: Filter by type - 'templates', 'cheatsheets', or 'all' (default: all).
 
     Examples:
-        pocket templates list
-        pocket templates list --type templates
-        pocket templates list -t cheatsheets
+        pocket documents list
+        pocket documents list --type templates
+        pocket documents list -t cheatsheets
     """
     table = Table(title="Available Templates & Cheatsheets", show_header=True, header_style="bold magenta")
     table.add_column("Type", style="cyan", width=15)
@@ -110,7 +110,7 @@ def list_items(type: str):
     console.print(table)
 
 
-@templates_cli.command(name="view")
+@documents_cli.command(name="view", context_settings=CONTEXT_SETTINGS)
 @click.argument('name', type=str)
 @click.option(
     '--type', '-t',
@@ -135,8 +135,8 @@ def view_item(name: str, type: Optional[str]):
         click.Abort: If the item is not found or cannot be read.
 
     Examples:
-        pocket templates view unit_tests_agent
-        pocket templates view SQL -t cheatsheet
+        pocket documents view unit_tests_agent
+        pocket documents view SQL -t cheatsheet
     """
     # Try to find the item
     item_path = None
@@ -153,7 +153,7 @@ def view_item(name: str, type: Optional[str]):
 
     if item_path is None:
         console.print(f"[red]Error:[/red] Item '{name}' not found.", style="bold")
-        console.print("\nUse 'pocket templates list' to see available items.")
+        console.print("\nUse 'pocket documents list' to see available items.")
         raise click.Abort()
 
     try:
@@ -165,7 +165,7 @@ def view_item(name: str, type: Optional[str]):
         raise click.Abort()
 
 
-@templates_cli.command(name="copy")
+@documents_cli.command(name="copy", context_settings=CONTEXT_SETTINGS)
 @click.argument('name', type=str)
 @click.option(
     '--output', '-o',
@@ -202,9 +202,9 @@ def copy_item(name: str, output: Optional[Path], type: Optional[str], force: boo
         click.Abort: If the item is not found or copy operation fails.
 
     Examples:
-        pocket templates copy unit_tests_agent -o .agents/
-        pocket templates copy SQL -o docs/cheatsheets/ -t cheatsheet
-        pocket templates copy my_agent -o ./custom.md -f
+        pocket documents copy unit_tests_agent -o .agents/
+        pocket documents copy SQL -o docs/cheatsheets/ -t cheatsheet
+        pocket documents copy my_agent -o ./custom.md -f
     """
     # Find the source item
     source_path = None
@@ -221,7 +221,7 @@ def copy_item(name: str, output: Optional[Path], type: Optional[str], force: boo
 
     if source_path is None:
         console.print(f"[red]Error:[/red] Item '{name}' not found.", style="bold")
-        console.print("\nUse 'pocket templates list' to see available items.")
+        console.print("\nUse 'pocket documents list' to see available items.")
         raise click.Abort()
 
     # Determine output path
@@ -251,7 +251,7 @@ def copy_item(name: str, output: Optional[Path], type: Optional[str], force: boo
         raise click.Abort()
 
 
-@templates_cli.command(name="init")
+@documents_cli.command(name="init", context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--output', '-o',
     type=click.Path(path_type=Path),
@@ -274,9 +274,9 @@ def init_agents(output: Path):
         click.Abort: If an error occurs during directory creation or file copying.
 
     Examples:
-        pocket templates init
-        pocket templates init -o ./agents/
-        pocket templates init -o /path/to/my-project/.agents
+        pocket documents init
+        pocket documents init -o ./agents/
+        pocket documents init -o /path/to/my-project/.agents
     """
     try:
         # Create output directory
@@ -304,5 +304,9 @@ def init_agents(output: Path):
         raise click.Abort()
 
 
+# Add 'help' subcommand to the group
+add_help_command(documents_cli)
+
+
 if __name__ == '__main__':
-    templates_cli()
+    documents_cli()

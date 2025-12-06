@@ -197,7 +197,7 @@ You should see:
      markdown   Markdown rendering tools
      pdf        PDF conversion tools
      project    Project export tools
-     templates  Agent templates and cheatsheets management
+     documents  Agent templates and cheatsheets management
      web        Web utilities
 
 Virtual Environment Setup

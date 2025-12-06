@@ -21,7 +21,7 @@ First sanity check
 
    pocket --help
 
-You should see the menu of groups (markdown, project, templates, pdf, web, readme, xml). If that shows up, you’re good.
+You should see the menu of groups (markdown, project, documents, pdf, web, readme, xml). If that shows up, you're good.
 
 Render Markdown (pretty output)
 -------------------------------
@@ -88,10 +88,10 @@ Templates & cheatsheets on tap
 
 .. code-block:: bash
 
-   pocket templates list
-   pocket templates view unit_tests_agent
-   pocket templates copy unit_tests_agent -o .AGENTS/
-   pocket templates init -o .AGENTS
+   pocket documents list
+   pocket documents view unit_tests_agent
+   pocket documents copy unit_tests_agent -o .AGENTS/
+   pocket documents init -o .AGENTS
 
 Great for stocking a repo with AGENTS.md templates or quick references.
 
@@ -121,7 +121,7 @@ Common mini-workflows
 
 - **Doc-in-a-box:** ``pocket project to-file -o snapshot.md`` → ``pocket pdf convert snapshot.md -o snapshot.pdf``  
 - **CI helper:** call the stand-alone shortcuts (``proj2md``, ``markd``, ``conv2pdf``, ``req-update``) directly in pipelines.  
-- **Agent setup:** ``pocket templates init -o .AGENTS`` then ``pocket templates view <name>`` to pick the right file.  
+- **Agent setup:** ``pocket documents init -o .AGENTS`` then ``pocket documents view <name>`` to pick the right file.  
 
 Next steps
 ----------

@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from super_pocket.settings import click
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
 from rich.console import Console
 from super_pocket.utils import print_error
 
@@ -110,7 +110,7 @@ def convert_md_to_pdf(input_file: Path, output_file: Path) -> None:
     pdf.save(str(output_file))
 
 
-@click.command()
+@click.command(name="conv2pdf", context_settings=CONTEXT_SETTINGS)
 @click.argument(
     'input_file',
     type=click.Path(exists=True, path_type=Path)
@@ -120,7 +120,7 @@ def convert_md_to_pdf(input_file: Path, output_file: Path) -> None:
     type=click.Path(path_type=Path),
     help='Output PDF file path. Default: <input_file>.pdf'
 )
-def pdf_convert(input_file: Path, output: Optional[Path]) -> None:
+def conv2pdf(input_file: Path, output: Optional[Path]) -> None:
     """
     Convert text or Markdown files to PDF.
 
@@ -136,9 +136,9 @@ def pdf_convert(input_file: Path, output: Optional[Path]) -> None:
         click.Abort: If the file format is unsupported or conversion fails.
 
     Examples:
-        pocket pdf convert document.txt
-        pocket pdf convert README.md -o output.pdf
-        conv-to-pdf document.md output.pdf
+        pocket conv2pdf document.txt
+        pocket conv2pdf README.md -o output.pdf
+        conv2pdf document.md output.pdf
     """
     # Determine output path
     if not output:
@@ -165,9 +165,12 @@ def pdf_convert(input_file: Path, output: Optional[Path]) -> None:
         raise
 
 
+add_help_command(conv2pdf)
+
+
 def main():
     """Main entry point for standalone script."""
-    pdf_convert()
+    conv2pdf()
 
 
 if __name__ == "__main__":

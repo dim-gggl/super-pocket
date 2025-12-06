@@ -181,7 +181,7 @@ None - version 1.0.0 maintains backward compatibility with 0.x releases.
    .. code-block:: bash
 
       # Initialize templates
-      pocket templates init
+      pocket documents init
 
 3. Install optional dependencies as needed:
 

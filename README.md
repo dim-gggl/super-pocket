@@ -1,10 +1,19 @@
 # Super Pocket
-
-[![Documentation Status](https://readthedocs.org/projects/pocketdocs/badge/?version=latest)](https://pocketdocs.readthedocs.io/en/latest/?badge=latest)
-[![Static Badge](https://img.shields.io/badge/python-3.11%2B-blue?style=plastic&logo=python&logoColor=yellow)
-](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-
+<div align="center">
+  <a href="https://pocketdocs.readthedocs.io/en/latest/?badge=latest&style=plastic&logo=readthedocs">
+    <img src="https://readthedocs.org/projects/pocketdocs/badge/?version=latest">
+  </a>
+  <a href="https://www.python.org/downloads/">
+    <img src="https://img.shields.io/badge/python-3.11%2B-blue?style=plastic&logo=python&logoColor=yellow">
+  </a>
+  <a href="https://opensource.org/licenses/MIT">
+    <img src="https://img.shields.io/badge/License-MIT-pink.svg?style=plastic">
+  </a>
+  <a href="https://pypi.org/project/super-pocket/">
+    <img src="https://img.shields.io/pypi/v/super-pocket?style=plastic&logo=python&logoColor=yellow">
+  </a>
+  
+</div>
 
 ![](./pocket_shaded.png)
 
@@ -33,13 +42,18 @@
   ```
 
 - **With pip/pipx:**
+It is **Highly recommended** to use a virtual environment.
   ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+
   pip install super-pocket
   # or
   pipx install super-pocket
   ```
 
 - Quick check: `pocket --version` should answer without whining.
+- Double check: `which pocket`, in this case should return `your/project/path/venv/bin/pocket`
 
 ## Quick usage
 
@@ -78,9 +92,9 @@ This launches a guided interactive menu. Navigate through tools, get prompted fo
 
 ### Agent templates and cheatsheets
 
-- List: `pocket templates list`  
-- Copy a template: `pocket templates copy unit_tests_agent -o .AGENTS/`  
-- Initialize everything at once: `pocket templates init -o .AGENTS`
+- List: `pocket documents list`  
+- Copy a template: `pocket documents copy unit_tests_agent -o .AGENTS/`  
+- Initialize everything at once: `pocket documents init -o .AGENTS`
 
 ### Convert a file to PDF
 
@@ -94,14 +108,24 @@ This launches a guided interactive menu. Navigate through tools, get prompted fo
 
 ### Generate LLM-friendly XML
 
-- `pocket xml "note:hello world"`  
+- `pocket xml "note:<hello world>"`  
 - Output: `<note>hello world</note>` (chain multiple tags, it keeps up).
 
 ### Quick cheatsheets
 
-- View in 2s: `pocket templates view SQL -t cheatsheet`  
-- Local copy to work offline: `pocket templates copy git -o docs/cheats/`
+- View in 2s: `pocket documents view SQL -t cheatsheet`  
+- Local copy to work offline: `pocket documents copy git -o docs/cheats/`
 
 ### Stand-alone mode (scripts)
 
 Everything above works directly from the CLI without the interactive UI. Perfect for CI or your own automation scripts.
+
+The initial command `pocket` is a way to unify all these tools, but it also works to do:
+`req-to-date requirements.txt`
+`proj2md -p . -o proj2md.md`
+`xml "context:<Job interview post:<back-end developer>>"`
+> This last command should return:
+> <context>
+>  Job interview
+>  <post>back-end developer</post>
+> </context>

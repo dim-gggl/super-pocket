@@ -18,7 +18,7 @@ The interactive mode offers:
 
 * **Help** - Display the main help menu
 * **Project** - Access project tools (to-file, readme, req-to-date, init)
-* **Templates** - Manage templates and cheatsheets (list, view, copy, init)
+* **Documents** - Manage templates and cheatsheets (list, view, copy, init)
 * **PDF** - Convert files to PDF
 * **Web** - Web utilities (favicon, job-search)
 * **README** - Analyze or generate README files
@@ -33,7 +33,7 @@ Each submenu guides you through the available options and prompts for required p
 
    $ pocket
    [Logo appears]
-   help project templates pdf web readme xml exit/Q >>> project
+   help project documents pdf web readme xml exit/Q >>> project
    [Project menu]
    help to-file readme req-to-date init exit/Q >>> to-file
    Project path [.]: ./my-app
@@ -197,27 +197,27 @@ Generate a README in one go, no Q&A.
 
 Outputs a ready-to-edit README based on the detected stack.
 
-Templates Commands
+Documents Commands
 ------------------
 
 Manage AI agent templates and cheatsheets.
 
-pocket templates list
+pocket documents list
 ~~~~~~~~~~~~~~~~~~~~~
 
 List every template/cheatsheet (filter with ``-t templates`` or ``-t cheatsheets``).
 
-pocket templates view
+pocket documents view
 ~~~~~~~~~~~~~~~~~~~~~
 
 Preview content in the terminal. Auto-detects type or specify ``-t template|cheatsheet``.
 
-pocket templates copy
+pocket documents copy
 ~~~~~~~~~~~~~~~~~~~~~
 
 Copy a template/cheatsheet to your project. Supports ``-o`` for destination and ``-f`` to overwrite.
 
-pocket templates init
+pocket documents init
 ~~~~~~~~~~~~~~~~~~~~~
 
 Bootstrap a directory with all templates (default: ``.AGENTS``). Pass ``-o`` to choose another path.
@@ -312,7 +312,7 @@ Quick reference:
    * - ``pocket readme analyze|generate``
      - Analyze or generate README directly
      - N/A
-   * - ``pocket templates list/view/copy/init``
+   * - ``pocket documents list/view/copy/init``
      - Manage templates & cheatsheets
      - N/A
    * - ``pocket pdf convert``

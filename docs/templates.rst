@@ -10,7 +10,7 @@ The templates system gives you:
 
 * **Agent Templates**: Pre-configured AI agent setups for common development tasks
 * **Cheatsheets**: Quick references for tech you use daily
-* **Easy Management**: ``pocket templates list/view/copy/init``—all the verbs you need
+* **Easy Management**: ``pocket documents list/view/copy/init``—all the verbs you need
 
 Agent Templates
 ---------------
@@ -36,8 +36,8 @@ An agent configuration designed to help you create new AI agent templates.
 
 .. code-block:: bash
 
-   pocket templates view agent_maker
-   pocket templates copy agent_maker -o .agents/
+   pocket documents view agent_maker
+   pocket documents copy agent_maker -o .agents/
 
 unit_tests_agent.md
 ^^^^^^^^^^^^^^^^^^^
@@ -61,8 +61,8 @@ Comprehensive configuration for generating unit tests with proper coverage and b
 
 .. code-block:: bash
 
-   pocket templates view unit_tests_agent
-   pocket templates copy unit_tests_agent -o .agents/
+   pocket documents view unit_tests_agent
+   pocket documents copy unit_tests_agent -o .agents/
 
 agents_template_maker.md
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -79,8 +79,8 @@ Template for creating AGENTS.md files that document your project's AI agent conf
 
 .. code-block:: bash
 
-   pocket templates view agents_template_maker
-   pocket templates copy agents_template_maker -o ./docs/
+   pocket documents view agents_template_maker
+   pocket documents copy agents_template_maker -o ./docs/
 
 job_assistant_agent.md
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -98,8 +98,8 @@ AI assistant configuration for job search and application processes.
 
 .. code-block:: bash
 
-   pocket templates view job_assistant_agent
-   pocket templates copy job_assistant_agent -o .
+   pocket documents view job_assistant_agent
+   pocket documents copy job_assistant_agent -o .
 
 Development Cheatsheets
 -----------------------
@@ -125,8 +125,8 @@ Comprehensive SQL reference covering:
 
 .. code-block:: bash
 
-   pocket templates view SQL -t cheatsheet
-   pocket templates copy SQL -t cheatsheet -o ./docs/
+   pocket documents view SQL -t cheatsheet
+   pocket documents copy SQL -t cheatsheet -o ./docs/
 
 Managing Templates
 ------------------
@@ -139,13 +139,13 @@ View all available templates and cheatsheets:
 .. code-block:: bash
 
    # List everything
-   pocket templates list
+   pocket documents list
 
    # List only templates
-   pocket templates list -t templates
+   pocket documents list -t templates
 
    # List only cheatsheets
-   pocket templates list -t cheatsheets
+   pocket documents list -t cheatsheets
 
 The output shows:
 
@@ -161,10 +161,10 @@ Preview template content before copying:
 .. code-block:: bash
 
    # View any template
-   pocket templates view unit_tests_agent
+   pocket documents view unit_tests_agent
 
    # View with type specified
-   pocket templates view SQL -t cheatsheet
+   pocket documents view SQL -t cheatsheet
 
 This displays the full content in your terminal with formatting.
 
@@ -176,13 +176,13 @@ Copy templates to use them in your projects:
 .. code-block:: bash
 
    # Copy to current directory
-   pocket templates copy unit_tests_agent
+   pocket documents copy unit_tests_agent
 
    # Copy to specific location
-   pocket templates copy unit_tests_agent -o .agents/
+   pocket documents copy unit_tests_agent -o .agents/
 
    # Copy with full path
-   pocket templates copy agent_maker -o /path/to/project/.agents/
+   pocket documents copy agent_maker -o /path/to/project/.agents/
 
 The copied files maintain their original formatting and can be edited as needed.
 
@@ -194,10 +194,10 @@ Set up a complete agent templates directory:
 .. code-block:: bash
 
    # Create .agents/ with all templates
-   pocket templates init
+   pocket documents init
 
    # Custom location
-   pocket templates init -o ./config/agents/
+   pocket documents init -o ./config/agents/
 
 This creates:
 
@@ -215,7 +215,7 @@ Agent Configuration Workflow
 
    .. code-block:: bash
 
-      pocket templates init
+      pocket documents init
 
 2. **Choose Appropriate Agents:**
 
@@ -236,13 +236,13 @@ Cheatsheet Workflow
 
    .. code-block:: bash
 
-      pocket templates view SQL -t cheatsheet
+      pocket documents view SQL -t cheatsheet
 
 2. **Copy for Reference:**
 
    .. code-block:: bash
 
-      pocket templates copy SQL -t cheatsheet -o ./docs/
+      pocket documents copy SQL -t cheatsheet -o ./docs/
 
 3. **Keep in Documentation:**
 
@@ -365,10 +365,10 @@ If you get a "template not found" error:
 .. code-block:: bash
 
    # List available templates to verify name
-   pocket templates list
+   pocket documents list
 
    # Check spelling and try again
-   pocket templates view correct_name
+   pocket documents view correct_name
 
 Cannot Copy Template
 ~~~~~~~~~~~~~~~~~~~~
@@ -381,7 +381,7 @@ If copying fails:
    mkdir -p .agents
 
    # Try with absolute path
-   pocket templates copy unit_tests_agent -o "$(pwd)/.agents/"
+   pocket documents copy unit_tests_agent -o "$(pwd)/.agents/"
 
 Template Display Issues
 ~~~~~~~~~~~~~~~~~~~~~~~

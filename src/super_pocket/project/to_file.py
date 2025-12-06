@@ -9,7 +9,7 @@ containing the entire codebase with syntax highlighting and file tree structure.
 import os
 import argparse
 import sys
-from super_pocket.settings import click
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
 from rich.console import Console
 from collections.abc import Generator
 from pathlib import Path
@@ -230,7 +230,7 @@ def create_codebase_markdown(
 
     console.print(f"\n|| Success! Codebase compiled into '{output_file}'")
 
-@click.command(name="proj-to-file")
+@click.command(name="proj-to-file", context_settings=CONTEXT_SETTINGS)
 @click.option('-p', '--project', default='.', help='Root directory of the project to scan.')
 @click.option('-o', '--output', default=None, help='Output Markdown file name.')
 @click.option('-e', '--exclude', default=DEFAULT_VALUES["exclude"], help='Comma-separated list of files/directories to exclude.')
@@ -261,3 +261,4 @@ def proj_to_file(project: str, output: str, exclude: str, extend_exclude: str):
 
     create_codebase_markdown(project_dir, output_path, exclude_pattern)
 
+add_help_command(proj_to_file)

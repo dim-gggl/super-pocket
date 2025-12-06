@@ -74,42 +74,42 @@ def test_cli_project_to_file_default_path(runner: CliRunner, temp_dir):
     assert result.exit_code in [0, 1]
 
 
-def test_cli_templates_list(runner: CliRunner):
-    """Test templates list command."""
-    result = runner.invoke(cli, ['templates', 'list'])
+def test_cli_documents_list(runner: CliRunner):
+    """Test documents list command."""
+    result = runner.invoke(cli, ['documents', 'list'])
     assert result.exit_code == 0
 
 
-def test_cli_templates_list_type(runner: CliRunner):
-    """Test templates list with type option."""
-    result = runner.invoke(cli, ['templates', 'list', '--type', 'templates'])
+def test_cli_documents_list_type(runner: CliRunner):
+    """Test documents list with type option."""
+    result = runner.invoke(cli, ['documents', 'list', '--type', 'templates'])
     assert result.exit_code == 0
 
 
-def test_cli_templates_view(runner: CliRunner):
-    """Test templates view command."""
+def test_cli_documents_view(runner: CliRunner):
+    """Test documents view command."""
     # Try to view an actual template if any exist
-    from super_pocket.templates_and_cheatsheets.cli import get_available_items
+    from super_pocket.documents.cli import get_available_items
     
     templates = get_available_items("templates")
     if templates:
         template_name = templates[0].stem
-        result = runner.invoke(cli, ['templates', 'view', template_name])
+        result = runner.invoke(cli, ['documents', 'view', template_name])
         # Should succeed if template exists
         assert result.exit_code in [0, 1]
     else:
         pytest.skip("No templates available for testing")
 
 
-def test_cli_templates_view_nonexistent(runner: CliRunner):
-    """Test templates view with non-existent template."""
-    result = runner.invoke(cli, ['templates', 'view', 'nonexistent_template_xyz'])
+def test_cli_documents_view_nonexistent(runner: CliRunner):
+    """Test documents view with non-existent template."""
+    result = runner.invoke(cli, ['documents', 'view', 'nonexistent_template_xyz'])
     assert result.exit_code != 0
 
 
-def test_cli_templates_copy(runner: CliRunner, temp_dir):
-    """Test templates copy command."""
-    from super_pocket.templates_and_cheatsheets.cli import get_available_items
+def test_cli_documents_copy(runner: CliRunner, temp_dir):
+    """Test documents copy command."""
+    from super_pocket.documents.cli import get_available_items
     
     templates = get_available_items("templates")
     if templates:
@@ -119,7 +119,7 @@ def test_cli_templates_copy(runner: CliRunner, temp_dir):
         result = runner.invoke(
             cli,
             [
-                'templates', 'copy',
+                'documents', 'copy',
                 template_name,
                 '--output', str(output_file),
                 '--force'
@@ -132,13 +132,13 @@ def test_cli_templates_copy(runner: CliRunner, temp_dir):
         pytest.skip("No templates available for testing")
 
 
-def test_cli_templates_init(runner: CliRunner, temp_dir):
-    """Test templates init command."""
+def test_cli_documents_init(runner: CliRunner, temp_dir):
+    """Test documents init command."""
     output_dir = temp_dir / ".AGENTS_CLI"
     
     result = runner.invoke(
         cli,
-        ['templates', 'init', '--output', str(output_dir)]
+        ['documents', 'init', '--output', str(output_dir)]
     )
     
     if result.exit_code == 0:
@@ -252,9 +252,9 @@ def test_cli_project_group_help(runner: CliRunner):
     assert result.exit_code == 0
 
 
-def test_cli_templates_group_help(runner: CliRunner):
-    """Test templates group help."""
-    result = runner.invoke(cli, ['templates', '--help'])
+def test_cli_documents_group_help(runner: CliRunner):
+    """Test documents group help."""
+    result = runner.invoke(cli, ['documents', '--help'])
     assert result.exit_code == 0
 
 

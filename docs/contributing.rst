@@ -407,7 +407,7 @@ Adding New Templates
    .. code-block:: bash
 
       # Create in templates directory
-      touch pocket/templates_and_cheatsheets/templates/your_agent.md
+      touch pocket/documents/templates/your_agent.md
 
 2. **Write Template Content:**
 
@@ -431,13 +431,13 @@ Adding New Templates
    .. code-block:: bash
 
       # Verify it appears in list
-      pocket templates list
+      pocket documents list
 
       # Test viewing
-      pocket templates view your_agent
+      pocket documents view your_agent
 
       # Test copying
-      pocket templates copy your_agent -o /tmp/
+      pocket documents copy your_agent -o /tmp/
 
 4. **Update Documentation:**
 
@@ -457,10 +457,10 @@ Contributing Cheatsheets
 
 Similar process to templates:
 
-1. Create file in ``pocket/templates_and_cheatsheets/cheatsheets/``
+1. Create file in ``pocket/documents/cheatsheets/``
 2. Follow markdown format
 3. Include comprehensive reference
-4. Test with ``pocket templates view NAME -t cheatsheet``
+4. Test with ``pocket documents view NAME -t cheatsheet``
 
 Release Process
 ---------------

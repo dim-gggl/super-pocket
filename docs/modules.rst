@@ -29,7 +29,7 @@ Package Layout
    │   └── job_search.py               # JSearch API wrapper
    ├── xml/
    │   └── xml.py                      # tag:<content> to XML
-   ├── templates_and_cheatsheets/
+   ├── documents/
    │   ├── cli.py
    │   ├── validator.py
    │   ├── templates/
@@ -103,11 +103,11 @@ Templates & Cheatsheets
 .. autosummary::
    :toctree: _autosummary
 
-   super_pocket.templates_and_cheatsheets
-   super_pocket.templates_and_cheatsheets.cli
-   super_pocket.templates_and_cheatsheets.validator
-   super_pocket.templates_and_cheatsheets.templates
-   super_pocket.templates_and_cheatsheets.cheatsheets
+   super_pocket.documents
+   super_pocket.documents.cli
+   super_pocket.documents.validator
+   super_pocket.documents.templates
+   super_pocket.documents.cheatsheets
 
 XML Modules
 -----------

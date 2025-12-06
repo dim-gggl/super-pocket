@@ -7,7 +7,7 @@ functionalities, organized into logical subcommands.
 """
 import asyncio
 import sys
-from super_pocket.settings import click
+from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_command
 
 from rich.console import Console
 from pathlib import Path
@@ -17,7 +17,7 @@ from super_pocket.web.job_search import main as job_search
 from super_pocket.markdown.renderer import markd
 from super_pocket.project.to_file import create_codebase_markdown
 # from super_pocket.project.readme import run_readme_wizard  # Module moved
-from super_pocket.templates_and_cheatsheets.cli import (
+from super_pocket.documents.cli import (
     list_items, view_item, copy_item, init_agents
 )
 from super_pocket.pdf.converter import pdf_convert
@@ -35,7 +35,7 @@ from super_pocket.xml.cli import xml as xml_cmd
 console = Console()
 
 
-@click.group(invoke_without_command=True)
+@click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=__version__, prog_name="pocket")
 @click.pass_context
 def cli(ctx):
@@ -45,7 +45,7 @@ def cli(ctx):
     Available commands:
     - markdown: Render markdown files in terminal
     - project: Project management tools (export to file, etc.)
-    - templates: Manage agent templates and cheatsheets
+    - documents: Manage agent templates and cheatsheets
     - pdf: PDF conversion tools
     - web: Web utilities (favicon conversion, etc.)
     - readme: Generate README.md files or analyze your project
@@ -55,7 +55,7 @@ def cli(ctx):
     Examples:
         pocket markdown render README.md
         pocket project to-file . -o project-to-file.md
-        pocket templates list
+        pocket documents list
         pocket readme generate README.md
         pocket project req-to-date pyproject.toml
     """
@@ -69,13 +69,13 @@ def cli(ctx):
 
 
 # ==================== Markdown Commands ====================
-@cli.group(name="markdown")
+@cli.group(name="markdown", context_settings=CONTEXT_SETTINGS)
 def markdown_group():
     """Markdown rendering and conversion tools."""
     pass
 
 
-@markdown_group.command(name="render")
+@markdown_group.command(name="render", context_settings=CONTEXT_SETTINGS)
 @click.argument('file', type=click.Path(exists=True))
 @click.option('--width', '-w', type=int, help='Output width in characters.')
 def markdown_render(file: str, width: int):
@@ -100,13 +100,13 @@ def markdown_render(file: str, width: int):
 
 
 # ==================== Project Commands ====================
-@cli.group(name="project")
+@cli.group(name="project", context_settings=CONTEXT_SETTINGS)
 def project_group():
     """Project management and export tools."""
     pass
 
 
-@project_group.command(name="to-file")
+@project_group.command(name="to-file", context_settings=CONTEXT_SETTINGS)
 @click.option(
     '-p', '--path',
     default='.',
@@ -144,7 +144,7 @@ def project_to_file(path: str, output: str, exclude: str):
     create_codebase_markdown(path, output, exclude)
 
 
-@project_group.command(name="readme")
+@project_group.command(name="readme", context_settings=CONTEXT_SETTINGS)
 @click.option(
     '-p', '--path',
     default='.',
@@ -175,7 +175,7 @@ def project_readme(path: str, output: str | None):
 
     run_readme_wizard(path, output)
 
-@project_group.command(name="req-to-date")
+@project_group.command(name="req-to-date", context_settings=CONTEXT_SETTINGS)
 @click.argument("packages", nargs=-1)
 def req_to_date(packages: tuple[str, ...]):
     """Accepte `nom==version`, une liste séparée par des virgules ou un fichier requirements."""
@@ -215,21 +215,21 @@ def req_to_date(packages: tuple[str, ...]):
     )
 
 project_group.add_command(init_group)
-# ==================== Templates Commands ====================
-@cli.group(name="templates")
-def templates_group():
+# ==================== Documents Commands ====================
+@cli.group(name="documents", context_settings=CONTEXT_SETTINGS)
+def documents_group():
     """Manage agent templates and development cheatsheets."""
     pass
 
 
-@templates_group.command(name="list")
+@documents_group.command(name="list", context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--type', '-t',
     type=click.Choice(['templates', 'cheatsheets', 'all'], case_sensitive=False),
     default='all',
     help='Type of items to list.'
 )
-def templates_list(type: str):
+def documents_list(type: str):
     """
     List available templates and cheatsheets.
 
@@ -240,23 +240,23 @@ def templates_list(type: str):
         type: Filter by type - 'templates', 'cheatsheets', or 'all' (default: all).
 
     Examples:
-        pocket templates list
-        pocket templates list --type templates
-        pocket templates list -t cheatsheets
+        pocket documents list
+        pocket documents list --type templates
+        pocket documents list -t cheatsheets
     """
 
     ctx = click.Context(list_items)
     ctx.invoke(list_items, type=type)
 
 
-@templates_group.command(name="view")
+@documents_group.command(name="view", context_settings=CONTEXT_SETTINGS)
 @click.argument('name', type=str)
 @click.option(
     '--type', '-t',
     type=click.Choice(['template', 'cheatsheet'], case_sensitive=False),
     help='Type of item to view.'
 )
-def templates_view(name: str, type: str):
+def documents_view(name: str, type: str):
     """
     View a template or cheatsheet in the terminal.
 
@@ -268,15 +268,15 @@ def templates_view(name: str, type: str):
         type: Type of item to view - 'template' or 'cheatsheet' (auto-detected if omitted).
 
     Examples:
-        pocket templates view unit_tests_agent
-        pocket templates view SQL -t cheatsheet
+        pocket documents view unit_tests_agent
+        pocket documents view SQL -t cheatsheet
     """
 
     ctx = click.Context(view_item)
     ctx.invoke(view_item, name=name, type=type)
 
 
-@templates_group.command(name="copy")
+@documents_group.command(name="copy", context_settings=CONTEXT_SETTINGS)
 @click.argument('name', type=str)
 @click.option(
     '--output', '-o',
@@ -293,7 +293,7 @@ def templates_view(name: str, type: str):
     is_flag=True,
     help='Overwrite existing file.'
 )
-def templates_copy(name: str, output: str, type: str, force: bool):
+def documents_copy(name: str, output: str, type: str, force: bool):
     """
     Copy a template or cheatsheet to your project.
 
@@ -307,8 +307,8 @@ def templates_copy(name: str, output: str, type: str, force: bool):
         force: If True, overwrite existing file without confirmation.
 
     Examples:
-        pocket templates copy unit_tests_agent -o .agents/
-        pocket templates copy SQL -o docs/cheatsheets/
+        pocket documents copy unit_tests_agent -o .agents/
+        pocket documents copy SQL -o docs/cheatsheets/
     """
     output_path = Path(output) if output else None
 
@@ -316,13 +316,13 @@ def templates_copy(name: str, output: str, type: str, force: bool):
     ctx.invoke(copy_item, name=name, output=output_path, type=type, force=force)
 
 
-@templates_group.command(name="init")
+@documents_group.command(name="init", context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--output', '-o',
     type=click.Path(),
     help='Directory for agent templates.'
 )
-def templates_init(output: str):
+def documents_init(output: str):
     """
     Initialize agent configuration directory with all templates.
 
@@ -333,8 +333,8 @@ def templates_init(output: str):
         output: Directory where agent templates will be copied (default: .AGENTS).
 
     Examples:
-        pocket templates init
-        pocket templates init -o ./agents/
+        pocket documents init
+        pocket documents init -o ./agents/
     """     
     output_path = Path(output) if output else Path.cwd() / ".AGENTS"
 
@@ -343,13 +343,13 @@ def templates_init(output: str):
 
 
 # ==================== PDF Commands ====================
-@cli.group(name="pdf")
+@cli.group(name="pdf", context_settings=CONTEXT_SETTINGS)
 def pdf_group():
     """PDF conversion tools."""
     pass
 
 
-@pdf_group.command(name="convert")
+@pdf_group.command(name="convert", context_settings=CONTEXT_SETTINGS)
 @click.argument('input_file', type=click.Path(exists=True))
 @click.option(
     '-o', '--output',
@@ -378,13 +378,13 @@ def pdf_convert_cmd(input_file: str, output: str):
 
 
 # ==================== Web Commands ====================
-@cli.group(name="web")
+@cli.group(name="web", context_settings=CONTEXT_SETTINGS)
 def web_group():
     """Web utilities."""
     pass
 
 
-@web_group.command(name="job-search")
+@web_group.command(name="job-search", context_settings=CONTEXT_SETTINGS)
 @click.argument("query")
 @click.option("-p", "--page", type=int, default=1, help="Page number to start from")
 @click.option("-n", "--num_pages", type=int, default=10, help="Number of pages to scrape")
@@ -433,7 +433,7 @@ def web_job_search_cmd(query: str,
                work_from_home=work_from_home, output=output)
 
 
-@web_group.command(name="favicon")
+@web_group.command(name="favicon", context_settings=CONTEXT_SETTINGS)
 @click.argument('input_file', type=click.Path(exists=True))
 @click.option(
     '-o', '--output',
@@ -473,6 +473,16 @@ cli.add_command(readme_cli, name="readme")
 
 # ==================== XML Commands ====================
 cli.add_command(xml_cmd, name="xml")
+
+
+# ==================== Help Commands ====================
+# Add 'help' subcommand to all groups
+add_help_command(cli)
+add_help_command(markdown_group)
+add_help_command(project_group)
+add_help_command(documents_group)
+add_help_command(pdf_group)
+add_help_command(web_group)
 
 
 def main():

@@ -1,6 +1,6 @@
 [project]
 name = "super-pocket"
-version = "1.0.2"
+version = "1.0.3"
 description = "A collection of developer tools including markdown rendering, project exporters, agent templates, and cheatsheets management."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -40,6 +40,9 @@ req-to-date = "super_pocket.project.req_to_date:req_to_date_cli"
 conv2pdf = "super_pocket.pdf.converter:main"
 favicon = "super_pocket.web.favicon:main"
 xml = "super_pocket.xml.cli:xml"
+readme = "super_pocket.readme.cli:readme_cli"
+project-init = "super_pocket.project.init.cli:new"
+documents = "super_pocket.documents.cli:documents_cli"
 
 [build-system]
 requires = ["setuptools>=61.0"]

@@ -101,13 +101,13 @@ def pocket_cmd() -> None:
     ):
         time.sleep(2)
 
-    base_choices = ["help", "project", "templates", "pdf", "web", "readme", "xml"]
+    base_choices = ["help", "h", "project", "proj", "documents", "docs", "doc", "pdf", "web", "readme", "read", "xml"]
 
     while True:
         display_logo()
         user_input = Prompt.ask(
             "[bold blue]help -[/] "
-            "[bold orange_red1] - project  - templates - pdf - web - readme - xml[/] "
+            "[bold orange_red1]project - documents - pdf - web - readme - xml[/] "
             "[bold blue]- exit/Q[/] >>>",
             default="help",
             choices=base_choices + EXIT_CHOICES,
@@ -119,7 +119,7 @@ def pocket_cmd() -> None:
             return
 
         match user_input:
-            case "help":
+            case "help" | "h":
                 display_logo()
                 _run_with_spinner_and_pause(
                     "Loading help...",
@@ -127,12 +127,12 @@ def pocket_cmd() -> None:
                     style="bold orange_red1",
                 )
 
-            case "project":
+            case "project" | "proj":
                 if project_cmd() == "exit":
                     return
 
-            case "templates":
-                if templates_cmd() == "exit":
+            case "documents" | "docs" | "doc":
+                if documents_cmd() == "exit":
                     return
 
             case "pdf":
@@ -143,7 +143,7 @@ def pocket_cmd() -> None:
                 if web_cmd() == "exit":
                     return
 
-            case "readme":
+            case "readme" | "read":
                 if readme_cmd() == "exit":
                     return
 
@@ -153,13 +153,13 @@ def pocket_cmd() -> None:
 
 
 def project_cmd() -> str | None:
-    base_choices = ["help", "to-file", "readme", "req-to-date", "init"]
+    base_choices = ["help", "h", "to-file", "tf", "req-to-date", "req", "rtd", "init", "i"]
 
     while True:
         display_logo()
         user_input = _prompt_with_choices(
             "[bold blue]help - [/][bold orange_red1]"
-            "to-file - readme - req-to-date - init[/] "
+            "to-file - req-to-date - init[/] "
             "[bold blue]- exit/Q[/] >>>",
             base_choices=base_choices,
             default="help",
@@ -173,10 +173,10 @@ def project_cmd() -> str | None:
             return "back"
 
         match user_input:
-            case "help":
+            case "help" | "h":
                 _show_help("project", "Loading project help...")
 
-            case "to-file":
+            case "to-file" | "tf":
                 path = Prompt.ask("Project path", default=".")
                 output = Prompt.ask("Output file (optional)", default="")
                 exclude = Prompt.ask("Exclude (comma-separated, optional)", default="")
@@ -189,17 +189,7 @@ def project_cmd() -> str | None:
 
                 _run_with_spinner_and_pause("Exporting project...", command)
 
-            case "readme":
-                path = Prompt.ask("Project path", default=".")
-                output = Prompt.ask("README output (optional)", default="")
-
-                command = ["pocket", "project", "readme", "--path", path]
-                if output.strip():
-                    command += ["--output", output]
-
-                _run_with_spinner_and_pause("Generating README...", command)
-
-            case "req-to-date":
+            case "req-to-date" | "req" | "rtd":
                 packages = Prompt.ask(
                     "Packages (comma list or requirements file)",
                     default="",
@@ -258,13 +248,13 @@ def project_cmd() -> str | None:
                 _run_with_spinner_and_pause("Creating project...", command)
 
 
-def templates_cmd() -> str | None:
-    base_choices = ["help", "list", "view", "copy", "init"]
+def documents_cmd() -> str | None:
+    base_choices = ["help", "h", "list", "ls", "view", "v", "copy", "cp", "init"]
 
     while True:
         display_logo()
         user_input = _prompt_with_choices(
-            "[bold blue]help -[/] [bold orange_red1]list - view - copy - init[/]"
+            "[bold blue]help -[/] [bold orange_red1]list - view - copy - init [/]"
             "[bold blue]- exit/Q[/] >>>",
             base_choices=base_choices,
             default="help",
@@ -278,31 +268,31 @@ def templates_cmd() -> str | None:
             return "back"
 
         match user_input:
-            case "help":
-                _show_help("templates", "Loading templates help...")
+            case "help" | "h":
+                _show_help("documents", "Loading documents help...")
 
-            case "list":
+            case "list" | "ls":
                 type_choice = Prompt.ask(
                     "Type",
                     choices=["all", "templates", "cheatsheets"],
                     default="all",
                 )
-                command = ["pocket", "templates", "list", "--type", type_choice]
-                _run_with_spinner_and_pause("Listing templates...", command)
+                command = ["pocket", "documents", "list", "--type", type_choice]
+                _run_with_spinner_and_pause("Listing documents...", command)
 
-            case "view":
+            case "view" | "v":
                 name = Prompt.ask("Template or cheatsheet name")
                 type_choice = Prompt.ask(
                     "Type (optional)",
                     choices=["auto", "template", "cheatsheet"],
                     default="auto",
                 )
-                command = ["pocket", "templates", "view", name]
+                command = ["pocket", "documents", "view", name]
                 if type_choice != "auto":
                     command += ["--type", type_choice]
                 _run_with_spinner_and_pause("Loading item...", command)
 
-            case "copy":
+            case "copy" | "cp":
                 name = Prompt.ask("Template or cheatsheet name")
                 output = Prompt.ask("Output path (optional)", default="")
                 type_choice = Prompt.ask(
@@ -316,7 +306,7 @@ def templates_cmd() -> str | None:
                     default="y",
                 )
 
-                command = ["pocket", "templates", "copy", name]
+                command = ["pocket", "documents", "copy", name]
                 if output.strip():
                     command += ["--output", output]
                 if type_choice != "auto":
@@ -331,17 +321,17 @@ def templates_cmd() -> str | None:
                     "Target directory (default .AGENTS)",
                     default=".AGENTS",
                 )
-                command = ["pocket", "templates", "init", "--output", output]
-                _run_with_spinner_and_pause("Initializing templates...", command)
+                command = ["pocket", "documents", "init", "--output", output]
+                _run_with_spinner_and_pause("Initializing documents...", command)
 
 
 def pdf_cmd() -> str | None:
-    base_choices = ["help", "convert"]
+    base_choices = ["help", "h", "convert", "conv", "c"]
 
     while True:
         display_logo()
         user_input = _prompt_with_choices(
-            "[bold blue]help -[/] [bold orange_red1]convert[/] "
+            "[bold blue]help -[/] [bold orange_red1]convert [/] "
             "[bold blue]- exit/Q[/] >>>",
             base_choices=base_choices,
             default="help",
@@ -355,10 +345,10 @@ def pdf_cmd() -> str | None:
             return "back"
 
         match user_input:
-            case "help":
+            case "help" | "h":
                 _show_help("pdf", "Loading PDF help...")
 
-            case "convert":
+            case "convert" | "conv" | "c":
                 input_file = Prompt.ask("Input file")
                 output_file = Prompt.ask("Output file (optional)", default="")
                 command = ["pocket", "pdf", "convert", input_file]
@@ -368,7 +358,7 @@ def pdf_cmd() -> str | None:
 
 
 def web_cmd() -> str | None:
-    base_choices = ["help", "favicon", "job-search"]
+    base_choices = ["help", "h", "favicon", "fav", "job-search", "js", "j"]
 
     while True:
         display_logo()
@@ -387,10 +377,10 @@ def web_cmd() -> str | None:
             return "back"
 
         match user_input:
-            case "help":
+            case "help" | "h":
                 _show_help("web", "Loading web help...")
 
-            case "favicon":
+            case "favicon" | "fav":
                 input_file = Prompt.ask("Input image")
                 output_file = Prompt.ask("Output ico (optional)", default="")
                 sizes = Prompt.ask("Sizes (optional: 64x64,32x32)", default="")
@@ -401,7 +391,7 @@ def web_cmd() -> str | None:
                     command += ["--sizes", sizes]
                 _run_with_spinner_and_pause("Generating favicon...", command)
 
-            case "job-search":
+            case "job-search" | "js" | "j":
                 query = Prompt.ask("Search query", default="Python developer")
                 page = Prompt.ask("Start page", default="1")
                 num_pages = Prompt.ask("Number of pages", default="10")
@@ -457,12 +447,12 @@ def web_cmd() -> str | None:
 
 
 def readme_cmd() -> str | None:
-    base_choices = ["help", "analyze", "generate"]
+    base_choices = ["help", "h", "analyze", "ana", "generate", "gen", "g"]
 
     while True:
         display_logo()
         user_input = _prompt_with_choices(
-            "[bold blue]help -[/] [bold orange_red1]analyze - generate[/] "
+            "[bold blue]help -[/] [bold orange_red1]analyze - generate [/] "
             "[bold blue]- exit/Q[/] >>>",
             base_choices=base_choices,
             default="help",
@@ -476,15 +466,15 @@ def readme_cmd() -> str | None:
             return "back"
 
         match user_input:
-            case "help":
+            case "help" | "h":
                 _show_help("readme", "Loading README help...")
 
-            case "analyze":
+            case "analyze" | "ana":
                 path = Prompt.ask("Project path", default=".")
                 command = ["pocket", "readme", "analyze", path]
                 _run_with_spinner_and_pause("Analyzing project...", command)
 
-            case "generate":
+            case "generate" | "gen" | "g":
                 path = Prompt.ask("Project path", default=".")
                 output = Prompt.ask("Output file", default="README.md")
                 command = [
@@ -500,12 +490,12 @@ def readme_cmd() -> str | None:
 
 
 def xml_cmd() -> str | None:
-    base_choices = ["help", "convert"]
+    base_choices = ["help", "h", "convert", "conv", "c"]
 
     while True:
         display_logo()
         user_input = _prompt_with_choices(
-            "[bold blue]help -[/] [bold orange_red1]convert[/] "
+            "[bold blue]help -[/] [bold orange_red1]convert [/] "
             "[bold blue]- exit/Q[/] >>>",
             base_choices=base_choices,
             default="help",
@@ -519,10 +509,10 @@ def xml_cmd() -> str | None:
             return "back"
 
         match user_input:
-            case "help":
+            case "help" | "h":
                 _show_help("xml", "Loading XML help...")
 
-            case "convert":
+            case "convert" | "conv" | "c":
                 source_type = Prompt.ask(
                     "Source type",
                     choices=["text", "file"],

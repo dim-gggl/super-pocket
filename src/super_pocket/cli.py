@@ -29,6 +29,7 @@ from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_
 from super_pocket.project.init.cli import init_group
 from super_pocket.interactive import pocket_cmd
 from super_pocket.xml.cli import xml as xml_cmd
+from super_pocket.video.cli import video_cli
 
 
 
@@ -507,6 +508,9 @@ cli.add_command(readme_cli, name="readme")
 # ==================== XML Commands ====================
 cli.add_command(xml_cmd, name="xml")
 
+
+# ==================== Video Commands ====================
+cli.add_command(video_cli, name="video")
 
 # ==================== Help Commands ====================
 # Add 'help' subcommand to all groups

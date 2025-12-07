@@ -32,7 +32,7 @@ click.rich_click.STYLE_OPTIONS_PANEL_BOX = "SIMPLE_HEAD"
 
 click.rich_click.STYLE_OPTIONS_PANEL_TITLE_STYLE = "bold grey100"
 
-click.rich_click.STYLE_OPTIONS_TABLE_LEADING: int = 1
+click.rich_click.STYLE_OPTIONS_TABLE_LEADING: int = 0
 click.rich_click.STYLE_COMMANDS_PANEL_BOX = "SIMPLE_HEAD"
 click.rich_click.STYLE_COMMANDS_PANEL_TITLE_STYLE = "bold grey100"
 click.rich_click.STYLE_COMMANDS_TABLE_BOX = "SIMPLE"

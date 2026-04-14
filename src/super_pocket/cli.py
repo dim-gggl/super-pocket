@@ -16,6 +16,7 @@ from super_pocket import __version__
 from super_pocket.web.job_search import main as job_search
 from super_pocket.markdown.renderer import markd
 from super_pocket.project.to_file import create_codebase_markdown
+from super_pocket.iconify.cli import iconify_cli
 # from super_pocket.project.readme import run_readme_wizard  # Module moved
 from super_pocket.documents.cli import (
     list_items, view_item, copy_item, init_agents
@@ -29,10 +30,7 @@ from super_pocket.project.req_to_date import run_req_to_date, print_req_to_date_
 from super_pocket.project.init.cli import init_group
 from super_pocket.interactive import pocket_cmd
 from super_pocket.xml.cli import xml as xml_cmd
-
-
-
-console = Console()
+from super_pocket.utils import console
 
 
 @click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
@@ -506,6 +504,7 @@ cli.add_command(readme_cli, name="readme")
 
 # ==================== XML Commands ====================
 cli.add_command(xml_cmd, name="xml")
+cli.add_command(iconify_cli, name="iconify")
 
 
 # ==================== Help Commands ====================

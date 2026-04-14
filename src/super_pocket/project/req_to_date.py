@@ -44,8 +44,8 @@ class CheckRequest(BaseModel):
 def _read_requirements_file(path: Path) -> List[str]:
     """Returns the dependencies extracted from a requirements file."""
     try:
-        with open(path, "r") as f:
-            lines = [l.strip() for l in f.readlines()[2:]]
+        with open(path, "r", encoding="utf-8") as file_obj:
+            lines = [line.strip() for line in file_obj.readlines()]
 
     except FileNotFoundError as exc:
         print_error(exc, custom=True, message=f"Requirements file not found: {path}")
@@ -59,11 +59,13 @@ def _read_requirements_file(path: Path) -> List[str]:
         if not line or line.startswith("#") or line.startswith("--"):
             continue
         spec = _normalize_dependency_spec(line)
-        specs.append(spec)
+        if spec:
+            specs.append(spec)
 
     if not specs:
-        print_error(ValueError(f"No valid package found in {path}"), custom=True, message="No valid package found in {path}")
-        return []
+        error = ValueError(f"No valid package found in {path}")
+        print_error(error, custom=True, message=f"No valid package found in {path}")
+        raise error
 
     return specs
 
@@ -105,8 +107,9 @@ def _read_pyproject_file(path: Path) -> List[str]:
                 specs.append(spec)
 
     if not specs:
-        print_error(ValueError, custom=True, message=f"No dependencies found in {path}")
-        raise
+        error = ValueError(f"No dependencies found in {path}")
+        print_error(error, custom=True, message=f"No dependencies found in {path}")
+        raise error
 
     return specs
 
@@ -164,8 +167,9 @@ def _expand_spec_inputs(inputs: Sequence[str]) -> List[str]:
         expanded.append(entry)
 
     if not expanded:
-        print_error(ValueError, custom=True, message="The list of packages cannot be empty")
-        raise
+        error = ValueError("The list of packages cannot be empty")
+        print_error(error, custom=True, message=str(error))
+        raise error
 
     return expanded
 
@@ -176,18 +180,16 @@ def parse_package_specs(specs: Sequence[str]) -> List[PackageInput]:
     parsed: List[PackageInput] = []
     for spec in expanded_specs:
         if "==" not in spec:
-            print_error(ValueError, 
-                        custom=True, 
-                        message="Each package must be provided in the form name==version")
-            raise
+            error = ValueError("Each package must be provided in the form name==version")
+            print_error(error, custom=True, message=str(error))
+            raise error
         package, version = spec.split("==", 1)
         package = package.strip()
         version = version.strip()
         if not package or not version:
-            print_error(ValueError, 
-                        custom=True, 
-                        message=f"Invalid format for '{spec}': name or version missing")
-            raise
+            error = ValueError(f"Invalid format for '{spec}': name or version missing")
+            print_error(error, custom=True, message=str(error))
+            raise error
         parsed.append(PackageInput(package=package, version=version))
 
     return parsed
@@ -341,10 +343,10 @@ def req_to_date_cli(packages: tuple[str, ...]):
     - packages: package names in the form name==version, comma-separated lists of
     name==version, path to a pyproject.toml or a requirements.txt file.
     """
-    packages = _expand_spec_inputs(packages)
+    expanded = _expand_spec_inputs(packages)
     count = 0
     try:
-        results = run_req_to_date(packages)
+        results = run_req_to_date(expanded)
     except ValueError as exc:
         print_error(exc, custom=True, message="ValueError")
         raise

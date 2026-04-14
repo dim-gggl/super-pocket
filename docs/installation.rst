@@ -183,7 +183,7 @@ You should see:
 
 .. code-block:: text
 
-   pocket, version 1.0.1
+   pocket, version 1.2.0
 
    Usage: pocket [OPTIONS] COMMAND [ARGS]...
 

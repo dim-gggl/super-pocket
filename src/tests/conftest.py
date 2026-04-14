@@ -6,6 +6,11 @@ import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from PIL import Image
+
+SAMPLE_ICON_SIZE = 128
+SAMPLE_ICON_FILL = (12, 140, 210, 255)
+
 
 @pytest.fixture
 def temp_dir():
@@ -88,3 +93,20 @@ def sample_project_structure(temp_dir):
     (project_dir / "README.md").write_text("# Test Project", encoding='utf-8')
 
     return project_dir
+
+
+@pytest.fixture
+def sample_rgba_icon_file(temp_dir):
+    """
+    Create a valid RGBA PNG file for icon-related tests.
+
+    Args:
+        temp_dir: Temporary directory fixture.
+
+    Returns:
+        Path: Path to a PNG image fixture.
+    """
+    file_path = temp_dir / "sample-icon.png"
+    image = Image.new("RGBA", (SAMPLE_ICON_SIZE, SAMPLE_ICON_SIZE), SAMPLE_ICON_FILL)
+    image.save(file_path, format="PNG")
+    return file_path

@@ -643,7 +643,7 @@ wheels = [
 
 [[package]]
 name = "super-pocket"
-version = "1.0.3"
+version = "1.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },

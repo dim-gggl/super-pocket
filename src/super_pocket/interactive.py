@@ -101,13 +101,13 @@ def pocket_cmd() -> None:
     ):
         time.sleep(2)
 
-    base_choices = ["help", "h", "project", "proj", "documents", "docs", "doc", "pdf", "web", "readme", "read", "xml"]
+    base_choices = ["help", "h", "iconify", "icon", "project", "proj", "documents", "docs", "doc", "pdf", "web", "readme", "read", "xml"]
 
     while True:
         display_logo()
         user_input = Prompt.ask(
             "[bold blue]help -[/] "
-            "[bold orange_red1]project - documents - pdf - web - readme - xml[/] "
+            "[bold orange_red1]iconify - project - documents - pdf - web - readme - xml[/] "
             "[bold blue]- exit/Q[/] >>>",
             default="help",
             choices=base_choices + EXIT_CHOICES,
@@ -126,6 +126,20 @@ def pocket_cmd() -> None:
                     ["pocket", "--help"],
                     style="bold orange_red1",
                 )
+
+            case "iconify" | "icon":
+                input_file = Prompt.ask("Input image")
+                output_file = Prompt.ask("Output PNG")
+                size = Prompt.ask("Size", default="1024")
+                exponent = Prompt.ask("Exponent", default="5.0")
+
+                command = ["pocket", "iconify", "-i", input_file, "-o", output_file]
+                if size.strip():
+                    command += ["--size", size]
+                if exponent.strip():
+                    command += ["--exponent", exponent]
+
+                _run_with_spinner_and_pause("Generating squircle icon...", command)
 
             case "project" | "proj":
                 if project_cmd() == "exit":

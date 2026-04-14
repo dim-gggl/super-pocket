@@ -107,7 +107,7 @@ Example bug report:
    **Environment**
    - OS: macOS 13.4
    - Python: 3.11.4
-   - Super Pocket: 1.0.1
+   - Super Pocket: 1.2.0
 
    **Error Message**
    ```

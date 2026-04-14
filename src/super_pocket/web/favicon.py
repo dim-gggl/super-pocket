@@ -11,19 +11,16 @@ from typing import Optional, List, Tuple
 
 from super_pocket.settings import click, CONTEXT_SETTINGS, add_help_argument
 from rich.console import Console
-
+from super_pocket.utils import console, print_error
 try:
     from PIL import Image
-except ImportError:
-    Console().print(
-        "[red]Error:[/red] Pillow is not installed. "
-        "Install it with: pip install Pillow",
-        style="bold"
+except ImportError as e:
+    print_error(
+        e(
+            "Pillow is not installed. Install it with: pip install Pillow"
+        )
     )
-    raise
 
-
-console = Console()
 
 # Standard favicon sizes
 DEFAULT_FAVICON_SIZES: List[Tuple[int, int]] = [
@@ -36,11 +33,13 @@ DEFAULT_FAVICON_SIZES: List[Tuple[int, int]] = [
 ]
 
 
-def convert_to_favicon(
-    input_file: str,
-    output_file: str = 'favicon.ico',
-    sizes: Optional[List[Tuple[int, int]]] = DEFAULT_FAVICON_SIZES
-) -> None:
+def convert_to_favicon(input_file: str,
+                       output_file: str = 'favicon.ico',
+                       sizes: Optional[
+                          List[
+                              Tuple[int, int]
+                          ]
+                       ] = DEFAULT_FAVICON_SIZES) -> None:
     """
     Convert an image to a favicon (.ico) file with multiple sizes.
 
@@ -70,33 +69,26 @@ def convert_to_favicon(
         img.save(f"{i}_{output_file}", format="ICO", sizes=sizes[i])
 
     console.print(
-        f"[green]✓[/green] Favicon saved to '{output_file}' with {len(sizes)} sizes",
+        (f"[green]✓[/green] Favicon saved to '{output_file}' "
+        f"with {len(sizes)} sizes"),
         style="bold"
     )
 
 
 @click.command(name="favicon", context_settings=CONTEXT_SETTINGS)
-@click.argument(
-    'input_file',
-    type=str
-)
-@click.option(
-    '-o', '--output',
-    type=str,
-    default='favicon.ico',
-    help='Output favicon file path. Default: favicon.ico'
-)
-@click.option(
-    '-s', '--sizes',
-    type=List[Tuple[int, int]],
-    default=DEFAULT_FAVICON_SIZES,
-    help='Custom sizes as comma-separated WxH values (e.g., "64x64,32x32,16x16"). '
-)
-def web_favicon(
-    input_file: str,
-    output: str,
-    sizes: List[Tuple[int, int]]
-) -> None:
+@click.argument('input_file',
+                type=str)
+@click.option('-o', '--output',
+              type=str,
+              default='favicon.ico',
+              help='Output favicon file path. Default: favicon.ico')
+@click.option('-s', '--sizes',
+              type=List[Tuple[int, int]],
+              default=DEFAULT_FAVICON_SIZES,
+              help='Custom sizes as comma-separated WxH values (e.g., "64x64,32x32,16x16"). ')
+def web_favicon(input_file: str,
+                output: str,
+                sizes: List[Tuple[int, int]]) -> None:
     """
     Convert an image to a favicon (.ico) file.
 

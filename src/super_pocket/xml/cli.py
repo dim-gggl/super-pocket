@@ -1,12 +1,11 @@
 from super_pocket.settings import click, display_logo, CONTEXT_SETTINGS
 from rich.console import Console
 from rich.prompt import Prompt
+
+from super_pocket.utils import console
 from super_pocket.xml.xml import (
     extract_text, format_xml, parse_custom_syntax
 )
-
-
-console = Console()
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)

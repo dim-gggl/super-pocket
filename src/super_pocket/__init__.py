@@ -9,7 +9,7 @@ This package provides various utilities for developers including:
 - Web utilities (favicon generation, job search, etc.)
 """
 
-__version__ = "1.0.1"
+__version__ = "1.2.0"
 __author__ = "Dimitri Gaggioli"
 
 from pathlib import Path
